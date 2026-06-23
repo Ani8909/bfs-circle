@@ -5512,9 +5512,9 @@ if (isset($_GET['api'])) {
         };
 
         const PRIORITY_BADGE = {
-            'Hot':  '<span style="background:#fee2e2;color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">≡ƒö┤ Hot</span>',
-            'Warm': '<span style="background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">≡ƒƒí Warm</span>',
-            'Cold': '<span style="background:#dbeafe;color:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">≡ƒö╡ Cold</span>'
+            'Hot':  '<span style="background:#fee2e2;color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Hot</span>',
+            'Warm': '<span style="background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Warm</span>',
+            'Cold': '<span style="background:#dbeafe;color:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">Cold</span>'
         };
 
         // ==========================================
@@ -5696,12 +5696,12 @@ if (isset($_GET['api'])) {
                                 ).join('')}
                             </select>
                         </td>
-                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || 'ΓÇö'}</td>
+                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || '<span style="color:#94a3b8;font-weight:normal;">Unassigned</span>'}</td>
                         <td style="padding:12px;">
                             <div style="display:flex;gap:6px;">
-                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">Γ£Å∩╕Å</button>` : ''}
-                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">≡ƒöä</button>
-                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">≡ƒùæ∩╕Å</button>` : ''}
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">Edit</button>` : ''}
+                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">Convert</button>
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">Delete</button>` : ''}
                             </div>
                         </td>
                     </tr>`;
