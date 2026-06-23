@@ -35,6 +35,7 @@ try {
     $db->exec("CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
+        name TEXT,
         password_hash TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'Staff', -- 'Admin', 'Staff'
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -483,7 +484,7 @@ if (isset($_GET['api'])) {
 
             case 'get_users':
                 if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required'], 403);
-                $stmt = $db->query("SELECT id, username, role, is_active, created_at FROM users ORDER BY created_at ASC");
+                $stmt = $db->query("SELECT id, username, name, role, is_active, created_at FROM users ORDER BY created_at ASC");
                 return_json($stmt->fetchAll());
                 break;
                 
@@ -4482,7 +4483,7 @@ if (isset($_GET['api'])) {
                     const users = await res.json();
                     if(users && !users.error) {
                         let opts = '<option value="">-- Unassigned --</option>';
-                        users.forEach(u => opts += `<option value="${u.username}">${u.username}</option>`);
+                        users.forEach(u => opts += `<option value="${u.username}">${u.name ? u.name + ' (' + u.username + ')' : u.username}</option>`);
                         document.querySelectorAll('.user-select').forEach(sel => sel.innerHTML = opts);
                     }
                 } catch(e) {}
@@ -5750,7 +5751,7 @@ if (isset($_GET['api'])) {
                 document.getElementById('lf-assigned').value = l.assigned_to || '';
                 document.getElementById('lf-notes').value    = l.notes || '';
                 
-                document.getElementById('lead-form-title').innerText = 'Γ£Å∩╕Å Edit Lead';
+                document.getElementById('lead-form-title').innerText = 'Edit Lead';
                 document.getElementById('lead-submit-btn').innerText = 'Update Lead';
                 document.getElementById('lead-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch(err) {
