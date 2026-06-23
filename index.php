@@ -375,11 +375,21 @@ $profile = $db->query("SELECT * FROM company_profile LIMIT 1")->fetch();
 //  PHP API ENDPOINTS (JSON responses)
 // ==========================================
 
+// Utility function to return JSON and exit
 function return_json($data, $status = 200) {
-    header('Content-Type: application/json');
     http_response_code($status);
+    header('Content-Type: application/json');
     echo json_encode($data);
     exit;
+}
+
+// Activity logging helper
+function log_activity($description) {
+    global $db;
+    $user = $_SESSION['username'] ?? 'System';
+    $desc = "[$user] " . $description;
+    $stmt = $db->prepare("INSERT INTO activities (description) VALUES (?)");
+    $stmt->execute([$desc]);
 }
 
 if (isset($_GET['api'])) {
