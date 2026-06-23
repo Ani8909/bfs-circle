@@ -465,6 +465,9 @@ if (isset($_GET['api'])) {
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
                 if ($id == $_SESSION['user_id']) return_json(['error' => 'Cannot deactivate yourself'], 400);
                 
+                $target_role = $db->query("SELECT role FROM users WHERE id = " . (int)$id)->fetchColumn();
+                if ($target_role === 'Admin') return_json(['error' => 'Cannot deactivate the Admin account'], 400);
+
                 $stmt = $db->prepare("UPDATE users SET is_active = CASE WHEN is_active = 1 THEN 0 ELSE 1 END WHERE id = ?");
                 $stmt->execute([$id]);
                 return_json(['success' => true, 'message' => 'Status updated']);
@@ -477,6 +480,9 @@ if (isset($_GET['api'])) {
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
                 if ($id == $_SESSION['user_id']) return_json(['error' => 'Cannot delete yourself'], 400);
                 
+                $target_role = $db->query("SELECT role FROM users WHERE id = " . (int)$id)->fetchColumn();
+                if ($target_role === 'Admin') return_json(['error' => 'Cannot delete the Admin account'], 400);
+
                 $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
                 $stmt->execute([$id]);
                 return_json(['success' => true, 'message' => 'User deleted']);
@@ -3702,8 +3708,12 @@ if (isset($_GET['api'])) {
                         let html = '<table class="data-table"><thead><tr><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
                         data.forEach(u => {
                             let statusBadge = u.is_active == 1 ? '<span class="status-badge status-new" style="background:#dcfce7; color:#166534;">Active</span>' : '<span class="status-badge status-closed-lost">Deactivated</span>';
-                            let actionBtn = u.is_active == 1 ? `<button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 3px 6px;" onclick="toggleUserStatus(${u.id})">Deactivate</button>` : `<button type="button" class="btn btn-primary" style="font-size: 11px; padding: 3px 6px;" onclick="toggleUserStatus(${u.id})">Activate</button>`;
-                            let deleteBtn = `<button type="button" class="btn btn-danger" style="font-size: 11px; padding: 3px 6px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5;" onclick="deleteUser(${u.id})">Delete</button>`;
+                            let actionBtn = '';
+                            let deleteBtn = '';
+                            if (u.role !== 'Admin') {
+                                actionBtn = u.is_active == 1 ? `<button type="button" class="btn btn-secondary" style="font-size: 11px; padding: 3px 6px;" onclick="toggleUserStatus(${u.id})">Deactivate</button>` : `<button type="button" class="btn btn-primary" style="font-size: 11px; padding: 3px 6px;" onclick="toggleUserStatus(${u.id})">Activate</button>`;
+                                deleteBtn = `<button type="button" class="btn btn-danger" style="font-size: 11px; padding: 3px 6px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5;" onclick="deleteUser(${u.id})">Delete</button>`;
+                            }
                             
                             html += `<tr>
                                 <td><strong>${u.username}</strong></td>
