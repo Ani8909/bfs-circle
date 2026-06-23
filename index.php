@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Kolkata');
 session_start();
 /**
  * AuraCRM - Professional Client Management & Tracking System
@@ -1014,7 +1015,7 @@ if (isset($_GET['api'])) {
                 if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required'], 403);
                 $activities = $db->query("SELECT description, created_at FROM activities ORDER BY id DESC LIMIT 200")->fetchAll();
                 foreach ($activities as &$act) {
-                    $act['created_at_formatted'] = date('d M Y, h:i A', strtotime($act['created_at']));
+                    $act['created_at_formatted'] = date('d M Y, h:i A', strtotime($act['created_at'] . ' UTC'));
                 }
                 return_json($activities);
                 break;
@@ -1023,7 +1024,7 @@ if (isset($_GET['api'])) {
                 $activities = $db->query("SELECT description, created_at FROM activities ORDER BY id DESC LIMIT 10")->fetchAll();
                 // Format relative time
                 foreach ($activities as &$act) {
-                    $timestamp = strtotime($act['created_at']);
+                    $timestamp = strtotime($act['created_at'] . ' UTC');
                     $diff = time() - $timestamp;
                     
                     if ($diff < 60) {
