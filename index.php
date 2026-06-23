@@ -614,6 +614,11 @@ if (isset($_GET['api'])) {
             case 'save_lead':
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
                 $lead_id     = isset($_POST['lead_id']) && (int)$_POST['lead_id'] > 0 ? (int)$_POST['lead_id'] : null;
+                
+                if ($lead_id && ($_SESSION['role'] ?? '') !== 'Admin') {
+                    return_json(['error' => 'Admin privileges required to edit leads'], 403);
+                }
+
                 $lead_name   = trim($_POST['lead_name'] ?? '');
                 $company     = trim($_POST['company_name'] ?? '');
                 $mobile      = trim($_POST['mobile'] ?? '');
@@ -644,6 +649,11 @@ if (isset($_GET['api'])) {
             case 'save_prelead':
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
                 $id = isset($_POST['id']) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : null;
+                
+                if ($id && ($_SESSION['role'] ?? '') !== 'Admin') {
+                    return_json(['error' => 'Admin privileges required to edit pre-leads'], 403);
+                }
+
                 $name = trim($_POST['name'] ?? '');
                 $company = trim($_POST['company_name'] ?? '');
                 $mobile = trim($_POST['mobile'] ?? '');
@@ -659,7 +669,6 @@ if (isset($_GET['api'])) {
                 if ($id) {
                     $stmt = $db->prepare("UPDATE pre_leads SET name=?, company_name=?, mobile=?, email=?, source=?, status=?, assigned_to=?, location=?, notes=? WHERE id=?");
                     $stmt->execute([$name, $company, $mobile, $email, $source, $status, $assigned_to, $location, $notes, $id]);
-                    return_json(['success' => true, 'message' => 'Pre-Lead updated!']);
                 } else {
                     $stmt = $db->prepare("INSERT INTO pre_leads (name, company_name, mobile, email, source, status, assigned_to, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([$name, $company, $mobile, $email, $source, $status, $assigned_to, $location, $notes]);
@@ -669,6 +678,7 @@ if (isset($_GET['api'])) {
 
             case 'delete_prelead':
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+                if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required to delete pre-leads'], 403);
                 $id = (int)($_POST['id'] ?? 0);
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
                 $db->prepare("DELETE FROM pre_leads WHERE id = ?")->execute([$id]);
@@ -784,6 +794,7 @@ if (isset($_GET['api'])) {
 
             case 'delete_lead':
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+                if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required to delete leads'], 403);
                 $id = (int)($_POST['id'] ?? 0);
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
                 $db->prepare("DELETE FROM leads WHERE id=?")->execute([$id]);
@@ -4983,9 +4994,9 @@ if (isset($_GET['api'])) {
                     </td>
                     <td>
                         <div style="display:flex;gap:5px;">
+                            ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" onclick="editPreLead(${p.id})" style="padding:4px 8px;" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i></button>` : ''}
                             <button class="btn btn-primary" onclick="promotePreLead(${p.id})" style="padding:4px 8px; font-size:12px;" title="Promote to Lead"><i data-lucide="rocket" style="width:14px;height:14px;"></i> Promote</button>
-                            <button class="btn btn-secondary" onclick="editPreLead(${p.id})" style="padding:4px 8px;" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i></button>
-                            <button class="btn btn-danger" onclick="deletePreLead(${p.id})" style="padding:4px 8px;" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>
+                            ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" onclick="deletePreLead(${p.id})" style="padding:4px 8px;" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>` : ''}
                         </div>
                     </td>
                 `;
@@ -5126,9 +5137,9 @@ if (isset($_GET['api'])) {
                         <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || '—'}</td>
                         <td style="padding:12px;">
                             <div style="display:flex;gap:6px;">
-                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">✏️</button>
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">✏️</button>` : ''}
                                 <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">🔄</button>
-                                <button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">🗑️</button>
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">🗑️</button>` : ''}
                             </div>
                         </td>
                     </tr>`;
