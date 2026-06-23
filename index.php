@@ -2943,6 +2943,37 @@ if (isset($_GET['api'])) {
             </div>
         </header>
 
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ==========================================
               VIEW 1: DASHBOARD LANDING SCREEN
              ========================================== -->
@@ -3070,6 +3101,37 @@ if (isset($_GET['api'])) {
                     </div>
                     <div class="activity-feed" id="dashboard-activity-feed">
                         <!-- Loaded via API -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -3258,6 +3320,37 @@ if (isset($_GET['api'])) {
             </form>
         </div>
 
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ==========================================
               VIEW 3: COMPLETE SEARCH & CRM TRACKING
              ========================================== -->
@@ -3330,6 +3423,37 @@ if (isset($_GET['api'])) {
                             <h3>No Client Selected</h3>
                             <p style="font-size: 13.5px; margin-top: 6px;">Select a client from the search results to view their CRM history, communications, and quotation statuses.</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -3408,6 +3532,37 @@ if (isset($_GET['api'])) {
             </div>
         </div>
 
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ==========================================
               VIEW 5: QUOTATION BUILDER
              ========================================== -->
@@ -3483,6 +3638,37 @@ if (isset($_GET['api'])) {
                         <button type="submit" class="btn btn-primary"><i data-lucide="save"></i> Save Quotation</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -3576,6 +3762,37 @@ if (isset($_GET['api'])) {
                                 </tr>
                             </thead>
                             <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -3735,6 +3952,37 @@ if (isset($_GET['api'])) {
             </div>
         </div>
 
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ==========================================
               VIEW 6: QUOTATION LIST
              ========================================== -->
@@ -3794,6 +4042,37 @@ if (isset($_GET['api'])) {
                             <!-- Loaded via API -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        
+        <!-- ==========================================
+             REMINDERS VIEW
+        ========================================== -->
+        <div id="reminders-view" class="view-section" style="display: none;">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Pending & Completed Reminders</h2>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="reminders-table">
+                            <thead>
+                                <tr>
+                                    <th>Reminder Date</th>
+                                    <th>Type</th>
+                                    <th>Associated Lead</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loaded via API -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -4426,7 +4705,7 @@ if (isset($_GET['api'])) {
             const footer = document.getElementById("template-preview-footer");
             if(t.attachment_name) {
                 footer.style.display = "block";
-                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📎 Download Attachment</a>`;
+                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;">≡ƒôÄ Download Attachment</a>`;
             } else {
                 footer.style.display = "none";
             }
@@ -4465,8 +4744,7 @@ if (isset($_GET['api'])) {
             if(json.success) loadPptsList();
         }
 
-        
-        async function initUserSelects() {
+                async function initUserSelects() {
             if (currentUser && currentUser.role === 'Admin') {
                 document.querySelectorAll('.admin-only-field').forEach(el => el.style.display = 'block');
                 try {
@@ -4482,42 +4760,34 @@ if (isset($_GET['api'])) {
         }
         document.addEventListener("DOMContentLoaded", initUserSelects);
 
-        
-        // Reminders Logic
         function openReminderModal(type, id) {
-            document.getElementById("rem_lead_type").value = type;
-            document.getElementById("rem_lead_id").value = id;
-            document.getElementById("rem_date").value = "";
-            document.getElementById("rem_notes").value = "";
-            document.getElementById("reminder-modal").style.display = "block";
+            document.getElementById('reminder-lead-type').value = type;
+            document.getElementById('reminder-lead-id').value = id;
+            document.getElementById('reminder-modal').style.display = 'flex';
         }
-        
-        async function saveReminder(e) {
+        function closeReminderModal() {
+            document.getElementById('reminder-modal').style.display = 'none';
+        }
+        document.getElementById('reminder-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             let fd = new FormData(e.target);
             fd.append("api", "save_reminder");
-            let res = await fetch("?", {method: "POST", body: fd});
+            let res = await fetch("?", {method:"POST", body:fd});
             let json = await res.json();
             if(json.success) {
-                showNotification(json.message, "success");
-                document.getElementById("reminder-modal").style.display = "none";
-                loadReminders();
+                showNotification("Reminder set successfully", "success");
+                closeReminderModal();
             } else {
-                showNotification(json.error, "error");
+                showNotification(json.error || "Failed", "error");
             }
-        }
-        
+        });
+
         async function loadReminders() {
             try {
-                let res = await fetch("?api=get_reminders");
+                let res = await fetch('?api=get_reminders');
                 let data = await res.json();
-                let tbody = document.getElementById("reminders-table-body");
-                if(!tbody) return;
-                
-                if(data.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;color:#888;'>No upcoming reminders.</td></tr>";
-                    return;
-                }
+                let tbody = document.querySelector("#reminders-table tbody");
+                if(data.error) { tbody.innerHTML = "<tr><td colspan='6'>Failed to load</td></tr>"; return; }
                 
                 let html = "";
                 data.forEach(r => {
@@ -4615,8 +4885,8 @@ if (isset($_GET['api'])) {
                     const titles = {
                         'dashboard': { title: 'Dashboard', sub: 'AuraCRM Operations Control Panel' },
                         'preleads': { title: 'Pre-Leads (Raw Data)', sub: 'Manage raw data and unverified prospects' },
-                        'leads': { title: 'Lead Management', sub: '🎯 Capture, track and convert leads into clients' },
-                        'add-client': { title: 'Register Client Account', sub: '🔒 Lock-in customer profile parameters permanently' },
+                        'leads': { title: 'Lead Management', sub: '≡ƒÄ» Capture, track and convert leads into clients' },
+                        'add-client': { title: 'Register Client Account', sub: '≡ƒöÆ Lock-in customer profile parameters permanently' },
                         'search-crm': { title: 'Search & Tracking Dashboard', sub: 'Interactive CRM conversion tracker and client card catalog' },
                         'send-email': { title: 'Communication Center', sub: 'Compose and dispatch simulated customer interaction emails' },
                         'create-quotation': { title: 'Quotation Builder Suite', sub: 'Create items proposals with instant Indian GST taxation logic' },
@@ -4697,7 +4967,7 @@ if (isset($_GET['api'])) {
             if (x.length > 1) {
                 res += '.' + x[1].substring(0, 2);
             }
-            return '₹' + res;
+            return 'Γé╣' + res;
         }
 
         // ==========================================
@@ -5024,7 +5294,7 @@ if (isset($_GET['api'])) {
                         </div>
                         <div class="client-card-meta">
                             <i data-lucide="user" style="width: 12px; height: 12px;"></i>
-                            <span>${c.contact_name} — ${c.designation || 'Client Contact'}</span>
+                            <span>${c.contact_name} ΓÇö ${c.designation || 'Client Contact'}</span>
                         </div>
                         <div class="client-card-meta">
                             <i data-lucide="phone" style="width: 12px; height: 12px;"></i>
@@ -5250,7 +5520,7 @@ if (isset($_GET['api'])) {
                 if (emailSelect) emailSelect.innerHTML = '<option value="" disabled selected>Choose client account...</option>' + optHtml;
                 if (quoteSelect) quoteSelect.innerHTML = '<option value="" disabled selected>Choose client account...</option>' + optHtml;
             } catch (err) {
-                // Silent fail — do not show error toast on initial load
+                // Silent fail ΓÇö do not show error toast on initial load
                 console.warn('refreshClientDropdowns:', err);
             }
         }
@@ -5350,7 +5620,7 @@ if (isset($_GET['api'])) {
                 <td><input type="text" placeholder="Item/Service name description..." required class="item-name"></td>
                 <td><input type="number" min="1" value="1" required class="item-qty" oninput="calculateRowMath('${rowId}')"></td>
                 <td><input type="number" min="0.01" step="0.01" placeholder="0.00" required class="item-rate" oninput="calculateRowMath('${rowId}')"></td>
-                <td><input type="text" readonly value="₹0.00" class="item-taxval" style="background:#f1f5f9; font-weight: 500;"></td>
+                <td><input type="text" readonly value="Γé╣0.00" class="item-taxval" style="background:#f1f5f9; font-weight: 500;"></td>
                 <td>
                     <select class="item-gst" onchange="calculateRowMath('${rowId}')">
                         <option value="0">0% Exempt</option>
@@ -5512,44 +5782,14 @@ if (isset($_GET['api'])) {
         };
 
         const PRIORITY_BADGE = {
-            'Hot':  '<span style="background:#fee2e2;color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">🔴 Hot</span>',
-            'Warm': '<span style="background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">🟡 Warm</span>',
-            'Cold': '<span style="background:#dbeafe;color:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">🔵 Cold</span>'
+            'Hot':  '<span style="background:#fee2e2;color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">≡ƒö┤ Hot</span>',
+            'Warm': '<span style="background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">≡ƒƒí Warm</span>',
+            'Cold': '<span style="background:#dbeafe;color:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">≡ƒö╡ Cold</span>'
         };
 
         // ==========================================
         // PRE-LEADS JAVASCRIPT LOGIC
         // ==========================================
-        
-        async function editPreLead(id) {
-            try {
-                const res = await fetch(`?api=get_preleads`);
-                const text = await res.text();
-                const preleads = JSON.parse(text);
-                const p = preleads.find(x => x.id == id);
-                if (!p) return;
-                
-                document.getElementById('prelead_id').value = p.id;
-                document.getElementById('pl_name').value = p.name || '';
-                document.getElementById('pl_company').value = p.company_name || '';
-                document.getElementById('pl_mobile').value = p.mobile || '';
-                document.getElementById('pl_email').value = p.email || ''; // Add pl_email id in HTML if missing
-                document.getElementById('pl_source').value = p.source || 'Unknown';
-                
-                const isStaff = currentUser && currentUser.role !== 'Admin';
-                document.getElementById('pl_mobile').readOnly = isStaff;
-                if(document.getElementById('pl_email')) document.getElementById('pl_email').readOnly = isStaff;
-                
-                const plAssigned = document.getElementById('pl-assigned_to');
-                if (plAssigned && currentUser.role === 'Admin') plAssigned.value = p.assigned_to || '';
-                
-                window.scrollTo(0, 0);
-                showNotification("Editing Pre-Lead", "info");
-            } catch (err) {
-                console.error(err);
-            }
-        }
-    
         async function loadPreLeads() {
             const res = await fetch('?api=get_preleads');
             const data = await res.json();
@@ -5585,10 +5825,152 @@ if (isset($_GET['api'])) {
                     </td>
                     <td>
                         <div style="display:flex;gap:5px;">
-                            `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i> Edit</button>`
-                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">🔄</button>
-                                  <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="openReminderModal('Lead', ${l.id})" title="Set Reminder">⏰</button>
-                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">🗑️</button>` : ''}
+                            ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" onclick="editPreLead(${p.id})" style="padding:4px 8px;" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i></button>` : ''}
+                            <button class="btn btn-primary" onclick="promotePreLead(${p.id})" style="padding:4px 8px; font-size:12px;" title="Promote to Lead"><i data-lucide="rocket" style="width:14px;height:14px;"></i> Promote</button>
+                            ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" onclick="deletePreLead(${p.id})" style="padding:4px 8px;" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>` : ''}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('prelead-stat-total').innerText = total;
+            document.getElementById('prelead-stat-interested').innerText = interested;
+            document.getElementById('prelead-stat-junk').innerText = junk;
+            lucide.createIcons();
+        }
+
+        async function savePreLead(e) {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const res = await fetch('?api=save_prelead', { method:'POST', body:fd });
+            const data = await res.json();
+            if(data.success) {
+                showNotification(data.message, 'success');
+                resetPreLeadForm();
+                loadPreLeads();
+            } else {
+                showNotification(data.error, 'error');
+            }
+        }
+
+        function resetPreLeadForm() {
+            document.getElementById('prelead-form').reset();
+            document.getElementById('prelead_id').value = '';
+        }
+
+        async function deletePreLead(id) {
+            if(!confirm("Are you sure you want to delete this raw data?")) return;
+            const fd = new FormData(); fd.append('id', id);
+            const res = await fetch('?api=delete_prelead', { method:'POST', body:fd });
+            const data = await res.json();
+            if(data.success) { showNotification(data.message, 'success'); loadPreLeads(); }
+            else showNotification(data.error, 'error');
+        }
+
+        async function promotePreLead(id) {
+            if(!confirm("Promote this prospect to your main Leads CRM?")) return;
+            const fd = new FormData(); fd.append('id', id);
+            const res = await fetch('?api=promote_prelead', { method:'POST', body:fd });
+            const data = await res.json();
+            if(data.success) { 
+                showNotification("≡ƒÜÇ " + data.message, 'success'); 
+                loadPreLeads(); 
+                loadLeads(); // refresh main leads
+            } else {
+                showNotification(data.error, 'error');
+            }
+        }
+
+        async function updatePreLeadStatus(id, status) {
+            const fd = new FormData(); fd.append('id', id); fd.append('status', status);
+            await fetch('?api=update_prelead_status', { method:'POST', body:fd });
+            loadPreLeads();
+        }
+        
+        function openPreLeadBulkUploadModal() {
+            // Re-using the bulk modal but setting an indicator it's for pre-leads
+            document.getElementById('bulk-upload-modal').style.display = 'flex';
+            // We set a global variable to indicate destination
+            window.bulkUploadDestination = 'pre_leads';
+        }
+
+        // Run loadPreLeads periodically or when clicking the tab
+        document.querySelector('[data-view="preleads"]')?.addEventListener('click', () => {
+            loadPreLeads();
+        });
+
+        async function loadLeads() {
+            const search   = document.getElementById('lead-search')?.value || '';
+            const stage    = document.getElementById('lead-filter-stage')?.value || '';
+            const priority = document.getElementById('lead-filter-priority')?.value || '';
+            const params   = new URLSearchParams({ api: 'get_leads', search, stage, priority });
+
+            try {
+                const res = await fetch('?' + params.toString());
+                if (!res.ok) return;
+                const leads = await res.json();
+
+                // Update stat cards
+                const total    = leads.length;
+                const hot      = leads.filter(l => l.priority === 'Hot' && l.stage !== 'Won' && l.stage !== 'Lost').length;
+                const won      = leads.filter(l => l.stage === 'Won').length;
+                const progress = leads.filter(l => l.stage !== 'Won' && l.stage !== 'Lost').length;
+
+                const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
+                setEl('lead-stat-total',    total);
+                setEl('lead-stat-hot',      hot);
+                setEl('lead-stat-won',      won);
+                setEl('lead-stat-progress', progress);
+
+                // Pipeline Bar counts
+                const stageCounts = {};
+                leads.forEach(l => { stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1; });
+                const pipelineBar = document.getElementById('lead-pipeline-bar');
+                if (pipelineBar) {
+                    const stages = ['New Lead','Contacted','Interested','Proposal Sent','Negotiation','Won','Lost'];
+                    pipelineBar.innerHTML = stages.map(s => {
+                        const cnt = stageCounts[s] || 0;
+                        const col = STAGE_COLORS[s];
+                        return `<div onclick="document.getElementById('lead-filter-stage').value='${s}'; loadLeads();"
+                            style="flex:1;min-width:80px;text-align:center;padding:8px 6px;border-radius:8px;background:${col}18;border:1px solid ${col}44;cursor:pointer;transition:all .2s;"
+                            onmouseover="this.style.background='${col}33'" onmouseout="this.style.background='${col}18'">
+                            <div style="font-size:18px;font-weight:700;color:${col};">${cnt}</div>
+                            <div style="font-size:10px;color:${col};font-weight:600;">${s}</div>
+                        </div>`;
+                    }).join('');
+                }
+
+                // Table rows
+                const tbody = document.getElementById('leads-table-body');
+                if (!tbody) return;
+                if (leads.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-light);">No leads found. Add your first lead using the form!</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = leads.map(l => {
+                    const col = STAGE_COLORS[l.stage] || '#64748b';
+                    return `<tr style="border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='var(--bg-color)'" onmouseout="this.style.background=''">
+                        <td style="padding:12px;">
+                            <div style="font-weight:600;color:var(--text);">${l.lead_name}</div>
+                            <div style="font-size:11px;color:var(--text-light);">${l.company_name || 'ΓÇö'}</div>
+                        </td>
+                        <td style="padding:12px;font-size:13px;">${l.mobile}</td>
+                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.lead_source}</td>
+                        <td style="padding:12px;">${PRIORITY_BADGE[l.priority] || l.priority}</td>
+                        <td style="padding:12px;">
+                            <select onchange="quickUpdateStage(${l.id}, this.value)" style="padding:3px 8px;border:none;border-radius:20px;font-size:12px;font-weight:600;background:${col}20;color:${col};cursor:pointer;outline:none;">
+                                ${['New Lead','Contacted','Interested','Proposal Sent','Negotiation','Won','Lost'].map(s =>
+                                    `<option value="${s}" ${l.stage===s?'selected':''}>${s}</option>`
+                                ).join('')}
+                            </select>
+                        </td>
+                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || 'ΓÇö'}</td>
+                        <td style="padding:12px;">
+                            <div style="display:flex;gap:6px;">
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">Γ£Å∩╕Å</button>` : ''}
+                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">≡ƒöä</button>
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">≡ƒùæ∩╕Å</button>` : ''}
                             </div>
                         </td>
                     </tr>`;
@@ -5634,16 +6016,10 @@ if (isset($_GET['api'])) {
                 document.getElementById('lf-source').value   = l.lead_source || '';
                 document.getElementById('lf-priority').value = l.priority || '';
                 document.getElementById('lf-stage').value    = l.stage || '';
-                  const isStaff = currentUser && currentUser.role !== 'Admin';
-                  document.getElementById('lf-mobile').readOnly = isStaff;
-                  document.getElementById('lf-email').readOnly = isStaff;
-                  const lfAssigned = document.getElementById('lf-assigned_to');
-                  if (lfAssigned && currentUser.role === 'Admin') lfAssigned.value = l.assigned_to || '';
-                  
                 document.getElementById('lf-assigned').value = l.assigned_to || '';
                 document.getElementById('lf-notes').value    = l.notes || '';
                 
-                document.getElementById('lead-form-title').innerText = '✏️ Edit Lead';
+                document.getElementById('lead-form-title').innerText = 'Γ£Å∩╕Å Edit Lead';
                 document.getElementById('lead-submit-btn').innerText = 'Update Lead';
                 document.getElementById('lead-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch(err) {
@@ -5703,7 +6079,7 @@ if (isset($_GET['api'])) {
         function resetLeadForm() {
             document.getElementById('lead-form').reset();
             document.getElementById('lead-id-hidden').value = '';
-            document.getElementById('lead-form-title').innerText = '➕ New Lead';
+            document.getElementById('lead-form-title').innerText = 'Γ₧ò New Lead';
             document.getElementById('lead-submit-btn').innerText = 'Save Lead';
         }
 
@@ -5932,9 +6308,9 @@ if (isset($_GET['api'])) {
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 6%; text-align: center;">S.No</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 50%; text-align: left;">Item/Service Specification</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 8%; text-align: center;">Qty</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Rate (₹)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Rate (Γé╣)</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 10%; text-align: center;">GST</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Total (₹)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Total (Γé╣)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -6220,7 +6596,7 @@ if (isset($_GET['api'])) {
                 locations.forEach(loc => {
                     locHTML += `
                         <div class="loc-row" data-loc="${loc}" style="display:flex;gap:10px;margin-bottom:8px;align-items:center;">
-                            <span style="flex:1;font-weight:600;">📍 ${loc}</span>
+                            <span style="flex:1;font-weight:600;">≡ƒôì ${loc}</span>
                             <select class="l-staff" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:4px;">${userOptions}</select>
                         </div>
                     `;
