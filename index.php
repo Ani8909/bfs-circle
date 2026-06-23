@@ -3007,17 +3007,23 @@ if (isset($_GET['api'])) {
                 <h1 id="view-title">Dashboard</h1>
                 <p id="view-subtitle">AuraCRM Operations Control Panel</p>
             </div>
-            <div class="user-pill">
-                <div class="user-avatar" id="header-user-avatar"><?php 
-                    $names = explode(' ', $profile['contact_person']);
-                    $initials = '';
-                    foreach ($names as $n) {
-                        if (!empty($n)) $initials .= strtoupper(substr($n, 0, 1));
-                    }
-                    echo htmlspecialchars(substr($initials, 0, 2));
-                ?></div>
-                <span id="header-user-name"><?php echo htmlspecialchars($profile['contact_person']); ?></span>
-            </div>
+                          <div class="user-pill">
+                  <div class="user-avatar" id="header-user-avatar"><?php 
+                      $current_username = $_SESSION['username'] ?? 'Unknown';
+                      $stmtUser = $db->prepare("SELECT name FROM users WHERE username = ?");
+                      $stmtUser->execute([$current_username]);
+                      $uRow = $stmtUser->fetch();
+                      $displayName = (!empty($uRow) && !empty($uRow['name'])) ? $uRow['name'] : $current_username;
+                      
+                      $names = explode(' ', $displayName);
+                      $initials = '';
+                      foreach ($names as $n) {
+                          if (!empty($n)) $initials .= strtoupper(substr($n, 0, 1));
+                      }
+                      echo htmlspecialchars(substr($initials, 0, 2));
+                  ?></div>
+                  <span id="header-user-name"><?php echo htmlspecialchars($displayName); ?></span>
+              </div>
         </header>
 
         
