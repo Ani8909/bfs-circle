@@ -4197,6 +4197,8 @@ if (isset($_GET['api'])) {
                         resetQuotationForm();
                     } else if (targetView === 'quotation-list') {
                         loadQuotationList();
+                    } else if (targetView === 'activity-logs') {
+                        loadFullActivityLogs();
                     }
                 });
             });
