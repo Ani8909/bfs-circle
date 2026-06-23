@@ -5155,23 +5155,34 @@ if (isset($_GET['api'])) {
 
         async function editLead(id) {
             try {
+                console.log('editLead called for id:', id);
                 const res = await fetch(`?api=get_lead_detail&id=${id}`);
-                const l = await res.json();
+                const text = await res.text();
+                console.log('editLead API response:', text);
+                const l = JSON.parse(text);
+                
+                if (l.error) {
+                    showNotification(l.error, 'error');
+                    return;
+                }
+
                 document.getElementById('lead-id-hidden').value = l.id;
-                document.getElementById('lf-name').value     = l.lead_name;
+                document.getElementById('lf-name').value     = l.lead_name || '';
                 document.getElementById('lf-company').value  = l.company_name || '';
-                document.getElementById('lf-mobile').value   = l.mobile;
+                document.getElementById('lf-mobile').value   = l.mobile || '';
                 document.getElementById('lf-email').value    = l.email || '';
-                document.getElementById('lf-source').value   = l.lead_source;
-                document.getElementById('lf-priority').value = l.priority;
-                document.getElementById('lf-stage').value    = l.stage;
+                document.getElementById('lf-source').value   = l.lead_source || '';
+                document.getElementById('lf-priority').value = l.priority || '';
+                document.getElementById('lf-stage').value    = l.stage || '';
                 document.getElementById('lf-assigned').value = l.assigned_to || '';
                 document.getElementById('lf-notes').value    = l.notes || '';
+                
                 document.getElementById('lead-form-title').innerText = '✏️ Edit Lead';
                 document.getElementById('lead-submit-btn').innerText = 'Update Lead';
                 document.getElementById('lead-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch(err) {
-                showNotification('Could not load lead details.', 'error');
+                console.error('editLead error:', err);
+                showNotification('Could not load lead details. Check console.', 'error');
             }
         }
 
