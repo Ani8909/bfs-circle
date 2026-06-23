@@ -4036,8 +4036,12 @@ if (isset($_GET['api'])) {
                     <div class="form-section-title">➕ Register New Staff</div>
                     <div class="form-grid">
                         <div class="form-group">
+                            <label class="required">Full Name</label>
+                            <input type="text" name="name" required placeholder="Staff Full Name">
+                        </div>
+                        <div class="form-group">
                             <label class="required">Username</label>
-                            <input type="text" name="username" required>
+                            <input type="text" name="username" required placeholder="Login ID">
                         </div>
                         <div class="form-group">
                             <label class="required">Password</label>
