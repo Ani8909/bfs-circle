@@ -61,6 +61,7 @@ try {
         subject TEXT NOT NULL,
         body TEXT NOT NULL,
         attachment_name TEXT,
+        delete_requested INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
     
@@ -68,8 +69,12 @@ try {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         original_name TEXT NOT NULL,
         filename TEXT NOT NULL,
+        delete_requested INTEGER DEFAULT 0,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
+
+    try { $db->exec("ALTER TABLE email_templates ADD COLUMN delete_requested INTEGER DEFAULT 0"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE presentations ADD COLUMN delete_requested INTEGER DEFAULT 0"); } catch (Exception $e) {}
 
     $db->exec("CREATE TABLE IF NOT EXISTS leads (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -549,9 +554,34 @@ if (isset($_GET['api'])) {
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
                 $id = $_POST['id'] ?? null;
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
-                $stmt = $db->prepare("DELETE FROM email_templates WHERE id = ?");
-                $stmt->execute([$id]);
-                return_json(['success' => true, 'message' => 'Template deleted']);
+                
+                if (($_SESSION['role'] ?? '') === 'Admin') {
+                    $stmt = $db->prepare("DELETE FROM email_templates WHERE id = ?");
+                    $stmt->execute([$id]);
+                    log_activity("Admin deleted email template ID: $id");
+                    return_json(['success' => true, 'message' => 'Template deleted']);
+                } else {
+                    $stmt = $db->prepare("UPDATE email_templates SET delete_requested = 1 WHERE id = ?");
+                    $stmt->execute([$id]);
+                    log_activity("Staff requested deletion for email template ID: $id");
+                    return_json(['success' => true, 'message' => 'Delete request sent to Admin']);
+                }
+                break;
+                
+            case 'approve_delete_template':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+                $id = $_POST['id'] ?? null;
+                $db->prepare("DELETE FROM email_templates WHERE id = ?")->execute([$id]);
+                log_activity("Admin approved deletion of email template ID: $id");
+                return_json(['success' => true, 'message' => 'Template deleted permanently']);
+                break;
+                
+            case 'reject_delete_template':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+                $id = $_POST['id'] ?? null;
+                $db->prepare("UPDATE email_templates SET delete_requested = 0 WHERE id = ?")->execute([$id]);
+                log_activity("Admin rejected deletion for email template ID: $id");
+                return_json(['success' => true, 'message' => 'Delete request rejected']);
                 break;
 
             case 'get_ppts':
@@ -586,14 +616,41 @@ if (isset($_GET['api'])) {
                 $id = $_POST['id'] ?? null;
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
                 
+                if (($_SESSION['role'] ?? '') === 'Admin') {
+                    $filename = $db->query("SELECT filename FROM presentations WHERE id = " . (int)$id)->fetchColumn();
+                    if ($filename && file_exists(__DIR__ . '/uploads/' . $filename)) {
+                        @unlink(__DIR__ . '/uploads/' . $filename);
+                    }
+                    $stmt = $db->prepare("DELETE FROM presentations WHERE id = ?");
+                    $stmt->execute([$id]);
+                    log_activity("Admin deleted presentation ID: $id");
+                    return_json(['success' => true, 'message' => 'Presentation deleted']);
+                } else {
+                    $stmt = $db->prepare("UPDATE presentations SET delete_requested = 1 WHERE id = ?");
+                    $stmt->execute([$id]);
+                    log_activity("Staff requested deletion for presentation ID: $id");
+                    return_json(['success' => true, 'message' => 'Delete request sent to Admin']);
+                }
+                break;
+                
+            case 'approve_delete_ppt':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+                $id = $_POST['id'] ?? null;
                 $filename = $db->query("SELECT filename FROM presentations WHERE id = " . (int)$id)->fetchColumn();
                 if ($filename && file_exists(__DIR__ . '/uploads/' . $filename)) {
                     @unlink(__DIR__ . '/uploads/' . $filename);
                 }
+                $db->prepare("DELETE FROM presentations WHERE id = ?")->execute([$id]);
+                log_activity("Admin approved deletion of presentation ID: $id");
+                return_json(['success' => true, 'message' => 'Presentation deleted permanently']);
+                break;
                 
-                $stmt = $db->prepare("DELETE FROM presentations WHERE id = ?");
-                $stmt->execute([$id]);
-                return_json(['success' => true, 'message' => 'Presentation deleted']);
+            case 'reject_delete_ppt':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST' || ($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+                $id = $_POST['id'] ?? null;
+                $db->prepare("UPDATE presentations SET delete_requested = 0 WHERE id = ?")->execute([$id]);
+                log_activity("Admin rejected deletion for presentation ID: $id");
+                return_json(['success' => true, 'message' => 'Delete request rejected']);
                 break;
 
             case 'bulk_upload_leads':
@@ -4088,6 +4145,20 @@ if (isset($_GET['api'])) {
         <!-- Generated on PDF creation request -->
     </div>
 
+    <!-- Template Preview Modal -->
+    <div id="template-preview-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>dY"' Template Preview</h2>
+                <span class="close" onclick="closeTemplatePreviewModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="template-preview-body" style="white-space: pre-wrap; font-size: 14px; color: var(--text);">
+            </div>
+            <div class="modal-footer" id="template-preview-footer" style="padding-top: 15px; border-top: 1px solid var(--border); display: none;">
+            </div>
+        </div>
+    </div>
+    
     <!-- Notification Toast System -->
     <div class="toast-container" id="toast-container"></div>
 
