@@ -3971,13 +3971,30 @@ if (isset($_GET['api'])) {
                             let html = '<ul style="list-style:none; padding:0; margin:0;">';
                             data.forEach(t => {
                                 let attachBadge = t.attachment_name ? `<span style="font-size: 11px; background: var(--secondary-light); color: var(--secondary); padding: 2px 6px; border-radius: 4px; margin-left: 8px;">📎 Attached File</span>` : '';
+                                
+                                let buttonsHtml = ``;
+                                if (t.delete_requested == 1) {
+                                    if (currentUser && currentUser.role === 'Admin') {
+                                        buttonsHtml = `
+                                            <div style="display:flex; gap:0.5rem;">
+                                                <button type="button" onclick="approveDeleteTemplate(${t.id})" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;">✅ Approve</button>
+                                                <button type="button" onclick="rejectDeleteTemplate(${t.id})" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">❌ Reject</button>
+                                            </div>
+                                        `;
+                                    } else {
+                                        buttonsHtml = `<span style="font-size:12px; color:#ef4444; border:1px solid #fca5a5; padding: 0.4rem 0.8rem; border-radius: 6px; background: #fee2e2;">🔴 Pending Admin Approval</span>`;
+                                    }
+                                } else {
+                                    buttonsHtml = `<button type="button" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;" onclick="deleteTemplate(${t.id})">Delete</button>`;
+                                }
+                                
                                 html += `<li style="padding: 1rem; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
                                     <div>
-                                        <strong style="display:block;">${t.template_name} (${t.type})</strong>
+                                        <strong style="display:block; cursor:pointer; color:var(--primary); text-decoration:underline;" onclick="showTemplatePreview(${t.id})">${t.template_name} (${t.type})</strong>
                                         <span style="font-size: 13px; color: var(--text-light);">Sub: ${t.subject}</span>
                                         ${attachBadge}
                                     </div>
-                                    <button type="button" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;" onclick="deleteTemplate(${t.id})">Delete</button>
+                                    ${buttonsHtml}
                                 </li>`;
                             });
                             html += '</ul>';
@@ -4068,9 +4085,28 @@ if (isset($_GET['api'])) {
                             } else {
                                 let html = '<ul style="list-style:none; padding:0; margin:0;">';
                                 data.forEach(p => {
+                                    let buttonsHtml = ``;
+                                    if (p.delete_requested == 1) {
+                                        if (currentUser && currentUser.role === 'Admin') {
+                                            buttonsHtml = `
+                                                <div style="display:flex; gap:0.5rem;">
+                                                    <button type="button" onclick="approveDeletePpt(${p.id})" style="padding: 4px 8px; font-size: 11px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;">✅ Approve</button>
+                                                    <button type="button" onclick="rejectDeletePpt(${p.id})" style="padding: 4px 8px; font-size: 11px; background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">❌ Reject</button>
+                                                </div>
+                                            `;
+                                        } else {
+                                            buttonsHtml = `<span style="font-size:11px; color:#ef4444; border:1px solid #fca5a5; padding: 4px 8px; border-radius: 6px; background: #fee2e2;">🔴 Pending</span>`;
+                                        }
+                                    } else {
+                                        buttonsHtml = `<button type="button" class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deletePpt(${p.id})">Delete</button>`;
+                                    }
+
                                     html += `<li style="padding: 10px; border: 1px solid var(--border); margin-bottom: 5px; border-radius: 6px; display:flex; justify-content:space-between; align-items:center; background: var(--card-bg);">
-                                        <div><strong>${p.original_name}</strong> <span style="font-size:11px; color:var(--text-muted); margin-left: 10px;">${p.filename}</span></div>
-                                        <button type="button" class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deletePpt(${p.id})">Delete</button>
+                                        <div>
+                                            <strong><a href="uploads/${p.filename}" target="_blank" style="color:var(--primary); text-decoration:underline;">${p.original_name}</a></strong> 
+                                            <span style="font-size:11px; color:var(--text-muted); margin-left: 10px;">${p.filename}</span>
+                                        </div>
+                                        ${buttonsHtml}
                                     </li>`;
                                 });
                                 html += '</ul>';
@@ -4159,6 +4195,20 @@ if (isset($_GET['api'])) {
         </div>
     </div>
     
+    <!-- Template Preview Modal -->
+    <div id="template-preview-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📝 Template Preview</h2>
+                <span class="close" onclick="closeTemplatePreviewModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="template-preview-body" style="white-space: pre-wrap; font-size: 14px; color: var(--text);">
+            </div>
+            <div class="modal-footer" id="template-preview-footer" style="padding-top: 15px; border-top: 1px solid var(--border); display: none;">
+            </div>
+        </div>
+    </div>
+    
     <!-- Notification Toast System -->
     <div class="toast-container" id="toast-container"></div>
 
@@ -4214,6 +4264,58 @@ if (isset($_GET['api'])) {
         let quillEmailEditor = null;
         let crmClientList = []; // stores local copy of fetched search results
         window.globalEmailTemplates = [];
+
+        // Template Preview & Delete Approval Logic
+        function closeTemplatePreviewModal() {
+            document.getElementById("template-preview-modal").style.display = "none";
+        }
+        function showTemplatePreview(id) {
+            const t = window.globalEmailTemplates.find(x => x.id == id);
+            if(!t) return;
+            let bodyContent = `<strong>Subject:</strong> ${t.subject}\n\n${t.body}`;
+            document.getElementById("template-preview-body").innerHTML = bodyContent;
+            
+            const footer = document.getElementById("template-preview-footer");
+            if(t.attachment_name) {
+                footer.style.display = "block";
+                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📎 Download Attachment</a>`;
+            } else {
+                footer.style.display = "none";
+            }
+            document.getElementById("template-preview-modal").style.display = "block";
+        }
+
+        async function approveDeleteTemplate(id) {
+            if(!confirm("Permanently delete this template?")) return;
+            let fd = new FormData(); fd.append("id", id);
+            let res = await fetch("?api=approve_delete_template", {method:"POST", body:fd});
+            let json = await res.json();
+            showNotification(json.message || (json.error ? "Error" : "Success"), json.success ? "success" : "error");
+            if(json.success) loadTemplatesList();
+        }
+        async function rejectDeleteTemplate(id) {
+            let fd = new FormData(); fd.append("id", id);
+            let res = await fetch("?api=reject_delete_template", {method:"POST", body:fd});
+            let json = await res.json();
+            showNotification(json.message || (json.error ? "Error" : "Success"), json.success ? "success" : "error");
+            if(json.success) loadTemplatesList();
+        }
+        
+        async function approveDeletePpt(id) {
+            if(!confirm("Permanently delete this presentation?")) return;
+            let fd = new FormData(); fd.append("id", id);
+            let res = await fetch("?api=approve_delete_ppt", {method:"POST", body:fd});
+            let json = await res.json();
+            showNotification(json.message || (json.error ? "Error" : "Success"), json.success ? "success" : "error");
+            if(json.success) loadPptsList();
+        }
+        async function rejectDeletePpt(id) {
+            let fd = new FormData(); fd.append("id", id);
+            let res = await fetch("?api=reject_delete_ppt", {method:"POST", body:fd});
+            let json = await res.json();
+            showNotification(json.message || (json.error ? "Error" : "Success"), json.success ? "success" : "error");
+            if(json.success) loadPptsList();
+        }
 
         // Document Load entry triggers
         document.addEventListener('DOMContentLoaded', () => {
