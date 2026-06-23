@@ -227,7 +227,7 @@ try {
             [
                 'company_name' => 'Apex Industries', 'business_type' => 'Manufacturer', 'industry_sector' => 'Automotive',
                 'gstin' => '27AAACA1234A1Z1', 'pan' => 'AAACA1234A', 'website' => 'https://apexind.com',
-                'turnover' => '&#8377;5-10 Crores', 'employees' => 120, 'contact_name' => 'Amit Sharma', 'designation' => 'Director',
+                'turnover' => 'Rs. 5-10 Crores', 'employees' => 120, 'contact_name' => 'Amit Sharma', 'designation' => 'Director',
                 'mobile' => '9876543210', 'whatsapp' => '9876543210', 'email' => 'amit@apexind.com', 'alternate_email' => 'info@apexind.com',
                 'linkedin' => 'https://linkedin.com/in/amit-apex', 'address_line1' => 'Plot 45, MIDC Industrial Area',
                 'address_line2' => 'Andheri East', 'city' => 'Mumbai', 'state' => 'Maharashtra', 'pincode' => '400093', 'country' => 'India',
@@ -239,7 +239,7 @@ try {
             [
                 'company_name' => 'Zenith Retail', 'business_type' => 'Retailer', 'industry_sector' => 'Consumer Goods',
                 'gstin' => '24AABCB5678B1Z2', 'pan' => 'AABCB5678B', 'website' => 'https://zenithretail.in',
-                'turnover' => '&#8377;1-5 Crores', 'employees' => 45, 'contact_name' => 'Priya Patel', 'designation' => 'Purchase Manager',
+                'turnover' => 'Rs. 1-5 Crores', 'employees' => 45, 'contact_name' => 'Priya Patel', 'designation' => 'Purchase Manager',
                 'mobile' => '9123456789', 'whatsapp' => '9123456789', 'email' => 'priya@zenithretail.in', 'alternate_email' => 'purchase@zenithretail.in',
                 'linkedin' => '', 'address_line1' => '102 Royal Arcade', 'address_line2' => 'C.G. Road', 'city' => 'Ahmedabad',
                 'state' => 'Gujarat', 'pincode' => '380009', 'country' => 'India', 'bank_name' => 'ICICI Bank',
@@ -250,7 +250,7 @@ try {
             [
                 'company_name' => 'Nova Software Solutions', 'business_type' => 'Service', 'industry_sector' => 'Information Technology',
                 'gstin' => '29AABCC9012C1Z3', 'pan' => 'AABCC9012C', 'website' => 'https://novasoft.io',
-                'turnover' => '&#8377;10-25 Crores', 'employees' => 250, 'contact_name' => 'Rohan Murthy', 'designation' => 'CTO',
+                'turnover' => 'Rs. 10-25 Crores', 'employees' => 250, 'contact_name' => 'Rohan Murthy', 'designation' => 'CTO',
                 'mobile' => '8887776665', 'whatsapp' => '8887776665', 'email' => 'rohan@novasoft.io', 'alternate_email' => '',
                 'linkedin' => 'https://linkedin.com/in/rohan-nova', 'address_line1' => 'Block B, Tech Park', 'address_line2' => 'Whitefield',
                 'city' => 'Bengaluru', 'state' => 'Karnataka', 'pincode' => '560066', 'country' => 'India', 'bank_name' => 'Axis Bank',
@@ -261,7 +261,7 @@ try {
             [
                 'company_name' => 'Matrix Logistics', 'business_type' => 'Service', 'industry_sector' => 'Logistics',
                 'gstin' => '19AABCD3456D1Z4', 'pan' => 'AABCD3456D', 'website' => 'https://matrixlogistics.com',
-                'turnover' => '&#8377;1-5 Crores', 'employees' => 80, 'contact_name' => 'Subhash Bose', 'designation' => 'Operations Head',
+                'turnover' => 'Rs. 1-5 Crores', 'employees' => 80, 'contact_name' => 'Subhash Bose', 'designation' => 'Operations Head',
                 'mobile' => '7776665554', 'whatsapp' => '', 'email' => 'subhash@matrixlogistics.com', 'alternate_email' => '',
                 'linkedin' => '', 'address_line1' => 'Salt Lake Sector V', 'address_line2' => 'Near College More', 'city' => 'Kolkata',
                 'state' => 'West Bengal', 'pincode' => '700091', 'country' => 'India', 'bank_name' => '', 'account_number' => '',
@@ -272,7 +272,7 @@ try {
             [
                 'company_name' => 'Elite Exports', 'business_type' => 'Trader', 'industry_sector' => 'Textiles',
                 'gstin' => '07AABCE7890E1Z5', 'pan' => 'AABCE7890E', 'website' => 'https://eliteexports.com',
-                'turnover' => '&#8377;25-50 Crores', 'employees' => 150, 'contact_name' => 'Vikram Goel', 'designation' => 'Managing Director',
+                'turnover' => 'Rs. 25-50 Crores', 'employees' => 150, 'contact_name' => 'Vikram Goel', 'designation' => 'Managing Director',
                 'mobile' => '9998887776', 'whatsapp' => '9998887776', 'email' => 'vikram@eliteexports.com', 'alternate_email' => '',
                 'linkedin' => '', 'address_line1' => 'Okhla Phase III', 'address_line2' => '', 'city' => 'Delhi',
                 'state' => 'Delhi', 'pincode' => '110020', 'country' => 'India', 'bank_name' => '', 'account_number' => '', 'ifsc_code' => '',
@@ -372,7 +372,7 @@ try {
             ['description' => 'Matrix Logistics added by Anjali Mehta — Today 10am', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 hours'))],
             ['description' => 'Email Pitch sent to Apex Industries by Rahul Sharma — 25 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-25 days'))],
             ['description' => 'Presentation Deck (PPT) sent to Apex Industries by Rahul Sharma — 15 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-15 days'))],
-            ['description' => 'Quotation Q001 (&#8377;1,77,000) created for Apex Industries — 8 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-8 days'))],
+            ['description' => 'Quotation Q001 (Rs. 1,77,000) created for Apex Industries — 8 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-8 days'))],
             ['description' => 'Quotation Q002 approved for Nova Software Solutions — 30 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-30 days'))],
             ['description' => 'Quotation Q003 rejected by Elite Exports — 18 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-18 days'))],
             ['description' => 'Email Pitch sent to Zenith Retail by Karan Singh — 5 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-5 days'))]
@@ -1018,7 +1018,7 @@ if (isset($_GET['api'])) {
                 // Pending Follow-ups (Hot leads not closed/won/lost)
                 $pending_followups = $db->query("SELECT COUNT(*) FROM clients WHERE priority = 'Hot' AND overall_status IN ('New', 'Contacted', 'In Negotiation')")->fetchColumn();
                 
-                // Total Quotation Value (&#8377;)
+                // Total Quotation Value (Rs. )
                 $total_quote_value = $db->query("SELECT SUM(total_amount) FROM quotations")->fetchColumn() ?: 0;
                 
                 // Clients with No Quotation Yet
@@ -1444,7 +1444,7 @@ if (isset($_GET['api'])) {
                 }
                 
                 // Write Activity logs
-                $act_desc = "Quotation {$quotation_number} (&#8377;" . number_format($total_amount, 2, '.', ',') . ") drafted for {$c_name}";
+                $act_desc = "Quotation {$quotation_number} (Rs. " . number_format($total_amount, 2, '.', ',') . ") drafted for {$c_name}";
                 log_activity($act_desc);
                 
                 return_json(['success' => true, 'quotation_number' => $quotation_number, 'message' => "Quotation {$quotation_number} saved successfully!"]);
@@ -3126,12 +3126,12 @@ if (isset($_GET['api'])) {
                             <label>Annual Turnover (approx.)</label>
                             <select name="turnover">
                                 <option value="" disabled selected>Select Turnover Tier</option>
-                                <option value="Under &#8377;1 Crore">Under &#8377;1 Crore</option>
-                                <option value="&#8377;1-5 Crores">&#8377;1-5 Crores</option>
-                                <option value="&#8377;5-10 Crores">&#8377;5-10 Crores</option>
-                                <option value="&#8377;10-25 Crores">&#8377;10-25 Crores</option>
-                                <option value="&#8377;25-50 Crores">&#8377;25-50 Crores</option>
-                                <option value="&#8377;50+ Crores">&#8377;50+ Crores</option>
+                                <option value="Under Rs. 1 Crore">Under Rs. 1 Crore</option>
+                                <option value="Rs. 1-5 Crores">Rs. 1-5 Crores</option>
+                                <option value="Rs. 5-10 Crores">Rs. 5-10 Crores</option>
+                                <option value="Rs. 10-25 Crores">Rs. 10-25 Crores</option>
+                                <option value="Rs. 25-50 Crores">Rs. 25-50 Crores</option>
+                                <option value="Rs. 50+ Crores">Rs. 50+ Crores</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -3454,8 +3454,8 @@ if (isset($_GET['api'])) {
                             <tr>
                                 <th style="width: 40%;">Item Description</th>
                                 <th style="width: 10%;">Qty</th>
-                                <th style="width: 15%;">Rate (&#8377;)</th>
-                                <th style="width: 15%;">Taxable Value (&#8377;)</th>
+                                <th style="width: 15%;">Rate (Rs. )</th>
+                                <th style="width: 15%;">Taxable Value (Rs. )</th>
                                 <th style="width: 15%;">GST Rate</th>
                                 <th style="width: 5%;"></th>
                             </tr>
@@ -3472,15 +3472,15 @@ if (isset($_GET['api'])) {
                         <div class="summary-block">
                             <div class="summary-row">
                                 <span>Subtotal (Taxable):</span>
-                                <strong id="quote-subtotal">&#8377;0.00</strong>
+                                <strong id="quote-subtotal">Rs. 0.00</strong>
                             </div>
                             <div class="summary-row">
                                 <span>GST Amount:</span>
-                                <strong id="quote-gst">&#8377;0.00</strong>
+                                <strong id="quote-gst">Rs. 0.00</strong>
                             </div>
                             <div class="summary-row grand-total">
                                 <span>Grand Total:</span>
-                                <strong id="quote-grand-total">&#8377;0.00</strong>
+                                <strong id="quote-grand-total">Rs. 0.00</strong>
                             </div>
                         </div>
                     </div>
@@ -3768,19 +3768,19 @@ if (isset($_GET['api'])) {
                 <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 14px; margin-bottom: 24px;">
                     <div class="stat-card" style="padding: 16px;">
                         <span class="stat-label" style="font-size: 11px;">Total Drafted Value</span>
-                        <div class="stat-value" id="qs-total" style="font-size: 20px; margin-top: 4px;">&#8377;0.00</div>
+                        <div class="stat-value" id="qs-total" style="font-size: 20px; margin-top: 4px;">Rs. 0.00</div>
                     </div>
                     <div class="stat-card" style="padding: 16px; border-left: 4px solid var(--warning);">
                         <span class="stat-label" style="font-size: 11px; color: var(--warning);">Pending Value</span>
-                        <div class="stat-value" id="qs-pending" style="font-size: 20px; color: var(--warning); margin-top: 4px;">&#8377;0.00</div>
+                        <div class="stat-value" id="qs-pending" style="font-size: 20px; color: var(--warning); margin-top: 4px;">Rs. 0.00</div>
                     </div>
                     <div class="stat-card" style="padding: 16px; border-left: 4px solid var(--success);">
                         <span class="stat-label" style="font-size: 11px; color: var(--success);">Approved (Won) Value</span>
-                        <div class="stat-value" id="qs-approved" style="font-size: 20px; color: var(--success); margin-top: 4px;">&#8377;0.00</div>
+                        <div class="stat-value" id="qs-approved" style="font-size: 20px; color: var(--success); margin-top: 4px;">Rs. 0.00</div>
                     </div>
                     <div class="stat-card" style="padding: 16px; border-left: 4px solid var(--danger);">
                         <span class="stat-label" style="font-size: 11px; color: var(--danger);">Rejected Value</span>
-                        <div class="stat-value" id="qs-rejected" style="font-size: 20px; color: var(--danger); margin-top: 4px;">&#8377;0.00</div>
+                        <div class="stat-value" id="qs-rejected" style="font-size: 20px; color: var(--danger); margin-top: 4px;">Rs. 0.00</div>
                     </div>
                 </div>
 
@@ -3791,9 +3791,9 @@ if (isset($_GET['api'])) {
                             <tr>
                                 <th style="width: 10%;">Quote No.</th>
                                 <th style="width: 25%;">Client Company Name</th>
-                                <th style="width: 15%;">Subtotal (&#8377;)</th>
-                                <th style="width: 15%;">GST Amount (&#8377;)</th>
-                                <th style="width: 15%;">Total Value (&#8377;)</th>
+                                <th style="width: 15%;">Subtotal (Rs. )</th>
+                                <th style="width: 15%;">GST Amount (Rs. )</th>
+                                <th style="width: 15%;">Total Value (Rs. )</th>
                                 <th style="width: 12%;">Status</th>
                                 <th style="width: 8%;">Actions</th>
                             </tr>
@@ -4697,7 +4697,7 @@ if (isset($_GET['api'])) {
             if (x.length > 1) {
                 res += '.' + x[1].substring(0, 2);
             }
-            return '&#8377;' + res;
+            return 'Rs. ' + res;
         }
 
         // ==========================================
@@ -5350,7 +5350,7 @@ if (isset($_GET['api'])) {
                 <td><input type="text" placeholder="Item/Service name description..." required class="item-name"></td>
                 <td><input type="number" min="1" value="1" required class="item-qty" oninput="calculateRowMath('${rowId}')"></td>
                 <td><input type="number" min="0.01" step="0.01" placeholder="0.00" required class="item-rate" oninput="calculateRowMath('${rowId}')"></td>
-                <td><input type="text" readonly value="&#8377;0.00" class="item-taxval" style="background:#f1f5f9; font-weight: 500;"></td>
+                <td><input type="text" readonly value="Rs. 0.00" class="item-taxval" style="background:#f1f5f9; font-weight: 500;"></td>
                 <td>
                     <select class="item-gst" onchange="calculateRowMath('${rowId}')">
                         <option value="0">0% Exempt</option>
@@ -6039,9 +6039,9 @@ if (isset($_GET['api'])) {
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 6%; text-align: center;">S.No</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 50%; text-align: left;">Item/Service Specification</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 8%; text-align: center;">Qty</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Rate (&#8377;)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Rate (Rs. )</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 10%; text-align: center;">GST</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Total (&#8377;)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Total (Rs. )</th>
                             </tr>
                         </thead>
                         <tbody>
