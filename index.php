@@ -482,6 +482,35 @@ if (isset($_GET['api'])) {
                 }
                 break;
 
+                        case 'bulk_assign':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+                if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required'], 403);
+                
+                $type = $_POST['type'] ?? '';
+                $assigned_to = $_POST['assigned_to'] ?? '';
+                $ids_json = $_POST['ids'] ?? '[]';
+                
+                $ids = json_decode($ids_json, true);
+                if (!is_array($ids) || empty($ids)) return_json(['error' => 'No records selected'], 400);
+                if (empty($assigned_to)) return_json(['error' => 'No staff selected'], 400);
+                
+                $table = $type === 'leads' ? 'leads' : 'pre_leads';
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+                
+                // Add assigned_to to params
+                $params = array_merge([$assigned_to], $ids);
+                
+                $stmt = $db->prepare("UPDATE $table SET assigned_to = ? WHERE id IN ($placeholders)");
+                $stmt->execute($params);
+                
+                // Log activity
+                $currentUser = $_SESSION['username'] ?? 'Unknown';
+                $c = count($ids);
+                log_activity($db, $currentUser, "Bulk assigned $c $type to $assigned_to");
+                
+                return_json(['success' => true]);
+                break;
+                
             case 'get_users':
                 if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required'], 403);
                 $stmt = $db->query("SELECT id, username, name, role, is_active, created_at FROM users ORDER BY created_at ASC");
@@ -2915,7 +2944,54 @@ if (isset($_GET['api'])) {
             <span style="font-size: 10px; color: var(--text-light); margin-top: 4px; display:block;">Role: <?php echo htmlspecialchars($_SESSION['role']); ?></span>
             <button onclick="logout()" class="btn btn-secondary" style="width: 100%; margin-top: 10px; padding: 5px; font-size: 12px; background: transparent; border: 1px solid var(--border); color: var(--text-light);">Logout</button>
             <script>
-                function logout() {
+                        function toggleSelectAll(type) {
+            const isChecked = document.getElementById(type === 'leads' ? 'selectAllLeads' : 'selectAllPreLeads').checked;
+            document.querySelectorAll(type === 'leads' ? '.lead-checkbox' : '.prelead-checkbox').forEach(cb => cb.checked = isChecked);
+        }
+
+        async function bulkAssign(type) {
+            const checkboxes = document.querySelectorAll(type === 'leads' ? '.lead-checkbox:checked' : '.prelead-checkbox:checked');
+            const ids = Array.from(checkboxes).map(cb => cb.value);
+            
+            if (ids.length === 0) {
+                showNotification("Please select at least one record", "error");
+                return;
+            }
+            
+            const staffDropdown = document.getElementById(type === 'leads' ? 'bulk-assign-leads-staff' : 'bulk-assign-preleads-staff');
+            const staff = staffDropdown.value;
+            
+            if (!staff) {
+                showNotification("Please select a staff member to assign to", "error");
+                return;
+            }
+
+            let fd = new FormData();
+            fd.append("api", "bulk_assign");
+            fd.append("type", type);
+            fd.append("assigned_to", staff);
+            fd.append("ids", JSON.stringify(ids));
+
+            try {
+                let res = await fetch("?", {method: "POST", body: fd});
+                let json = await res.json();
+                if (json.success) {
+                    showNotification(`Successfully assigned ${ids.length} records to ${staff}`, "success");
+                    // Uncheck select all
+                    const sa = document.getElementById(type === 'leads' ? 'selectAllLeads' : 'selectAllPreLeads');
+                    if(sa) sa.checked = false;
+                    
+                    if (type === 'leads') loadLeads();
+                    else loadPreLeads();
+                } else {
+                    showNotification(json.error || "Failed to bulk assign", "error");
+                }
+            } catch(e) {
+                showNotification("Error during bulk assignment", "error");
+            }
+        }
+
+        function logout() {
                     fetch('?api=logout').then(() => location.reload());
                 }
             </script>
@@ -3569,6 +3645,13 @@ if (isset($_GET['api'])) {
                 <div class="card" style="flex:1;">
                     <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                         <h2><i data-lucide="list"></i> All Pre-Leads</h2>
+                        <div class="admin-only-field" style="display:flex; gap:10px; align-items:center; background:#f8fafc; padding:6px 12px; border-radius:6px; border:1px solid #e2e8f0;">
+                            <span style="font-size:12px; font-weight:600; color:#475569;">Bulk Assign:</span>
+                            <select id="bulk-assign-preleads-staff" class="user-select" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; outline:none;">
+                                <option value="">-- Select Staff --</option>
+                            </select>
+                            <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="bulkAssign('preleads')">Assign Selected</button>
+                        </div>
                         <input type="text" id="prelead-search" placeholder="Search mobile/name..." class="search-box" onkeyup="loadPreLeads()" style="max-width:200px;">
                     </div>
                     <div class="card-body" style="padding:0; overflow-x:auto;">
@@ -3678,10 +3761,7 @@ if (isset($_GET['api'])) {
                                 <option value="Lost">Lost ❌</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Assigned To</label>
-                            <input type="text" name="assigned_to" id="lf-assigned" placeholder="Staff member name">
-                        </div>
+                        
                         <div class="form-group">
                             <label>Notes / Remarks</label>
                             <textarea name="notes" id="lf-notes" rows="3" placeholder="Any remarks about this lead..."></textarea>
