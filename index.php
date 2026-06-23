@@ -142,7 +142,8 @@ try {
         added_by TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         remarks TEXT,
-        overall_status TEXT DEFAULT 'New' -- 'New', 'Contacted', 'In Negotiation', 'Closed Won', 'Closed Lost'
+        overall_status TEXT DEFAULT 'New', -- 'New', 'Contacted', 'In Negotiation', 'Closed Won', 'Closed Lost'
+        assigned_to TEXT
     )");
 
     $db->exec("CREATE TABLE IF NOT EXISTS communications (
@@ -1036,29 +1037,37 @@ if (isset($_GET['api'])) {
                 break;
 
             case 'stats':
+                $username = $_SESSION['username'] ?? '';
+                $isStaff = ($_SESSION['role'] ?? '') === 'Staff';
+                $assignedFilter = $isStaff ? " WHERE assigned_to = '$username'" : "";
+                $assignedFilterAnd = $isStaff ? " AND assigned_to = '$username'" : "";
+                $quotationJoinFilter = $isStaff ? " JOIN clients c ON quotations.client_id = c.id WHERE c.assigned_to = '$username' AND " : " WHERE ";
+                $quotationJoinFilterEmpty = $isStaff ? " JOIN clients c ON quotations.client_id = c.id WHERE c.assigned_to = '$username'" : "";
+                $commJoinFilter = $isStaff ? " JOIN clients c ON communications.client_id = c.id WHERE c.assigned_to = '$username' AND " : " WHERE ";
+
                 // Total Clients
-                $total_clients = $db->query("SELECT COUNT(*) FROM clients")->fetchColumn();
+                $total_clients = $db->query("SELECT COUNT(*) FROM clients$assignedFilter")->fetchColumn();
                 
                 // Emails Sent Today
-                $emails_today = $db->query("SELECT COUNT(*) FROM communications WHERE date(sent_at) = date('now', 'localtime')")->fetchColumn();
+                $emails_today = $db->query("SELECT COUNT(*) FROM communications" . $commJoinFilter . "date(sent_at) = date('now', 'localtime')")->fetchColumn();
                 
                 // Quotations This Month
-                $quotes_this_month = $db->query("SELECT COUNT(*) FROM quotations WHERE strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now', 'localtime')")->fetchColumn();
+                $quotes_this_month = $db->query("SELECT COUNT(quotations.id) FROM quotations" . $quotationJoinFilter . "strftime('%Y-%m', quotations.created_at) = strftime('%Y-%m', 'now', 'localtime')")->fetchColumn();
                 
                 // Pending Follow-ups (Hot leads not closed/won/lost)
-                $pending_followups = $db->query("SELECT COUNT(*) FROM clients WHERE priority = 'Hot' AND overall_status IN ('New', 'Contacted', 'In Negotiation')")->fetchColumn();
+                $pending_followups = $db->query("SELECT COUNT(*) FROM clients WHERE priority = 'Hot' AND overall_status IN ('New', 'Contacted', 'In Negotiation') $assignedFilterAnd")->fetchColumn();
                 
                 // Total Quotation Value (Rs. )
-                $total_quote_value = $db->query("SELECT SUM(total_amount) FROM quotations")->fetchColumn() ?: 0;
+                $total_quote_value = $db->query("SELECT SUM(quotations.total_amount) FROM quotations" . $quotationJoinFilterEmpty)->fetchColumn() ?: 0;
                 
                 // Clients with No Quotation Yet
-                $no_quotation_clients = $db->query("SELECT COUNT(*) FROM clients WHERE id NOT IN (SELECT DISTINCT client_id FROM quotations)")->fetchColumn();
+                $no_quotation_clients = $db->query("SELECT COUNT(*) FROM clients WHERE id NOT IN (SELECT DISTINCT client_id FROM quotations) $assignedFilterAnd")->fetchColumn();
                 
                 // Active Staff Members
                 $active_staff = $db->query("SELECT COUNT(*) FROM users WHERE is_active = 1")->fetchColumn();
                 // Lead stats
-                $total_leads = $db->query("SELECT COUNT(*) FROM leads")->fetchColumn();
-                $hot_leads   = $db->query("SELECT COUNT(*) FROM leads WHERE priority='Hot' AND stage NOT IN ('Won','Lost')")->fetchColumn();
+                $total_leads = $db->query("SELECT COUNT(*) FROM leads$assignedFilter")->fetchColumn();
+                $hot_leads   = $db->query("SELECT COUNT(*) FROM leads WHERE priority='Hot' AND stage NOT IN ('Won','Lost') $assignedFilterAnd")->fetchColumn();
                 
                 return_json([
                     'total_clients'        => (int)$total_clients,
@@ -1074,8 +1083,16 @@ if (isset($_GET['api'])) {
                 break;
 
             case 'charts_data':
+                $username = $_SESSION['username'] ?? '';
+                $isStaff = ($_SESSION['role'] ?? '') === 'Staff';
+                $assignedFilter = $isStaff ? " WHERE assigned_to = '$username'" : "";
+                $assignedFilterAnd = $isStaff ? " AND assigned_to = '$username'" : "";
+                $commJoinFilter = $isStaff ? " JOIN clients c ON communications.client_id = c.id WHERE c.assigned_to = '$username' AND " : " WHERE ";
+                $quoteJoinFilterEmpty = $isStaff ? " JOIN clients c ON quotations.client_id = c.id WHERE c.assigned_to = '$username'" : "";
+                $topClientsFilter = $isStaff ? " WHERE c.assigned_to = '$username' " : "";
+
                 // 1. Client growth graph (month-wise)
-                $growth_query = $db->query("SELECT strftime('%Y-%m', created_at) as month, COUNT(*) as count FROM clients GROUP BY month ORDER BY month ASC");
+                $growth_query = $db->query("SELECT strftime('%Y-%m', created_at) as month, COUNT(*) as count FROM clients $assignedFilter GROUP BY month ORDER BY month ASC");
                 $growth_data = [];
                 while ($row = $growth_query->fetch()) {
                     $dateObj = DateTime::createFromFormat('!Y-m', $row['month']);
@@ -1085,11 +1102,11 @@ if (isset($_GET['api'])) {
                 
                 // 2. Communication Funnel
                 // Stages: Pitch -> PPT -> Custom Mail -> Quotation -> Closed
-                $pitch_count = $db->query("SELECT COUNT(DISTINCT client_id) FROM communications WHERE type = 'Pitch'")->fetchColumn();
-                $ppt_count = $db->query("SELECT COUNT(DISTINCT client_id) FROM communications WHERE type = 'PPT'")->fetchColumn();
-                $mail_count = $db->query("SELECT COUNT(DISTINCT client_id) FROM communications WHERE type = 'Custom Mail'")->fetchColumn();
-                $quote_count = $db->query("SELECT COUNT(DISTINCT client_id) FROM quotations")->fetchColumn();
-                $closed_count = $db->query("SELECT COUNT(*) FROM clients WHERE overall_status = 'Closed Won'")->fetchColumn();
+                $pitch_count = $db->query("SELECT COUNT(DISTINCT communications.client_id) FROM communications $commJoinFilter communications.type = 'Pitch'")->fetchColumn();
+                $ppt_count = $db->query("SELECT COUNT(DISTINCT communications.client_id) FROM communications $commJoinFilter communications.type = 'PPT'")->fetchColumn();
+                $mail_count = $db->query("SELECT COUNT(DISTINCT communications.client_id) FROM communications $commJoinFilter communications.type = 'Custom Mail'")->fetchColumn();
+                $quote_count = $db->query("SELECT COUNT(DISTINCT quotations.client_id) FROM quotations $quoteJoinFilterEmpty")->fetchColumn();
+                $closed_count = $db->query("SELECT COUNT(*) FROM clients WHERE overall_status = 'Closed Won' $assignedFilterAnd")->fetchColumn();
                 
                 $funnel = [
                     ['stage' => 'Pitch Sent', 'count' => (int)$pitch_count],
@@ -1104,6 +1121,7 @@ if (isset($_GET['api'])) {
                     SELECT c.company_name, SUM(q.total_amount) as total_val 
                     FROM clients c 
                     JOIN quotations q ON c.id = q.client_id 
+                    $topClientsFilter
                     GROUP BY c.id 
                     ORDER BY total_val DESC 
                     LIMIT 5
@@ -1322,6 +1340,11 @@ if (isset($_GET['api'])) {
                 $priority = trim($_POST['priority'] ?? 'Warm');
                 $added_by = trim($_POST['added_by'] ?? 'System');
                 $remarks = trim($_POST['remarks'] ?? '');
+
+                $assigned_to = trim($_POST['assigned_to'] ?? '');
+                if (empty($assigned_to) && ($_SESSION['role'] ?? '') === 'Staff') {
+                    $assigned_to = $_SESSION['username'] ?? '';
+                }
                 
                 // Basic Validation
                 if (empty($company_name) || empty($business_type) || empty($contact_name) || empty($mobile) || empty($email) || empty($address_line1) || empty($city) || empty($state) || empty($pincode) || empty($country)) {
@@ -1340,8 +1363,8 @@ if (isset($_GET['api'])) {
                     contact_name, designation, mobile, whatsapp, email, alternate_email, linkedin,
                     address_line1, address_line2, city, state, pincode, country,
                     bank_name, account_number, ifsc_code,
-                    lead_source, priority, added_by, remarks, overall_status
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'New')";
+                    lead_source, priority, added_by, remarks, overall_status, assigned_to
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'New', ?)";
                 
                 $stmt = $db->prepare($sql);
                 $stmt->execute([
@@ -1349,7 +1372,7 @@ if (isset($_GET['api'])) {
                     $contact_name, $designation, $mobile, $whatsapp, $email, $alternate_email, $linkedin,
                     $address_line1, $address_line2, $city, $state, $pincode, $country,
                     $bank_name, $account_number, $ifsc_code,
-                    $lead_source, $priority, $added_by, $remarks
+                    $lead_source, $priority, $added_by, $remarks, $assigned_to
                 ]);
                 
                 // Log Action
@@ -5890,6 +5913,7 @@ if (isset($_GET['api'])) {
                     setVal('#client-registration-form input[name="email"]',        l.email);
                     setVal('#client-registration-form select[name="lead_source"]', l.lead_source);
                     setVal('#client-registration-form select[name="priority"]',    l.priority);
+                    setVal('#client-registration-form select[name="assigned_to"]', l.assigned_to);
                     if (l.location) {
                         setVal('#client-registration-form input[name="city"]', l.location);
                     }
