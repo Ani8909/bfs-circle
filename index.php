@@ -4152,10 +4152,13 @@ if (isset($_GET['api'])) {
         });
 
         // Toggle mobile aside layout, view redirection and UI updates
+        let activityPollInterval = null;
         function initNavigation() {
             document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
                 item.addEventListener('click', function(e) {
                     e.preventDefault();
+                    
+                    if (activityPollInterval) clearInterval(activityPollInterval);
                     
                     // Mark sidebar active
                     document.querySelectorAll('.sidebar-menu .menu-item').forEach(li => li.classList.remove('active'));
@@ -4190,6 +4193,7 @@ if (isset($_GET['api'])) {
                         loadDashboardStats();
                         loadDashboardCharts();
                         loadRecentActivities();
+                        activityPollInterval = setInterval(loadRecentActivities, 5000);
                     } else if (targetView === 'leads') {
                         loadLeads();
                     } else if (targetView === 'search-crm') {
@@ -4204,6 +4208,7 @@ if (isset($_GET['api'])) {
                         loadQuotationList();
                     } else if (targetView === 'activity-logs') {
                         loadFullActivityLogs();
+                        activityPollInterval = setInterval(loadFullActivityLogs, 5000);
                     }
                 });
             });
