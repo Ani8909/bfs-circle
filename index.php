@@ -638,11 +638,12 @@ if (isset($_GET['api'])) {
                 if ($lead_id) {
                     $stmt = $db->prepare("UPDATE leads SET lead_name=?,company_name=?,mobile=?,email=?,lead_source=?,assigned_to=?,priority=?,stage=?,notes=? WHERE id=?");
                     $stmt->execute([$lead_name,$company,$mobile,$email,$source,$assigned_to,$priority,$stage,$notes,$lead_id]);
+                    log_activity("Updated lead: $lead_name");
                     return_json(['success' => true, 'message' => 'Lead updated successfully']);
                 } else {
                     $stmt = $db->prepare("INSERT INTO leads (lead_name,company_name,mobile,email,lead_source,assigned_to,priority,stage,notes) VALUES (?,?,?,?,?,?,?,?,?)");
                     $stmt->execute([$lead_name,$company,$mobile,$email,$source,$assigned_to,$priority,$stage,$notes]);
-                    $db->prepare("INSERT INTO activities (description) VALUES (?)")->execute(["New lead added: $lead_name (" . ($company ?: 'Individual') . ") — " . date('h:i A')]);
+                    log_activity("New lead added: $lead_name (" . ($company ?: 'Individual') . ")");
                     return_json(['success' => true, 'message' => "Lead '$lead_name' added successfully!"]);
                 }
                 break;
@@ -675,9 +676,12 @@ if (isset($_GET['api'])) {
                 if ($id) {
                     $stmt = $db->prepare("UPDATE pre_leads SET name=?, company_name=?, mobile=?, email=?, source=?, status=?, assigned_to=?, location=?, notes=? WHERE id=?");
                     $stmt->execute([$name, $company, $mobile, $email, $source, $status, $assigned_to, $location, $notes, $id]);
+                    log_activity("Updated pre-lead: $name");
+                    return_json(['success' => true, 'message' => 'Pre-Lead updated!']);
                 } else {
                     $stmt = $db->prepare("INSERT INTO pre_leads (name, company_name, mobile, email, source, status, assigned_to, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([$name, $company, $mobile, $email, $source, $status, $assigned_to, $location, $notes]);
+                    log_activity("Added new pre-lead: $name");
                     return_json(['success' => true, 'message' => 'Pre-Lead added!']);
                 }
                 break;
@@ -687,8 +691,10 @@ if (isset($_GET['api'])) {
                 if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required to delete pre-leads'], 403);
                 $id = (int)($_POST['id'] ?? 0);
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
+                $prelead_name = $db->query("SELECT name FROM pre_leads WHERE id=$id")->fetchColumn();
                 $db->prepare("DELETE FROM pre_leads WHERE id = ?")->execute([$id]);
-                return_json(['success' => true, 'message' => 'Pre-Lead deleted!']);
+                log_activity("Deleted pre-lead: $prelead_name");
+                return_json(['success' => true, 'message' => 'Pre-Lead deleted']);
                 break;
 
             case 'promote_prelead':
@@ -803,7 +809,9 @@ if (isset($_GET['api'])) {
                 if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required to delete leads'], 403);
                 $id = (int)($_POST['id'] ?? 0);
                 if (!$id) return_json(['error' => 'Missing ID'], 400);
+                $lead_name = $db->query("SELECT lead_name FROM leads WHERE id=$id")->fetchColumn();
                 $db->prepare("DELETE FROM leads WHERE id=?")->execute([$id]);
+                log_activity("Deleted lead: $lead_name");
                 return_json(['success' => true, 'message' => 'Lead deleted']);
                 break;
 
@@ -900,6 +908,15 @@ if (isset($_GET['api'])) {
                     'top_clients' => $top_clients,
                     'activity_weekly' => $activity_summary
                 ]);
+                break;
+
+            case 'get_activity_logs':
+                if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Admin privileges required'], 403);
+                $activities = $db->query("SELECT description, created_at FROM activities ORDER BY id DESC LIMIT 200")->fetchAll();
+                foreach ($activities as &$act) {
+                    $act['created_at_formatted'] = date('d M Y, h:i A', strtotime($act['created_at']));
+                }
+                return_json($activities);
                 break;
 
             case 'recent_activities':
@@ -1100,8 +1117,7 @@ if (isset($_GET['api'])) {
                 
                 // Log Action
                 $action_desc = "{$company_name} added by {$added_by} — Today " . date('h:i A');
-                $log = $db->prepare("INSERT INTO activities (description) VALUES (?)");
-                $log->execute([$action_desc]);
+                log_activity($action_desc);
                 
                 return_json(['success' => true, 'message' => 'Client profile locked & registered successfully!']);
                 break;
@@ -1175,8 +1191,7 @@ if (isset($_GET['api'])) {
                 
                 // Log activity feed
                 $act_desc = "{$type} email sent to {$client['company_name']} by {$sent_by} — " . date('h:i A');
-                $log = $db->prepare("INSERT INTO activities (description) VALUES (?)");
-                $log->execute([$act_desc]);
+                log_activity($act_desc);
                 
                 return_json([
                     'success' => true, 
@@ -1223,7 +1238,7 @@ if (isset($_GET['api'])) {
                 
                 // Write Activity logs
                 $act_desc = "Quotation {$quotation_number} (₹" . number_format($total_amount, 2, '.', ',') . ") drafted for {$c_name}";
-                $db->prepare("INSERT INTO activities (description) VALUES (?)")->execute([$act_desc]);
+                log_activity($act_desc);
                 
                 return_json(['success' => true, 'quotation_number' => $quotation_number, 'message' => "Quotation {$quotation_number} saved successfully!"]);
                 break;
@@ -1263,7 +1278,7 @@ if (isset($_GET['api'])) {
                 
                 // Insert activity log
                 $act_desc = "Quotation {$q_info['quotation_number']} updated to {$status} for {$q_info['company_name']}";
-                $db->prepare("INSERT INTO activities (description) VALUES (?)")->execute([$act_desc]);
+                log_activity($act_desc);
                 
                 return_json(['success' => true, 'message' => 'Status updated successfully', 'client_status' => $client_status]);
                 break;
@@ -1350,8 +1365,7 @@ if (isset($_GET['api'])) {
                 
                 // Log activity
                 $act_desc = "Company settings & profile updated by {$contact_person} — Today " . date('h:i A');
-                $log = $db->prepare("INSERT INTO activities (description) VALUES (?)");
-                $log->execute([$act_desc]);
+                log_activity($act_desc);
                 
                 return_json(['success' => true, 'message' => 'CRM Configurations updated successfully!']);
                 break;
@@ -2669,7 +2683,15 @@ if (isset($_GET['api'])) {
                     <span class="menu-text">Quotation List</span>
                 </a>
             </li>
-            <li class="menu-item" data-view="settings">
+            <?php if (($_SESSION['role'] ?? '') === 'Admin'): ?>
+              <li class="menu-item" data-view="activity-logs">
+                  <a href="#activity-logs">
+                      <i data-lucide="activity"></i>
+                      <span class="menu-text">Activity Logs</span>
+                  </a>
+              </li>
+              <?php endif; ?>
+              <li class="menu-item" data-view="settings">
                 <a href="#settings">
                     <i data-lucide="settings"></i>
                     <span class="menu-text">CRM Settings</span>
@@ -3557,6 +3579,30 @@ if (isset($_GET['api'])) {
         <!-- ==========================================
               VIEW 7: SETTINGS SCREEN
              ========================================== -->
+        <div id="view-activity-logs" class="view-container">
+            <div class="card">
+                <div class="card-title-bar">
+                    <h2>System Audit & Activity Logs</h2>
+                    <div class="badge-locked" style="background-color: var(--secondary-light); color: var(--secondary);"><i data-lucide="shield"></i> Admin Only</div>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Action Log Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="full-activity-logs-tbody">
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="view-settings" class="view-container">
             <form id="settings-form" onsubmit="saveCompanySettings(event)">
                 <div class="card">
@@ -4117,7 +4163,8 @@ if (isset($_GET['api'])) {
                         'send-email': { title: 'Communication Center', sub: 'Compose and dispatch simulated customer interaction emails' },
                         'create-quotation': { title: 'Quotation Builder Suite', sub: 'Create items proposals with instant Indian GST taxation logic' },
                         'quotation-list': { title: 'Invoice Ledgers', sub: 'Audit and track approved client quotations' },
-                        'settings': { title: 'CRM Settings & Configurations', sub: 'Manage company profile, GST details, billing parameters, and default user' }
+                        'settings': { title: 'CRM Settings & Configurations', sub: 'Manage company profile, GST details, billing parameters, and default user' },
+                        'activity-logs': { title: 'Activity Audit Logs', sub: 'System tracking of all staff actions and record updates' }
                     };
                     
                     document.getElementById('view-title').innerText = titles[targetView] ? titles[targetView].title : 'Configurations';
@@ -4331,6 +4378,31 @@ if (isset($_GET['api'])) {
             } catch (err) {
                 console.error(err);
                 showNotification('Failed to generate interactive dashboard charts.', 'error');
+            }
+        }
+
+        async function loadFullActivityLogs() {
+            try {
+                const response = await fetch('?api=get_activity_logs');
+                const data = await response.json();
+                const container = document.getElementById('full-activity-logs-tbody');
+                if (data.length === 0) {
+                    container.innerHTML = '<tr><td colspan="2" style="text-align:center;">No activities found</td></tr>';
+                    return;
+                }
+                let html = '';
+                data.forEach(act => {
+                    let descHtml = act.description;
+                    // highlight username
+                    descHtml = descHtml.replace(/^\[(.*?)\]/, '<span class="badge" style="background:var(--primary);color:white;">$1</span>');
+                    html += `<tr>
+                        <td style="white-space:nowrap; color:var(--text-light); font-size:12px;">${act.created_at_formatted}</td>
+                        <td>${descHtml}</td>
+                    </tr>`;
+                });
+                container.innerHTML = html;
+            } catch (e) {
+                console.error(e);
             }
         }
 
