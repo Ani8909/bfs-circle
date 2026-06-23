@@ -3669,7 +3669,7 @@ if (isset($_GET['api'])) {
                         <h2>Manage Users</h2>
                         <div class="badge-locked" style="background-color: var(--secondary-light); color: var(--secondary);"><i data-lucide="shield"></i> Admin Only</div>
                     </div>
-                    <div class="form-section-title">➕ Register New Staff / Admin</div>
+                    <div class="form-section-title">➕ Register New Staff</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Username</label>
