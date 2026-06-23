@@ -5825,10 +5825,9 @@ if (isset($_GET['api'])) {
             try {
                 const fd = new FormData();
                 const action = window.bulkUploadDestination === 'pre_leads' ? 'bulk_upload_preleads' : 'bulk_upload_leads';
-                fd.append('action', action);
                 fd.append('leads_json', JSON.stringify(finalData));
                 
-                const res = await fetch('', { method:'POST', body: fd });
+                const res = await fetch(`?api=${action}`, { method:'POST', body: fd });
                 const json = await res.json();
                 
                 if(json.success) {
