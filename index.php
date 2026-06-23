@@ -4396,23 +4396,33 @@ if (isset($_GET['api'])) {
                 const response = await fetch('?api=get_activity_logs');
                 const data = await response.json();
                 const container = document.getElementById('full-activity-logs-tbody');
+                if (data.error) {
+                    container.innerHTML = `<tr><td colspan="2" style="text-align:center;color:red;">Error: ${data.error}</td></tr>`;
+                    return;
+                }
+                if (!Array.isArray(data)) {
+                    container.innerHTML = `<tr><td colspan="2" style="text-align:center;color:red;">API Error: Expected array, got ${typeof data}</td></tr>`;
+                    return;
+                }
                 if (data.length === 0) {
                     container.innerHTML = '<tr><td colspan="2" style="text-align:center;">No activities found</td></tr>';
                     return;
                 }
                 let html = '';
                 data.forEach(act => {
-                    let descHtml = act.description;
+                    let descHtml = act.description || '';
                     // highlight username
                     descHtml = descHtml.replace(/^\[(.*?)\]/, '<span class="badge" style="background:var(--primary);color:white;">$1</span>');
                     html += `<tr>
-                        <td style="white-space:nowrap; color:var(--text-light); font-size:12px;">${act.created_at_formatted}</td>
+                        <td style="white-space:nowrap; color:var(--text-light); font-size:12px;">${act.created_at_formatted || ''}</td>
                         <td>${descHtml}</td>
                     </tr>`;
                 });
                 container.innerHTML = html;
             } catch (e) {
                 console.error(e);
+                const container = document.getElementById('full-activity-logs-tbody');
+                if(container) container.innerHTML = `<tr><td colspan="2" style="text-align:center;color:red;">JS Exception: ${e.message}</td></tr>`;
             }
         }
 
