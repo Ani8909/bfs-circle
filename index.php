@@ -5231,12 +5231,15 @@ if (isset($_GET['api'])) {
                 document.querySelector('.menu-item[data-view="add-client"]').click();
                 setTimeout(() => {
                     const setVal = (sel, val) => { const el = document.querySelector(sel); if(el && val) el.value = val; };
-                    setVal('input[name="contact_name"]', l.lead_name);
-                    setVal('input[name="company_name"]', l.company_name);
-                    setVal('input[name="mobile"]',       l.mobile);
-                    setVal('input[name="email"]',        l.email);
-                    setVal('select[name="lead_source"]', l.lead_source);
-                    setVal('select[name="priority"]',    l.priority);
+                    setVal('#add-client-form input[name="contact_name"]', l.lead_name);
+                    setVal('#add-client-form input[name="company_name"]', l.company_name);
+                    setVal('#add-client-form input[name="mobile"]',       l.mobile);
+                    setVal('#add-client-form input[name="email"]',        l.email);
+                    setVal('#add-client-form select[name="lead_source"]', l.lead_source);
+                    setVal('#add-client-form select[name="priority"]',    l.priority);
+                    if (l.location) {
+                        setVal('#add-client-form input[name="city"]', l.location);
+                    }
                     showNotification('Lead data pre-filled! Complete the client registration form.', 'info');
                 }, 400);
             });
