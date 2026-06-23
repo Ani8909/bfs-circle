@@ -620,6 +620,7 @@ if (isset($_GET['api'])) {
                         ]);
                     }
                     $db->commit();
+                    log_activity("Bulk uploaded " . count($leads) . " leads");
                     return_json(['success' => count($leads) . ' leads uploaded successfully']);
                 } catch (Exception $e) {
                     $db->rollBack();
@@ -733,6 +734,7 @@ if (isset($_GET['api'])) {
                     
                     $db->prepare("DELETE FROM pre_leads WHERE id = ?")->execute([$id]);
                     $db->commit();
+                    log_activity("Promoted pre-lead to lead: " . $pre_lead['name']);
                     return_json(['success' => true, 'message' => 'Promoted to CRM successfully!']);
                 } catch (Exception $e) {
                     $db->rollBack();
@@ -772,6 +774,7 @@ if (isset($_GET['api'])) {
                         ]);
                     }
                     $db->commit();
+                    log_activity("Bulk uploaded " . count($leads) . " Pre-Leads");
                     return_json(['success' => count($leads) . ' Pre-Leads uploaded successfully']);
                 } catch (Exception $e) {
                     $db->rollBack();
@@ -811,6 +814,8 @@ if (isset($_GET['api'])) {
                 $allowed_stages = ['New Lead','Contacted','Interested','Proposal Sent','Negotiation','Won','Lost'];
                 if (!$id || !in_array($stage, $allowed_stages)) return_json(['error' => 'Invalid data'], 400);
                 $db->prepare("UPDATE leads SET stage=? WHERE id=?")->execute([$stage,$id]);
+                $lead_name = $db->query("SELECT lead_name FROM leads WHERE id=$id")->fetchColumn();
+                log_activity("Updated lead stage for $lead_name to $stage");
                 return_json(['success' => true, 'message' => 'Stage updated']);
                 break;
 
