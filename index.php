@@ -172,7 +172,20 @@ try {
 
     $db->exec("CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT,
         description TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+    try { $db->exec("ALTER TABLE activities ADD COLUMN username TEXT"); } catch (Exception $e) {}
+
+    $db->exec("CREATE TABLE IF NOT EXISTS reminders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        lead_type TEXT NOT NULL,
+        lead_id INTEGER NOT NULL,
+        assigned_to TEXT NOT NULL,
+        remind_at DATETIME NOT NULL,
+        notes TEXT,
+        status TEXT DEFAULT 'Pending',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
 
@@ -365,7 +378,7 @@ try {
             ['description' => 'Email Pitch sent to Zenith Retail by Karan Singh — 5 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-5 days'))]
         ];
 
-        $stmt_act = $db->prepare("INSERT INTO activities (description, created_at) VALUES (?, ?)");
+        $stmt_act = $db->prepare("INSERT INTO activities (username, description, created_at) VALUES ('System', ?, ?)");
         foreach ($dummy_activities as $act) {
             $stmt_act->execute([$act['description'], $act['created_at']]);
         }
@@ -394,8 +407,8 @@ function log_activity($description) {
     global $db;
     $user = $_SESSION['username'] ?? 'System';
     $desc = "[$user] " . $description;
-    $stmt = $db->prepare("INSERT INTO activities (description) VALUES (?)");
-    $stmt->execute([$desc]);
+    $stmt = $db->prepare("INSERT INTO activities (username, description) VALUES (?, ?)");
+    $stmt->execute([$user, $desc]);
 }
 
 if (isset($_GET['api'])) {
@@ -704,9 +717,8 @@ if (isset($_GET['api'])) {
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
                 $lead_id     = isset($_POST['lead_id']) && (int)$_POST['lead_id'] > 0 ? (int)$_POST['lead_id'] : null;
                 
-                if ($lead_id && ($_SESSION['role'] ?? '') !== 'Admin') {
-                    return_json(['error' => 'Admin privileges required to edit leads'], 403);
-                }
+                $role = $_SESSION['role'] ?? '';
+                $username = $_SESSION['username'] ?? '';
 
                 $lead_name   = trim($_POST['lead_name'] ?? '');
                 $company     = trim($_POST['company_name'] ?? '');
@@ -714,16 +726,29 @@ if (isset($_GET['api'])) {
                 $email       = trim($_POST['email'] ?? '');
                 $source      = trim($_POST['lead_source'] ?? 'Cold Call');
                 $assigned_to = trim($_POST['assigned_to'] ?? '');
+                if ($role !== 'Admin') $assigned_to = $username;
                 $priority    = trim($_POST['priority'] ?? 'Warm');
                 $stage       = trim($_POST['stage'] ?? 'New Lead');
                 $notes       = trim($_POST['notes'] ?? '');
-                if (empty($lead_name) || empty($mobile)) return_json(['error' => 'Lead name and mobile are required'], 400);
+
+                if (empty($lead_name)) return_json(['error' => 'Lead name is required'], 400);
+
                 if ($lead_id) {
+                    $existing = $db->query("SELECT * FROM leads WHERE id=$lead_id")->fetch();
+                    if ($role !== 'Admin' && $existing['assigned_to'] !== $username) {
+                        return_json(['error' => 'Unauthorized to edit this lead'], 403);
+                    }
+                    if ($role !== 'Admin') {
+                        $mobile = $existing['mobile'];
+                        $email = $existing['email'];
+                    }
+                    
                     $stmt = $db->prepare("UPDATE leads SET lead_name=?,company_name=?,mobile=?,email=?,lead_source=?,assigned_to=?,priority=?,stage=?,notes=? WHERE id=?");
                     $stmt->execute([$lead_name,$company,$mobile,$email,$source,$assigned_to,$priority,$stage,$notes,$lead_id]);
                     log_activity("Updated lead: $lead_name");
                     return_json(['success' => true, 'message' => 'Lead updated successfully']);
                 } else {
+                    if (empty($mobile)) return_json(['error' => 'Mobile is required'], 400);
                     $stmt = $db->prepare("INSERT INTO leads (lead_name,company_name,mobile,email,lead_source,assigned_to,priority,stage,notes) VALUES (?,?,?,?,?,?,?,?,?)");
                     $stmt->execute([$lead_name,$company,$mobile,$email,$source,$assigned_to,$priority,$stage,$notes]);
                     log_activity("New lead added: $lead_name (" . ($company ?: 'Individual') . ")");
@@ -732,7 +757,12 @@ if (isset($_GET['api'])) {
                 break;
 
             case 'get_preleads':
-                $stmt = $db->query("SELECT * FROM pre_leads ORDER BY created_at DESC");
+                if (($_SESSION['role'] ?? '') !== 'Admin') {
+                    $stmt = $db->prepare("SELECT * FROM pre_leads WHERE assigned_to = ? ORDER BY created_at DESC");
+                    $stmt->execute([$_SESSION['username'] ?? '']);
+                } else {
+                    $stmt = $db->query("SELECT * FROM pre_leads ORDER BY created_at DESC");
+                }
                 return_json($stmt->fetchAll());
                 break;
 
@@ -740,9 +770,8 @@ if (isset($_GET['api'])) {
                 if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
                 $id = isset($_POST['id']) && (int)$_POST['id'] > 0 ? (int)$_POST['id'] : null;
                 
-                if ($id && ($_SESSION['role'] ?? '') !== 'Admin') {
-                    return_json(['error' => 'Admin privileges required to edit pre-leads'], 403);
-                }
+                $role = $_SESSION['role'] ?? '';
+                $username = $_SESSION['username'] ?? '';
 
                 $name = trim($_POST['name'] ?? '');
                 $company = trim($_POST['company_name'] ?? '');
@@ -751,17 +780,28 @@ if (isset($_GET['api'])) {
                 $source = trim($_POST['source'] ?? 'Unknown');
                 $status = trim($_POST['status'] ?? 'Not Contacted');
                 $assigned_to = trim($_POST['assigned_to'] ?? '');
+                if ($role !== 'Admin') $assigned_to = $username;
                 $location = trim($_POST['location'] ?? '');
                 $notes = trim($_POST['notes'] ?? '');
 
-                if (empty($name) || empty($mobile)) return_json(['error' => 'Name and Mobile are required'], 400);
+                if (empty($name)) return_json(['error' => 'Name is required'], 400);
 
                 if ($id) {
+                    $existing = $db->query("SELECT * FROM pre_leads WHERE id=$id")->fetch();
+                    if ($role !== 'Admin' && $existing['assigned_to'] !== $username) {
+                        return_json(['error' => 'Unauthorized to edit this pre-lead'], 403);
+                    }
+                    if ($role !== 'Admin') {
+                        $mobile = $existing['mobile'];
+                        $email = $existing['email'];
+                    }
+
                     $stmt = $db->prepare("UPDATE pre_leads SET name=?, company_name=?, mobile=?, email=?, source=?, status=?, assigned_to=?, location=?, notes=? WHERE id=?");
                     $stmt->execute([$name, $company, $mobile, $email, $source, $status, $assigned_to, $location, $notes, $id]);
                     log_activity("Updated pre-lead: $name");
                     return_json(['success' => true, 'message' => 'Pre-Lead updated!']);
                 } else {
+                    if (empty($mobile)) return_json(['error' => 'Mobile is required'], 400);
                     $stmt = $db->prepare("INSERT INTO pre_leads (name, company_name, mobile, email, source, status, assigned_to, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     $stmt->execute([$name, $company, $mobile, $email, $source, $status, $assigned_to, $location, $notes]);
                     log_activity("Added new pre-lead: $name");
@@ -868,6 +908,51 @@ if (isset($_GET['api'])) {
                 }
                 break;
 
+            
+            case 'get_reminders':
+                $role = $_SESSION['role'] ?? '';
+                $username = $_SESSION['username'] ?? '';
+                if ($role === 'Admin') {
+                    $stmt = $db->query("SELECT * FROM reminders WHERE status='Pending' ORDER BY remind_at ASC");
+                } else {
+                    $stmt = $db->prepare("SELECT * FROM reminders WHERE assigned_to=? AND status='Pending' ORDER BY remind_at ASC");
+                    $stmt->execute([$username]);
+                }
+                return_json($stmt->fetchAll());
+                break;
+                
+            case 'save_reminder':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+                $lead_type = $_POST['lead_type'] ?? '';
+                $lead_id = (int)($_POST['lead_id'] ?? 0);
+                $remind_at = $_POST['remind_at'] ?? '';
+                $notes = $_POST['notes'] ?? '';
+                
+                // Get lead owner
+                $assigned_to = $_SESSION['username'];
+                if ($lead_type === 'Lead') {
+                    $l = $db->query("SELECT assigned_to FROM leads WHERE id=$lead_id")->fetch();
+                    if($l) $assigned_to = $l['assigned_to'];
+                } else {
+                    $l = $db->query("SELECT assigned_to FROM pre_leads WHERE id=$lead_id")->fetch();
+                    if($l) $assigned_to = $l['assigned_to'];
+                }
+                
+                $stmt = $db->prepare("INSERT INTO reminders (lead_type, lead_id, assigned_to, remind_at, notes) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$lead_type, $lead_id, $assigned_to, $remind_at, $notes]);
+                return_json(['success' => true, 'message' => 'Reminder saved successfully!']);
+                break;
+
+            case 'complete_reminder':
+                if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+                $id = (int)($_POST['id'] ?? 0);
+                if ($id) {
+                    $db->query("UPDATE reminders SET status='Completed' WHERE id=$id");
+                    return_json(['success' => true]);
+                }
+                return_json(['error' => 'Missing ID'], 400);
+                break;
+
             case 'get_leads':
                 $s          = $_GET['search'] ?? '';
                 $f_stage    = $_GET['stage'] ?? '';
@@ -875,6 +960,10 @@ if (isset($_GET['api'])) {
                 $f_assigned = $_GET['assigned_to'] ?? '';
                 $sql_l      = "SELECT * FROM leads WHERE 1=1";
                 $params_l   = [];
+                if (($_SESSION['role'] ?? '') !== 'Admin') {
+                    $sql_l .= " AND assigned_to = ?";
+                    $params_l[] = $_SESSION['username'] ?? '';
+                }
                 if ($s)          { $sql_l .= " AND (lead_name LIKE ? OR company_name LIKE ? OR mobile LIKE ?)"; $params_l = array_merge($params_l, ["%$s%","%$s%","%$s%"]); }
                 if ($f_stage)    { $sql_l .= " AND stage = ?";       $params_l[] = $f_stage; }
                 if ($f_priority) { $sql_l .= " AND priority = ?";    $params_l[] = $f_priority; }
@@ -1021,7 +1110,24 @@ if (isset($_GET['api'])) {
                 break;
 
             case 'recent_activities':
-                $activities = $db->query("SELECT description, created_at FROM activities ORDER BY id DESC LIMIT 10")->fetchAll();
+                $user = $_GET['user'] ?? '';
+                $days = (int)($_GET['days'] ?? 0);
+                
+                $sql = "SELECT description, created_at FROM activities WHERE 1=1";
+                $params = [];
+                if ($user) {
+                    $sql .= " AND (username = ? OR description LIKE ?)";
+                    $params[] = $user;
+                    $params[] = "%[$user]%";
+                }
+                if ($days > 0) {
+                    $sql .= " AND created_at >= date('now', '-$days days')";
+                }
+                $sql .= " ORDER BY id DESC LIMIT 50";
+                
+                $stmt = $db->prepare($sql);
+                $stmt->execute($params);
+                $activities = $stmt->fetchAll();
                 // Format relative time
                 foreach ($activities as &$act) {
                     $timestamp = strtotime($act['created_at'] . ' UTC');
@@ -2754,6 +2860,9 @@ if (isset($_GET['api'])) {
                     <span class="menu-text">Lead Management</span>
                 </a>
             </li>
+            <li class="menu-item" data-view="reminders">
+                <i data-lucide="bell"></i> <span>Reminders</span>
+            </li>
             <li class="menu-item" data-view="add-client">
                 <a href="#add-client">
                     <i data-lucide="user-plus"></i>
@@ -3430,6 +3539,12 @@ if (isset($_GET['api'])) {
                                     <option value="Reference">Reference</option>
                                 </select>
                             </div>
+                              <div class="form-group admin-only-field" style="display:none;">
+                                  <label>Assigned To</label>
+                                  <select name="assigned_to" id="pl-assigned_to" class="user-select">
+                                      <option value="">-- Unassigned --</option>
+                                  </select>
+                              </div>
                             <div class="form-group">
                                 <label>Notes</label>
                                 <textarea name="notes" id="pl_notes" rows="2"></textarea>
@@ -3536,6 +3651,12 @@ if (isset($_GET['api'])) {
                                     <option value="Cold">🔵 Cold</option>
                                 </select>
                             </div>
+                              <div class="form-group admin-only-field" style="display:none;">
+                                  <label>Assigned To</label>
+                                  <select name="assigned_to" id="lf-assigned_to" class="user-select">
+                                      <option value="">-- Unassigned --</option>
+                                  </select>
+                              </div>
                         </div>
                         <div class="form-group">
                             <label>Stage</label>
@@ -4210,6 +4331,32 @@ if (isset($_GET['api'])) {
         </div>
     </div>
     
+    
+    <!-- Reminder Modal -->
+    <div id="reminder-modal" class="modal">
+        <div class="modal-content" style="max-width:400px;">
+            <div class="modal-header">
+                <h2>⏰ Set Reminder</h2>
+                <span class="close" onclick="document.getElementById('reminder-modal').style.display='none'">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="reminder-form" onsubmit="saveReminder(event)">
+                    <input type="hidden" id="rem_lead_type" name="lead_type">
+                    <input type="hidden" id="rem_lead_id" name="lead_id">
+                    <div class="form-group">
+                        <label>Date & Time</label>
+                        <input type="datetime-local" id="rem_date" name="remind_at" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Notes (e.g. Call back regarding pricing)</label>
+                        <textarea id="rem_notes" name="notes" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Save Reminder</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast System -->
     <div class="toast-container" id="toast-container"></div>
 
@@ -4317,6 +4464,97 @@ if (isset($_GET['api'])) {
             showNotification(json.message || (json.error ? "Error" : "Success"), json.success ? "success" : "error");
             if(json.success) loadPptsList();
         }
+
+        
+        async function initUserSelects() {
+            if (currentUser && currentUser.role === 'Admin') {
+                document.querySelectorAll('.admin-only-field').forEach(el => el.style.display = 'block');
+                try {
+                    const res = await fetch('?api=get_users');
+                    const users = await res.json();
+                    if(users && !users.error) {
+                        let opts = '<option value="">-- Unassigned --</option>';
+                        users.forEach(u => opts += `<option value="${u.username}">${u.username}</option>`);
+                        document.querySelectorAll('.user-select').forEach(sel => sel.innerHTML = opts);
+                    }
+                } catch(e) {}
+            }
+        }
+        document.addEventListener("DOMContentLoaded", initUserSelects);
+
+        
+        // Reminders Logic
+        function openReminderModal(type, id) {
+            document.getElementById("rem_lead_type").value = type;
+            document.getElementById("rem_lead_id").value = id;
+            document.getElementById("rem_date").value = "";
+            document.getElementById("rem_notes").value = "";
+            document.getElementById("reminder-modal").style.display = "block";
+        }
+        
+        async function saveReminder(e) {
+            e.preventDefault();
+            let fd = new FormData(e.target);
+            fd.append("api", "save_reminder");
+            let res = await fetch("?", {method: "POST", body: fd});
+            let json = await res.json();
+            if(json.success) {
+                showNotification(json.message, "success");
+                document.getElementById("reminder-modal").style.display = "none";
+                loadReminders();
+            } else {
+                showNotification(json.error, "error");
+            }
+        }
+        
+        async function loadReminders() {
+            try {
+                let res = await fetch("?api=get_reminders");
+                let data = await res.json();
+                let tbody = document.getElementById("reminders-table-body");
+                if(!tbody) return;
+                
+                if(data.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='6' style='text-align:center;color:#888;'>No upcoming reminders.</td></tr>";
+                    return;
+                }
+                
+                let html = "";
+                data.forEach(r => {
+                    let dateObj = new Date(r.remind_at);
+                    let isPast = dateObj < new Date() && r.status !== 'Completed';
+                    let color = isPast ? '#ef4444' : '#3b82f6';
+                    
+                    html += `<tr>
+                        <td style="color:${color}; font-weight:600;">${dateObj.toLocaleString()}</td>
+                        <td>${r.lead_type}</td>
+                        <td>ID: ${r.lead_id} <br><span style="font-size:11px;color:#888;">${r.assigned_to}</span></td>
+                        <td>${r.notes || '<span style="color:#ccc;">No notes</span>'}</td>
+                        <td><span class="badge" style="background:${r.status==='Pending'?'#fee2e2':'#dcfce7'};color:${r.status==='Pending'?'#ef4444':'#166534'};">${r.status}</span></td>
+                        <td>
+                            ${r.status === 'Pending' ? `<button class="btn btn-secondary" onclick="completeReminder(${r.id})">✅ Done</button>` : ''}
+                        </td>
+                    </tr>`;
+                });
+                tbody.innerHTML = html;
+            } catch(e) {}
+        }
+        
+        async function completeReminder(id) {
+            let fd = new FormData();
+            fd.append("api", "complete_reminder");
+            fd.append("id", id);
+            let res = await fetch("?", {method:"POST", body:fd});
+            let json = await res.json();
+            if(json.success) loadReminders();
+        }
+        
+        // Add hook to view switcher
+        document.querySelectorAll(".menu-item").forEach(item => {
+            item.addEventListener("click", () => {
+                if(item.dataset.view === 'reminders') loadReminders();
+            });
+        });
 
         // Document Load entry triggers
         document.addEventListener('DOMContentLoaded', () => {
@@ -4642,7 +4880,14 @@ if (isset($_GET['api'])) {
 
         async function loadRecentActivities() {
             try {
-                const response = await fetch('?api=recent_activities');
+                let userFilter = "";
+                let dateFilter = "0";
+                const uEl = document.getElementById('feed-user-filter');
+                const dEl = document.getElementById('feed-date-filter');
+                if(uEl) userFilter = uEl.value;
+                if(dEl) dateFilter = dEl.value;
+                
+                const response = await fetch(`?api=recent_activities&user=${userFilter}&days=${dateFilter}`);
                 const data = await response.json();
                 const container = document.getElementById('dashboard-activity-feed');
                 
@@ -5275,6 +5520,36 @@ if (isset($_GET['api'])) {
         // ==========================================
         // PRE-LEADS JAVASCRIPT LOGIC
         // ==========================================
+        
+        async function editPreLead(id) {
+            try {
+                const res = await fetch(`?api=get_preleads`);
+                const text = await res.text();
+                const preleads = JSON.parse(text);
+                const p = preleads.find(x => x.id == id);
+                if (!p) return;
+                
+                document.getElementById('prelead_id').value = p.id;
+                document.getElementById('pl_name').value = p.name || '';
+                document.getElementById('pl_company').value = p.company_name || '';
+                document.getElementById('pl_mobile').value = p.mobile || '';
+                document.getElementById('pl_email').value = p.email || ''; // Add pl_email id in HTML if missing
+                document.getElementById('pl_source').value = p.source || 'Unknown';
+                
+                const isStaff = currentUser && currentUser.role !== 'Admin';
+                document.getElementById('pl_mobile').readOnly = isStaff;
+                if(document.getElementById('pl_email')) document.getElementById('pl_email').readOnly = isStaff;
+                
+                const plAssigned = document.getElementById('pl-assigned_to');
+                if (plAssigned && currentUser.role === 'Admin') plAssigned.value = p.assigned_to || '';
+                
+                window.scrollTo(0, 0);
+                showNotification("Editing Pre-Lead", "info");
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    
         async function loadPreLeads() {
             const res = await fetch('?api=get_preleads');
             const data = await res.json();
@@ -5310,151 +5585,9 @@ if (isset($_GET['api'])) {
                     </td>
                     <td>
                         <div style="display:flex;gap:5px;">
-                            ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" onclick="editPreLead(${p.id})" style="padding:4px 8px;" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i></button>` : ''}
-                            <button class="btn btn-primary" onclick="promotePreLead(${p.id})" style="padding:4px 8px; font-size:12px;" title="Promote to Lead"><i data-lucide="rocket" style="width:14px;height:14px;"></i> Promote</button>
-                            ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" onclick="deletePreLead(${p.id})" style="padding:4px 8px;" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>` : ''}
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            
-            document.getElementById('prelead-stat-total').innerText = total;
-            document.getElementById('prelead-stat-interested').innerText = interested;
-            document.getElementById('prelead-stat-junk').innerText = junk;
-            lucide.createIcons();
-        }
-
-        async function savePreLead(e) {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            const res = await fetch('?api=save_prelead', { method:'POST', body:fd });
-            const data = await res.json();
-            if(data.success) {
-                showNotification(data.message, 'success');
-                resetPreLeadForm();
-                loadPreLeads();
-            } else {
-                showNotification(data.error, 'error');
-            }
-        }
-
-        function resetPreLeadForm() {
-            document.getElementById('prelead-form').reset();
-            document.getElementById('prelead_id').value = '';
-        }
-
-        async function deletePreLead(id) {
-            if(!confirm("Are you sure you want to delete this raw data?")) return;
-            const fd = new FormData(); fd.append('id', id);
-            const res = await fetch('?api=delete_prelead', { method:'POST', body:fd });
-            const data = await res.json();
-            if(data.success) { showNotification(data.message, 'success'); loadPreLeads(); }
-            else showNotification(data.error, 'error');
-        }
-
-        async function promotePreLead(id) {
-            if(!confirm("Promote this prospect to your main Leads CRM?")) return;
-            const fd = new FormData(); fd.append('id', id);
-            const res = await fetch('?api=promote_prelead', { method:'POST', body:fd });
-            const data = await res.json();
-            if(data.success) { 
-                showNotification("🚀 " + data.message, 'success'); 
-                loadPreLeads(); 
-                loadLeads(); // refresh main leads
-            } else {
-                showNotification(data.error, 'error');
-            }
-        }
-
-        async function updatePreLeadStatus(id, status) {
-            const fd = new FormData(); fd.append('id', id); fd.append('status', status);
-            await fetch('?api=update_prelead_status', { method:'POST', body:fd });
-            loadPreLeads();
-        }
-        
-        function openPreLeadBulkUploadModal() {
-            // Re-using the bulk modal but setting an indicator it's for pre-leads
-            document.getElementById('bulk-upload-modal').style.display = 'flex';
-            // We set a global variable to indicate destination
-            window.bulkUploadDestination = 'pre_leads';
-        }
-
-        // Run loadPreLeads periodically or when clicking the tab
-        document.querySelector('[data-view="preleads"]')?.addEventListener('click', () => {
-            loadPreLeads();
-        });
-
-        async function loadLeads() {
-            const search   = document.getElementById('lead-search')?.value || '';
-            const stage    = document.getElementById('lead-filter-stage')?.value || '';
-            const priority = document.getElementById('lead-filter-priority')?.value || '';
-            const params   = new URLSearchParams({ api: 'get_leads', search, stage, priority });
-
-            try {
-                const res = await fetch('?' + params.toString());
-                if (!res.ok) return;
-                const leads = await res.json();
-
-                // Update stat cards
-                const total    = leads.length;
-                const hot      = leads.filter(l => l.priority === 'Hot' && l.stage !== 'Won' && l.stage !== 'Lost').length;
-                const won      = leads.filter(l => l.stage === 'Won').length;
-                const progress = leads.filter(l => l.stage !== 'Won' && l.stage !== 'Lost').length;
-
-                const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.innerText = v; };
-                setEl('lead-stat-total',    total);
-                setEl('lead-stat-hot',      hot);
-                setEl('lead-stat-won',      won);
-                setEl('lead-stat-progress', progress);
-
-                // Pipeline Bar counts
-                const stageCounts = {};
-                leads.forEach(l => { stageCounts[l.stage] = (stageCounts[l.stage] || 0) + 1; });
-                const pipelineBar = document.getElementById('lead-pipeline-bar');
-                if (pipelineBar) {
-                    const stages = ['New Lead','Contacted','Interested','Proposal Sent','Negotiation','Won','Lost'];
-                    pipelineBar.innerHTML = stages.map(s => {
-                        const cnt = stageCounts[s] || 0;
-                        const col = STAGE_COLORS[s];
-                        return `<div onclick="document.getElementById('lead-filter-stage').value='${s}'; loadLeads();"
-                            style="flex:1;min-width:80px;text-align:center;padding:8px 6px;border-radius:8px;background:${col}18;border:1px solid ${col}44;cursor:pointer;transition:all .2s;"
-                            onmouseover="this.style.background='${col}33'" onmouseout="this.style.background='${col}18'">
-                            <div style="font-size:18px;font-weight:700;color:${col};">${cnt}</div>
-                            <div style="font-size:10px;color:${col};font-weight:600;">${s}</div>
-                        </div>`;
-                    }).join('');
-                }
-
-                // Table rows
-                const tbody = document.getElementById('leads-table-body');
-                if (!tbody) return;
-                if (leads.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-light);">No leads found. Add your first lead using the form!</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = leads.map(l => {
-                    const col = STAGE_COLORS[l.stage] || '#64748b';
-                    return `<tr style="border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='var(--bg-color)'" onmouseout="this.style.background=''">
-                        <td style="padding:12px;">
-                            <div style="font-weight:600;color:var(--text);">${l.lead_name}</div>
-                            <div style="font-size:11px;color:var(--text-light);">${l.company_name || '—'}</div>
-                        </td>
-                        <td style="padding:12px;font-size:13px;">${l.mobile}</td>
-                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.lead_source}</td>
-                        <td style="padding:12px;">${PRIORITY_BADGE[l.priority] || l.priority}</td>
-                        <td style="padding:12px;">
-                            <select onchange="quickUpdateStage(${l.id}, this.value)" style="padding:3px 8px;border:none;border-radius:20px;font-size:12px;font-weight:600;background:${col}20;color:${col};cursor:pointer;outline:none;">
-                                ${['New Lead','Contacted','Interested','Proposal Sent','Negotiation','Won','Lost'].map(s =>
-                                    `<option value="${s}" ${l.stage===s?'selected':''}>${s}</option>`
-                                ).join('')}
-                            </select>
-                        </td>
-                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || '—'}</td>
-                        <td style="padding:12px;">
-                            <div style="display:flex;gap:6px;">
-                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">✏️</button>` : ''}
+                            `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i> Edit</button>`
                                 <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">🔄</button>
+                                  <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="openReminderModal('Lead', ${l.id})" title="Set Reminder">⏰</button>
                                 ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">🗑️</button>` : ''}
                             </div>
                         </td>
@@ -5501,6 +5634,12 @@ if (isset($_GET['api'])) {
                 document.getElementById('lf-source').value   = l.lead_source || '';
                 document.getElementById('lf-priority').value = l.priority || '';
                 document.getElementById('lf-stage').value    = l.stage || '';
+                  const isStaff = currentUser && currentUser.role !== 'Admin';
+                  document.getElementById('lf-mobile').readOnly = isStaff;
+                  document.getElementById('lf-email').readOnly = isStaff;
+                  const lfAssigned = document.getElementById('lf-assigned_to');
+                  if (lfAssigned && currentUser.role === 'Admin') lfAssigned.value = l.assigned_to || '';
+                  
                 document.getElementById('lf-assigned').value = l.assigned_to || '';
                 document.getElementById('lf-notes').value    = l.notes || '';
                 
