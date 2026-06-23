@@ -604,13 +604,27 @@ if (isset($_GET['api'])) {
 
                 $db->beginTransaction();
                 try {
+                    $existing_mobiles = $db->query("SELECT mobile FROM leads WHERE mobile != ''")->fetchAll(PDO::FETCH_COLUMN);
+                    $existing_emails = $db->query("SELECT email FROM leads WHERE email != ''")->fetchAll(PDO::FETCH_COLUMN);
+                    $existing_mobiles_map = array_flip($existing_mobiles);
+                    $existing_emails_map = array_flip($existing_emails);
+
                     $stmt = $db->prepare("INSERT INTO leads (lead_name, company_name, mobile, email, lead_source, priority, stage, assigned_to, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $upload_count = 0;
                     foreach ($leads as $lead) {
+                        $mob = trim($lead['mobile'] ?? '');
+                        $eml = trim($lead['email'] ?? '');
+                        if ($mob !== '' && isset($existing_mobiles_map[$mob])) continue;
+                        if ($eml !== '' && isset($existing_emails_map[$eml])) continue;
+                        if ($mob !== '') $existing_mobiles_map[$mob] = true;
+                        if ($eml !== '') $existing_emails_map[$eml] = true;
+                        
+                        $upload_count++;
                         $stmt->execute([
                             $lead['lead_name'] ?? '',
                             $lead['company_name'] ?? '',
-                            $lead['mobile'] ?? '',
-                            $lead['email'] ?? '',
+                            $mob,
+                            $eml,
                             $lead['lead_source'] ?? 'Cold Call',
                             $lead['priority'] ?? 'Warm',
                             $lead['stage'] ?? 'New Lead',
@@ -620,8 +634,8 @@ if (isset($_GET['api'])) {
                         ]);
                     }
                     $db->commit();
-                    log_activity("Bulk uploaded " . count($leads) . " leads");
-                    return_json(['success' => count($leads) . ' leads uploaded successfully']);
+                    log_activity("Bulk uploaded " . $upload_count . " new leads");
+                    return_json(['success' => true, 'message' => $upload_count . ' new leads uploaded successfully (duplicates skipped)']);
                 } catch (Exception $e) {
                     $db->rollBack();
                     return_json(['error' => 'Database error: ' . $e->getMessage()], 500);
@@ -759,13 +773,27 @@ if (isset($_GET['api'])) {
 
                 $db->beginTransaction();
                 try {
+                    $existing_mobiles = $db->query("SELECT mobile FROM pre_leads WHERE mobile != ''")->fetchAll(PDO::FETCH_COLUMN);
+                    $existing_emails = $db->query("SELECT email FROM pre_leads WHERE email != ''")->fetchAll(PDO::FETCH_COLUMN);
+                    $existing_mobiles_map = array_flip($existing_mobiles);
+                    $existing_emails_map = array_flip($existing_emails);
+
                     $stmt = $db->prepare("INSERT INTO pre_leads (name, company_name, mobile, email, source, status, assigned_to, location, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $upload_count = 0;
                     foreach ($leads as $lead) {
+                        $mob = trim($lead['mobile'] ?? '');
+                        $eml = trim($lead['email'] ?? '');
+                        if ($mob !== '' && isset($existing_mobiles_map[$mob])) continue;
+                        if ($eml !== '' && isset($existing_emails_map[$eml])) continue;
+                        if ($mob !== '') $existing_mobiles_map[$mob] = true;
+                        if ($eml !== '') $existing_emails_map[$eml] = true;
+
+                        $upload_count++;
                         $stmt->execute([
                             $lead['lead_name'] ?? '',
                             $lead['company_name'] ?? '',
-                            $lead['mobile'] ?? '',
-                            $lead['email'] ?? '',
+                            $mob,
+                            $eml,
                             $lead['lead_source'] ?? 'Unknown',
                             'Not Contacted',
                             $lead['assigned_to'] ?? '',
@@ -774,8 +802,8 @@ if (isset($_GET['api'])) {
                         ]);
                     }
                     $db->commit();
-                    log_activity("Bulk uploaded " . count($leads) . " Pre-Leads");
-                    return_json(['success' => count($leads) . ' Pre-Leads uploaded successfully']);
+                    log_activity("Bulk uploaded " . $upload_count . " new Pre-Leads");
+                    return_json(['success' => true, 'message' => $upload_count . ' new Pre-Leads uploaded successfully (duplicates skipped)']);
                 } catch (Exception $e) {
                     $db->rollBack();
                     return_json(['error' => 'Database error: ' . $e->getMessage()], 500);
