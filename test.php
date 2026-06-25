@@ -1,1 +1,0 @@
-<?php $db = new PDO("sqlite:crm.db"); $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); try { $r = $db->query("SELECT * FROM leads LIMIT 1")->fetch(PDO::FETCH_ASSOC); print_r($r); } catch (Exception $e) { echo $e->getMessage(); }
