@@ -25,6 +25,45 @@ try {
     }
 
     switch ($action) {
+        case 'add_employee':
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+            $full_name = trim($_POST['full_name'] ?? '');
+            $username = trim($_POST['username'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+            $role = trim($_POST['role'] ?? 'Staff');
+            $mobile = trim($_POST['mobile'] ?? '');
+            
+            if(empty($full_name) || empty($username) || empty($password)) {
+                return_json(['error' => 'Name, Username, and Password are required.'], 400);
+            }
+            
+            try {
+                $db->beginTransaction();
+                
+                // 1. Create User
+                $hash = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $db->prepare("INSERT INTO users (username, name, password_hash, role) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$username, $full_name, $hash, $role]);
+                $user_id = $db->lastInsertId();
+                
+                // 2. Create Employee profile
+                $emp_id = 'EMP' . date('Ym') . rand(100, 999);
+                $stmt2 = $db->prepare("INSERT INTO employees (user_id, emp_id, full_name, mobile, personal_email) VALUES (?, ?, ?, ?, ?)");
+                $stmt2->execute([$user_id, $emp_id, $full_name, $mobile, $username]);
+                
+                $db->commit();
+                
+                log_activity("Added new employee: $full_name", "staff_hrms.php");
+                return_json(['success' => true, 'message' => 'Employee onboarded successfully!']);
+            } catch (PDOException $e) {
+                $db->rollBack();
+                if(strpos($e->getMessage(), 'UNIQUE') !== false) {
+                    return_json(['error' => 'Username/Email already exists.']);
+                }
+                return_json(['error' => 'Database error: ' . $e->getMessage()]);
+            }
+            break;
+
         case 'ping':
             $ip = $_SERVER['REMOTE_ADDR'] ?? '';
             $stmt = $db->prepare("UPDATE users SET last_active = datetime('now', 'localtime'), last_ip = ? WHERE id = ?");
