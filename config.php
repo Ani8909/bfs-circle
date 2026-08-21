@@ -434,7 +434,18 @@ try {
         FOREIGN KEY(applicant_id) REFERENCES applicants(id)
     )");
 
-    // Field Visits Module
+        $db->exec("CREATE TABLE IF NOT EXISTS staff_attendance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        att_date DATE NOT NULL,
+        punch_in DATETIME,
+        punch_out DATETIME,
+        status TEXT DEFAULT 'Present',
+        shift_duration TEXT
+    )");
+    
+    // Check missing columns
+// Field Visits Module
     $db->exec("CREATE TABLE IF NOT EXISTS field_visits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         visit_date DATE NOT NULL,
