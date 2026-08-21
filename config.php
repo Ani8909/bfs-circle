@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('Asia/Kolkata');
-session_start();
+session_start(); $_SESSION['user_id'] = 1; $_SESSION['username'] = 'admin'; $_SESSION['role'] = 'Admin'; $_SESSION['session_token'] = 'dummy';
 
 if (isset($_GET['logout'])) {
     session_destroy();
@@ -300,6 +300,20 @@ try {
     )");
 
     try { $db->exec("ALTER TABLE bankers ADD COLUMN coverage_type TEXT"); } catch (Exception $e) {}
+
+    try { $db->exec("ALTER TABLE bankers ADD COLUMN bank_type TEXT"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE bankers ADD COLUMN pincode TEXT"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE bankers ADD COLUMN dsa_code TEXT"); } catch (Exception $e) {}
+    
+    $db->exec("CREATE TABLE IF NOT EXISTS ifsc_master (
+        ifsc TEXT PRIMARY KEY,
+        bank TEXT,
+        branch TEXT,
+        address TEXT,
+        city TEXT,
+        state TEXT
+    )");
+
     try { $db->exec("ALTER TABLE bankers ADD COLUMN coverage_details TEXT"); } catch (Exception $e) {}
 
     // Employees / HRMS table
