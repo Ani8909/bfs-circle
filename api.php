@@ -970,7 +970,7 @@ try {
 
             // 1. PRE-LEADS
             $pl_total    = (int)$db->query("SELECT COUNT(*) FROM pre_leads")->fetchColumn();
-            $pl_new      = (int)$db->query("SELECT COUNT(*) FROM pre_leads WHERE (status='Not Contacted' OR status IS NULL OR status='') AND call_count=0")->fetchColumn();
+            $pl_new      = (int)$db->query("SELECT COUNT(*) FROM pre_leads WHERE (status='Not Contacted' OR status IS NULL OR status='') ")->fetchColumn();
             $pl_followup = (int)$db->query("SELECT COUNT(*) FROM pre_leads WHERE status='Follow Up' OR status='Interested'")->fetchColumn();
             $pl_junk     = (int)$db->query("SELECT COUNT(*) FROM pre_leads WHERE status='Not Interested' OR status='Junk'")->fetchColumn();
 
@@ -1021,8 +1021,8 @@ try {
             $top_referrals   = $db->query("SELECT full_name as name FROM referrals WHERE status='Active' ORDER BY created_at DESC LIMIT 5")->fetchAll(PDO::FETCH_ASSOC);
 
             // 8. PAYOUTS
-            $payout_total = (float)($db->query("SELECT COALESCE(SUM(net_payable),0) FROM payout_distributions WHERE status='Paid'")->fetchColumn() ?: 0);
-            $payout_month = (float)($db->query("SELECT COALESCE(SUM(net_payable),0) FROM payout_distributions WHERE status='Paid' AND strftime('%Y-%m',paid_on)='{$this_month}'")->fetchColumn() ?: 0);
+            try { $payout_total = (float)($db->query("SELECT COALESCE(SUM(net_payable),0) FROM payout_distributions WHERE status='Paid'")->fetchColumn() ?: 0); } catch (Exception $e) { $payout_total = 0; }
+            try { $payout_month = (float)($db->query("SELECT COALESCE(SUM(net_payable),0) FROM payout_distributions WHERE status='Paid' AND strftime('%Y-%m',paid_on)='{$this_month}'")->fetchColumn() ?: 0); } catch (Exception $e) { $payout_month = 0; }
 
             // 9. STAFF
             $staff_total  = (int)$db->query("SELECT COUNT(*) FROM users WHERE role='Staff'")->fetchColumn();
