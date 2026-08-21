@@ -24,7 +24,6 @@ try {
         return_json(['error' => 'Unauthorized Access. Please login.'], 401);
     }
 
-    try {
     switch ($action) {
         case 'add_employee':
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
