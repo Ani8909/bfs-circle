@@ -1,8 +1,8 @@
-Ôªø<?php
+<?php
 date_default_timezone_set('Asia/Kolkata');
 session_start();
 /**
- * AuraCRM - Professional Client Management & Tracking System
+ * BFS Financial Services - Professional Client Management & Tracking System
  * Features:
  * - SQLite Zero-Config Database
  * - Modern Slate & Orange Dashboard Dashboard with Chart.js
@@ -178,7 +178,7 @@ try {
 
     $db->exec("CREATE TABLE IF NOT EXISTS company_profile (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        company_name TEXT DEFAULT 'Aura CRM Solutions',
+        company_name TEXT DEFAULT 'BFS Financial Services Solutions',
         address_line1 TEXT DEFAULT 'Plot 12, Hitech Lane, Bandra West',
         address_line2 TEXT DEFAULT '',
         city TEXT DEFAULT 'Mumbai',
@@ -186,7 +186,7 @@ try {
         pincode TEXT DEFAULT '400050',
         country TEXT DEFAULT 'India',
         gstin TEXT DEFAULT '27AABCA9087A1Z0',
-        email TEXT DEFAULT 'info@auracrm.com',
+        email TEXT DEFAULT 'info@bfsBFS Financial Services.com',
         mobile TEXT DEFAULT '9876543210',
         contact_person TEXT DEFAULT 'Rahul Sharma',
         bank_name TEXT DEFAULT 'HDFC Bank',
@@ -197,7 +197,7 @@ try {
     $prof_count = $db->query("SELECT COUNT(*) FROM company_profile")->fetchColumn();
     if ($prof_count == 0) {
         $db->exec("INSERT INTO company_profile (company_name, address_line1, address_line2, city, state, pincode, country, gstin, email, mobile, contact_person, bank_name, account_number, ifsc_code) 
-                   VALUES ('Aura CRM Solutions', 'Plot 12, Hitech Lane, Bandra West', '', 'Mumbai', 'Maharashtra', '400050', 'India', '27AABCA9087A1Z0', 'info@auracrm.com', '9876543210', 'Rahul Sharma', 'HDFC Bank', '50100987654321', 'HDFC0001234')");
+                   VALUES ('BFS Financial Services Solutions', 'Plot 12, Hitech Lane, Bandra West', '', 'Mumbai', 'Maharashtra', '400050', 'India', '27AABCA9087A1Z0', 'info@bfsBFS Financial Services.com', '9876543210', 'Rahul Sharma', 'HDFC Bank', '50100987654321', 'HDFC0001234')");
     }
 
     // Safe SQLite Alter Table for SMTP fields
@@ -214,7 +214,7 @@ try {
             [
                 'company_name' => 'Apex Industries', 'business_type' => 'Manufacturer', 'industry_sector' => 'Automotive',
                 'gstin' => '27AAACA1234A1Z1', 'pan' => 'AAACA1234A', 'website' => 'https://apexind.com',
-                'turnover' => 'Œì√©‚ï£5-10 Crores', 'employees' => 120, 'contact_name' => 'Amit Sharma', 'designation' => 'Director',
+                'turnover' => 'GÈ¶5-10 Crores', 'employees' => 120, 'contact_name' => 'Amit Sharma', 'designation' => 'Director',
                 'mobile' => '9876543210', 'whatsapp' => '9876543210', 'email' => 'amit@apexind.com', 'alternate_email' => 'info@apexind.com',
                 'linkedin' => 'https://linkedin.com/in/amit-apex', 'address_line1' => 'Plot 45, MIDC Industrial Area',
                 'address_line2' => 'Andheri East', 'city' => 'Mumbai', 'state' => 'Maharashtra', 'pincode' => '400093', 'country' => 'India',
@@ -226,7 +226,7 @@ try {
             [
                 'company_name' => 'Zenith Retail', 'business_type' => 'Retailer', 'industry_sector' => 'Consumer Goods',
                 'gstin' => '24AABCB5678B1Z2', 'pan' => 'AABCB5678B', 'website' => 'https://zenithretail.in',
-                'turnover' => 'Œì√©‚ï£1-5 Crores', 'employees' => 45, 'contact_name' => 'Priya Patel', 'designation' => 'Purchase Manager',
+                'turnover' => 'GÈ¶1-5 Crores', 'employees' => 45, 'contact_name' => 'Priya Patel', 'designation' => 'Purchase Manager',
                 'mobile' => '9123456789', 'whatsapp' => '9123456789', 'email' => 'priya@zenithretail.in', 'alternate_email' => 'purchase@zenithretail.in',
                 'linkedin' => '', 'address_line1' => '102 Royal Arcade', 'address_line2' => 'C.G. Road', 'city' => 'Ahmedabad',
                 'state' => 'Gujarat', 'pincode' => '380009', 'country' => 'India', 'bank_name' => 'ICICI Bank',
@@ -237,7 +237,7 @@ try {
             [
                 'company_name' => 'Nova Software Solutions', 'business_type' => 'Service', 'industry_sector' => 'Information Technology',
                 'gstin' => '29AABCC9012C1Z3', 'pan' => 'AABCC9012C', 'website' => 'https://novasoft.io',
-                'turnover' => 'Œì√©‚ï£10-25 Crores', 'employees' => 250, 'contact_name' => 'Rohan Murthy', 'designation' => 'CTO',
+                'turnover' => 'GÈ¶10-25 Crores', 'employees' => 250, 'contact_name' => 'Rohan Murthy', 'designation' => 'CTO',
                 'mobile' => '8887776665', 'whatsapp' => '8887776665', 'email' => 'rohan@novasoft.io', 'alternate_email' => '',
                 'linkedin' => 'https://linkedin.com/in/rohan-nova', 'address_line1' => 'Block B, Tech Park', 'address_line2' => 'Whitefield',
                 'city' => 'Bengaluru', 'state' => 'Karnataka', 'pincode' => '560066', 'country' => 'India', 'bank_name' => 'Axis Bank',
@@ -248,7 +248,7 @@ try {
             [
                 'company_name' => 'Matrix Logistics', 'business_type' => 'Service', 'industry_sector' => 'Logistics',
                 'gstin' => '19AABCD3456D1Z4', 'pan' => 'AABCD3456D', 'website' => 'https://matrixlogistics.com',
-                'turnover' => 'Œì√©‚ï£1-5 Crores', 'employees' => 80, 'contact_name' => 'Subhash Bose', 'designation' => 'Operations Head',
+                'turnover' => 'GÈ¶1-5 Crores', 'employees' => 80, 'contact_name' => 'Subhash Bose', 'designation' => 'Operations Head',
                 'mobile' => '7776665554', 'whatsapp' => '', 'email' => 'subhash@matrixlogistics.com', 'alternate_email' => '',
                 'linkedin' => '', 'address_line1' => 'Salt Lake Sector V', 'address_line2' => 'Near College More', 'city' => 'Kolkata',
                 'state' => 'West Bengal', 'pincode' => '700091', 'country' => 'India', 'bank_name' => '', 'account_number' => '',
@@ -259,7 +259,7 @@ try {
             [
                 'company_name' => 'Elite Exports', 'business_type' => 'Trader', 'industry_sector' => 'Textiles',
                 'gstin' => '07AABCE7890E1Z5', 'pan' => 'AABCE7890E', 'website' => 'https://eliteexports.com',
-                'turnover' => 'Œì√©‚ï£25-50 Crores', 'employees' => 150, 'contact_name' => 'Vikram Goel', 'designation' => 'Managing Director',
+                'turnover' => 'GÈ¶25-50 Crores', 'employees' => 150, 'contact_name' => 'Vikram Goel', 'designation' => 'Managing Director',
                 'mobile' => '9998887776', 'whatsapp' => '9998887776', 'email' => 'vikram@eliteexports.com', 'alternate_email' => '',
                 'linkedin' => '', 'address_line1' => 'Okhla Phase III', 'address_line2' => '', 'city' => 'Delhi',
                 'state' => 'Delhi', 'pincode' => '110020', 'country' => 'India', 'bank_name' => '', 'account_number' => '', 'ifsc_code' => '',
@@ -282,7 +282,7 @@ try {
             [
                 'client_id' => $client_ids['Apex Industries'], 'type' => 'Pitch', 'subject' => 'Introduction to Custom ERP Solutions',
                 'body' => '<p>Dear Amit,</p><p>It was a pleasure speaking with you today. Here is the pitch for our ERP system...</p>',
-                'cc' => 'sales@auracrm.com', 'sent_by' => 'Rahul Sharma', 'sent_at' => date('Y-m-d H:i:s', strtotime('-25 days'))
+                'cc' => 'sales@bfsBFS Financial Services.com', 'sent_by' => 'Rahul Sharma', 'sent_at' => date('Y-m-d H:i:s', strtotime('-25 days'))
             ],
             [
                 'client_id' => $client_ids['Apex Industries'], 'type' => 'PPT', 'subject' => 'Enterprise CRM Proposal Deck',
@@ -352,17 +352,17 @@ try {
 
         // Mock Activity Logs
         $dummy_activities = [
-            ['description' => 'Apex Industries added by Rahul Sharma Œì√á√∂ 4 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-4 months'))],
-            ['description' => 'Zenith Retail added by Karan Singh Œì√á√∂ 3 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 months'))],
-            ['description' => 'Nova Software Solutions added by Rahul Sharma Œì√á√∂ 5 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-5 months'))],
-            ['description' => 'Elite Exports added by Anjali Mehta Œì√á√∂ 2 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-2 months'))],
-            ['description' => 'Matrix Logistics added by Anjali Mehta Œì√á√∂ Today 10am', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 hours'))],
-            ['description' => 'Email Pitch sent to Apex Industries by Rahul Sharma Œì√á√∂ 25 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-25 days'))],
-            ['description' => 'Presentation Deck (PPT) sent to Apex Industries by Rahul Sharma Œì√á√∂ 15 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-15 days'))],
-            ['description' => 'Quotation Q001 (Œì√©‚ï£1,77,000) created for Apex Industries Œì√á√∂ 8 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-8 days'))],
-            ['description' => 'Quotation Q002 approved for Nova Software Solutions Œì√á√∂ 30 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-30 days'))],
-            ['description' => 'Quotation Q003 rejected by Elite Exports Œì√á√∂ 18 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-18 days'))],
-            ['description' => 'Email Pitch sent to Zenith Retail by Karan Singh Œì√á√∂ 5 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-5 days'))]
+            ['description' => 'Apex Industries added by Rahul Sharma G«ˆ 4 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-4 months'))],
+            ['description' => 'Zenith Retail added by Karan Singh G«ˆ 3 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 months'))],
+            ['description' => 'Nova Software Solutions added by Rahul Sharma G«ˆ 5 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-5 months'))],
+            ['description' => 'Elite Exports added by Anjali Mehta G«ˆ 2 months ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-2 months'))],
+            ['description' => 'Matrix Logistics added by Anjali Mehta G«ˆ Today 10am', 'created_at' => date('Y-m-d H:i:s', strtotime('-3 hours'))],
+            ['description' => 'Email Pitch sent to Apex Industries by Rahul Sharma G«ˆ 25 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-25 days'))],
+            ['description' => 'Presentation Deck (PPT) sent to Apex Industries by Rahul Sharma G«ˆ 15 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-15 days'))],
+            ['description' => 'Quotation Q001 (GÈ¶1,77,000) created for Apex Industries G«ˆ 8 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-8 days'))],
+            ['description' => 'Quotation Q002 approved for Nova Software Solutions G«ˆ 30 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-30 days'))],
+            ['description' => 'Quotation Q003 rejected by Elite Exports G«ˆ 18 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-18 days'))],
+            ['description' => 'Email Pitch sent to Zenith Retail by Karan Singh G«ˆ 5 days ago', 'created_at' => date('Y-m-d H:i:s', strtotime('-5 days'))]
         ];
 
         $stmt_act = $db->prepare("INSERT INTO activities (description, created_at) VALUES (?, ?)");
@@ -929,7 +929,7 @@ if (isset($_GET['api'])) {
                 // Pending Follow-ups (Hot leads not closed/won/lost)
                 $pending_followups = $db->query("SELECT COUNT(*) FROM clients WHERE priority = 'Hot' AND overall_status IN ('New', 'Contacted', 'In Negotiation')")->fetchColumn();
                 
-                // Total Quotation Value (Œì√©‚ï£)
+                // Total Quotation Value (GÈ¶)
                 $total_quote_value = $db->query("SELECT SUM(total_amount) FROM quotations")->fetchColumn() ?: 0;
                 
                 // Clients with No Quotation Yet
@@ -1217,7 +1217,7 @@ if (isset($_GET['api'])) {
                 ]);
                 
                 // Log Action
-                $action_desc = "{$company_name} added by {$added_by} Œì√á√∂ Today " . date('h:i A');
+                $action_desc = "{$company_name} added by {$added_by} G«ˆ Today " . date('h:i A');
                 log_activity($action_desc);
                 
                 return_json(['success' => true, 'message' => 'Client profile locked & registered successfully!']);
@@ -1291,7 +1291,7 @@ if (isset($_GET['api'])) {
                 }
                 
                 // Log activity feed
-                $act_desc = "{$type} email sent to {$client['company_name']} by {$sent_by} Œì√á√∂ " . date('h:i A');
+                $act_desc = "{$type} email sent to {$client['company_name']} by {$sent_by} G«ˆ " . date('h:i A');
                 log_activity($act_desc);
                 
                 return_json([
@@ -1338,7 +1338,7 @@ if (isset($_GET['api'])) {
                 }
                 
                 // Write Activity logs
-                $act_desc = "Quotation {$quotation_number} (Œì√©‚ï£" . number_format($total_amount, 2, '.', ',') . ") drafted for {$c_name}";
+                $act_desc = "Quotation {$quotation_number} (GÈ¶" . number_format($total_amount, 2, '.', ',') . ") drafted for {$c_name}";
                 log_activity($act_desc);
                 
                 return_json(['success' => true, 'quotation_number' => $quotation_number, 'message' => "Quotation {$quotation_number} saved successfully!"]);
@@ -1465,7 +1465,7 @@ if (isset($_GET['api'])) {
                 $stmt->execute([$company_name, $address_line1, $address_line2, $city, $state, $pincode, $country, $gstin, $email, $mobile, $contact_person, $bank_name, $account_number, $ifsc_code, $smtp_host, $smtp_port, $smtp_username, $smtp_password, $smtp_encryption]);
                 
                 // Log activity
-                $act_desc = "Company settings & profile updated by {$contact_person} Œì√á√∂ Today " . date('h:i A');
+                $act_desc = "Company settings & profile updated by {$contact_person} G«ˆ Today " . date('h:i A');
                 log_activity($act_desc);
                 
                 return_json(['success' => true, 'message' => 'CRM Configurations updated successfully!']);
@@ -1484,7 +1484,7 @@ if (isset($_GET['api'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraCRM - Professional Client Management System</title>
+    <title>BFS Financial Services - Professional Client Management System</title>
     
     <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2700,7 +2700,7 @@ if (isset($_GET['api'])) {
         <div class="card" style="width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
             <div class="brand-container" style="justify-content: center; margin-bottom: 2rem;">
                 <div class="brand-logo">A</div>
-                <div class="brand-name" style="color: var(--text);">AuraCRM</div>
+                <div class="brand-name" style="color: var(--text);">BFS Financial Services</div>
             </div>
             <h2 style="text-align: center; margin-bottom: 1.5rem;">Welcome Back</h2>
             <form id="login-form" onsubmit="handleLogin(event)">
@@ -2733,7 +2733,7 @@ if (isset($_GET['api'])) {
     <aside>
         <div class="brand-container">
             <div class="brand-logo">A</div>
-            <div class="brand-name">AuraCRM</div>
+            <div class="brand-name">BFS Financial Services</div>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-item active" data-view="dashboard">
@@ -2819,7 +2819,7 @@ if (isset($_GET['api'])) {
         <header class="main-header">
             <div class="page-title">
                 <h1 id="view-title">Dashboard</h1>
-                <p id="view-subtitle">AuraCRM Operations Control Panel</p>
+                <p id="view-subtitle">BFS Financial Services Operations Control Panel</p>
             </div>
             <div class="user-pill">
                 <div class="user-avatar" id="header-user-avatar"><?php 
@@ -2974,11 +2974,11 @@ if (isset($_GET['api'])) {
                 <div class="card">
                     <div class="card-title-bar">
                         <h2>Add New Client Account</h2>
-                        <div class="badge-locked"><i data-lucide="lock"></i> Locked Entry Œì√á√∂ Permanent Record</div>
+                        <div class="badge-locked"><i data-lucide="lock"></i> Locked Entry G«ˆ Permanent Record</div>
                     </div>
                     
                     <!-- Business Information -->
-                    <div class="form-section-title">‚â°∆í√Ö√≥ Business Information</div>
+                    <div class="form-section-title">=É≈Û Business Information</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Business / Company Name</label>
@@ -3015,12 +3015,12 @@ if (isset($_GET['api'])) {
                             <label>Annual Turnover (approx.)</label>
                             <select name="turnover">
                                 <option value="" disabled selected>Select Turnover Tier</option>
-                                <option value="Under Œì√©‚ï£1 Crore">Under Œì√©‚ï£1 Crore</option>
-                                <option value="Œì√©‚ï£1-5 Crores">Œì√©‚ï£1-5 Crores</option>
-                                <option value="Œì√©‚ï£5-10 Crores">Œì√©‚ï£5-10 Crores</option>
-                                <option value="Œì√©‚ï£10-25 Crores">Œì√©‚ï£10-25 Crores</option>
-                                <option value="Œì√©‚ï£25-50 Crores">Œì√©‚ï£25-50 Crores</option>
-                                <option value="Œì√©‚ï£50+ Crores">Œì√©‚ï£50+ Crores</option>
+                                <option value="Under GÈ¶1 Crore">Under GÈ¶1 Crore</option>
+                                <option value="GÈ¶1-5 Crores">GÈ¶1-5 Crores</option>
+                                <option value="GÈ¶5-10 Crores">GÈ¶5-10 Crores</option>
+                                <option value="GÈ¶10-25 Crores">GÈ¶10-25 Crores</option>
+                                <option value="GÈ¶25-50 Crores">GÈ¶25-50 Crores</option>
+                                <option value="GÈ¶50+ Crores">GÈ¶50+ Crores</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -3030,7 +3030,7 @@ if (isset($_GET['api'])) {
                     </div>
 
                     <!-- Contact Person details -->
-                    <div class="form-section-title">‚â°∆í√¶¬øŒì√á√¨‚â°∆í√Ü‚ïù Contact Person Details</div>
+                    <div class="form-section-title">=ÉÊøG«Ï=É∆+ Contact Person Details</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Contact Person Name</label>
@@ -3063,7 +3063,7 @@ if (isset($_GET['api'])) {
                     </div>
 
                     <!-- Address details -->
-                    <div class="form-section-title">‚â°∆í√¥√¨ Address Details</div>
+                    <div class="form-section-title">=ÉÙÏ Address Details</div>
                     <div class="form-grid">
                         <div class="form-group full-width">
                             <label class="required">Address Line 1</label>
@@ -3092,7 +3092,7 @@ if (isset($_GET['api'])) {
                     </div>
 
                     <!-- Bank Details -->
-                    <div class="form-section-title">‚â°∆í√Ö¬™ Bank Details (Optional)</div>
+                    <div class="form-section-title">=É≈™ Bank Details (Optional)</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Bank Name</label>
@@ -3109,7 +3109,7 @@ if (isset($_GET['api'])) {
                     </div>
 
                     <!-- Other metadata info -->
-                    <div class="form-section-title">‚â°∆í√¥¬• Other Info</div>
+                    <div class="form-section-title">=ÉÙ• Other Info</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Lead Source</label>
@@ -3125,9 +3125,9 @@ if (isset($_GET['api'])) {
                         <div class="form-group">
                             <label class="required">Priority Level</label>
                             <select name="priority" required>
-                                <option value="Hot">‚â°∆í√∂√ë Hot</option>
-                                <option value="Warm" selected>Œì√ø√á‚à©‚ïï√Ö Warm</option>
-                                <option value="Cold">Œì¬•√§‚à©‚ïï√Ö Cold</option>
+                                <option value="Hot">=Éˆ— Hot</option>
+                                <option value="Warm" selected>Gˇ«n+≈ Warm</option>
+                                <option value="Cold">G•‰n+≈ Cold</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -3168,11 +3168,11 @@ if (isset($_GET['api'])) {
                     <label>By Status</label>
                     <select id="filter-status" onchange="triggerSearch()">
                         <option value="">All Statuses</option>
-                        <option value="New">‚â°∆í√∂‚ï° New</option>
-                        <option value="Contacted">‚â°∆í∆í√° Contacted</option>
-                        <option value="In Negotiation">‚â°∆í∆í√≠ In Negotiation</option>
-                        <option value="Closed Won">‚â°∆í∆í√≥ Closed Won</option>
-                        <option value="Closed Lost">‚â°∆í√∂‚î§ Closed Lost</option>
+                        <option value="New">=Éˆ¶ New</option>
+                        <option value="Contacted">=ÉÉ· Contacted</option>
+                        <option value="In Negotiation">=ÉÉÌ In Negotiation</option>
+                        <option value="Closed Won">=ÉÉÛ Closed Won</option>
+                        <option value="Closed Lost">=Éˆ¶ Closed Lost</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -3340,8 +3340,8 @@ if (isset($_GET['api'])) {
                             <tr>
                                 <th style="width: 40%;">Item Description</th>
                                 <th style="width: 10%;">Qty</th>
-                                <th style="width: 15%;">Rate (Œì√©‚ï£)</th>
-                                <th style="width: 15%;">Taxable Value (Œì√©‚ï£)</th>
+                                <th style="width: 15%;">Rate (GÈ¶)</th>
+                                <th style="width: 15%;">Taxable Value (GÈ¶)</th>
                                 <th style="width: 15%;">GST Rate</th>
                                 <th style="width: 5%;"></th>
                             </tr>
@@ -3358,15 +3358,15 @@ if (isset($_GET['api'])) {
                         <div class="summary-block">
                             <div class="summary-row">
                                 <span>Subtotal (Taxable):</span>
-                                <strong id="quote-subtotal">Œì√©‚ï£0.00</strong>
+                                <strong id="quote-subtotal">GÈ¶0.00</strong>
                             </div>
                             <div class="summary-row">
                                 <span>GST Amount:</span>
-                                <strong id="quote-gst">Œì√©‚ï£0.00</strong>
+                                <strong id="quote-gst">GÈ¶0.00</strong>
                             </div>
                             <div class="summary-row grand-total">
                                 <span>Grand Total:</span>
-                                <strong id="quote-grand-total">Œì√©‚ï£0.00</strong>
+                                <strong id="quote-grand-total">GÈ¶0.00</strong>
                             </div>
                         </div>
                     </div>
@@ -3475,19 +3475,19 @@ if (isset($_GET['api'])) {
             <div class="stats-grid" style="grid-template-columns: repeat(4,1fr); margin-bottom:1.5rem;">
                 <div class="stat-card" style="border-left:4px solid #6366f1;">
                     <div class="stat-card-header"><span class="stat-label">Total Leads</span><i data-lucide="target" style="color:#6366f1;width:20px;height:20px;"></i></div>
-                    <div class="stat-value" id="lead-stat-total">Œì√á√∂</div>
+                    <div class="stat-value" id="lead-stat-total">G«ˆ</div>
                 </div>
                 <div class="stat-card" style="border-left:4px solid var(--danger);">
                     <div class="stat-card-header"><span class="stat-label">Hot Leads</span><i data-lucide="flame" style="color:var(--danger);width:20px;height:20px;"></i></div>
-                    <div class="stat-value" id="lead-stat-hot">Œì√á√∂</div>
+                    <div class="stat-value" id="lead-stat-hot">G«ˆ</div>
                 </div>
                 <div class="stat-card" style="border-left:4px solid var(--success);">
                     <div class="stat-card-header"><span class="stat-label">Won Leads</span><i data-lucide="trophy" style="color:var(--success);width:20px;height:20px;"></i></div>
-                    <div class="stat-value" id="lead-stat-won">Œì√á√∂</div>
+                    <div class="stat-value" id="lead-stat-won">G«ˆ</div>
                 </div>
                 <div class="stat-card" style="border-left:4px solid var(--secondary);">
                     <div class="stat-card-header"><span class="stat-label">In Progress</span><i data-lucide="clock" style="color:var(--secondary);width:20px;height:20px;"></i></div>
-                    <div class="stat-value" id="lead-stat-progress">Œì√á√∂</div>
+                    <div class="stat-value" id="lead-stat-progress">G«ˆ</div>
                 </div>
             </div>
 
@@ -3495,8 +3495,8 @@ if (isset($_GET['api'])) {
                 <!-- ADD / EDIT LEAD FORM -->
                 <div class="card" style="position:sticky;top:20px;">
                     <div class="card-title-bar">
-                        <h2 id="lead-form-title">Œì‚Çß√≤ New Lead</h2>
-                        <button type="button" class="btn btn-secondary" style="padding:4px 10px;font-size:12px;margin-left:auto;" onclick="openBulkUploadModal()">‚â°∆í√¥√± Bulk Upload</button>
+                        <h2 id="lead-form-title">GPÚ New Lead</h2>
+                        <button type="button" class="btn btn-secondary" style="padding:4px 10px;font-size:12px;margin-left:auto;" onclick="openBulkUploadModal()">=ÉÙÒ Bulk Upload</button>
                     </div>
                     <form id="lead-form" onsubmit="saveLead(event)">
                         <input type="hidden" name="lead_id" id="lead-id-hidden" value="">
@@ -3531,9 +3531,9 @@ if (isset($_GET['api'])) {
                             <div class="form-group">
                                 <label>Priority</label>
                                 <select name="priority" id="lf-priority">
-                                    <option value="Hot">‚â°∆í√∂‚î§ Hot</option>
-                                    <option value="Warm" selected>‚â°∆í∆í√≠ Warm</option>
-                                    <option value="Cold">‚â°∆í√∂‚ï° Cold</option>
+                                    <option value="Hot">=Éˆ¶ Hot</option>
+                                    <option value="Warm" selected>=ÉÉÌ Warm</option>
+                                    <option value="Cold">=Éˆ¶ Cold</option>
                                 </select>
                             </div>
                         </div>
@@ -3545,8 +3545,8 @@ if (isset($_GET['api'])) {
                                 <option value="Interested">Interested</option>
                                 <option value="Proposal Sent">Proposal Sent</option>
                                 <option value="Negotiation">Negotiation</option>
-                                <option value="Won">Won Œì¬£√†</option>
-                                <option value="Lost">Lost Œì¬•√Æ</option>
+                                <option value="Won">Won G£‡</option>
+                                <option value="Lost">Lost G•Ó</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -3567,7 +3567,7 @@ if (isset($_GET['api'])) {
                 <!-- LEADS TABLE -->
                 <div class="card">
                     <div class="card-title-bar" style="flex-wrap:wrap; gap:10px;">
-                        <h2>‚â°∆í√¥√Ø All Leads</h2>
+                        <h2>=ÉÙÔ All Leads</h2>
                         <div style="display:flex;gap:8px;flex-wrap:wrap;">
                             <input type="text" id="lead-search" placeholder="Search name / company / mobile..." style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--text);font-size:13px;min-width:200px;" oninput="loadLeads()">
                             <select id="lead-filter-stage" onchange="loadLeads()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--text);font-size:13px;">
@@ -3577,14 +3577,14 @@ if (isset($_GET['api'])) {
                                 <option value="Interested">Interested</option>
                                 <option value="Proposal Sent">Proposal Sent</option>
                                 <option value="Negotiation">Negotiation</option>
-                                <option value="Won">Won Œì¬£√†</option>
-                                <option value="Lost">Lost Œì¬•√Æ</option>
+                                <option value="Won">Won G£‡</option>
+                                <option value="Lost">Lost G•Ó</option>
                             </select>
                             <select id="lead-filter-priority" onchange="loadLeads()" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--text);font-size:13px;">
                                 <option value="">All Priorities</option>
-                                <option value="Hot">‚â°∆í√∂‚î§ Hot</option>
-                                <option value="Warm">‚â°∆í∆í√≠ Warm</option>
-                                <option value="Cold">‚â°∆í√∂‚ï° Cold</option>
+                                <option value="Hot">=Éˆ¶ Hot</option>
+                                <option value="Warm">=ÉÉÌ Warm</option>
+                                <option value="Cold">=Éˆ¶ Cold</option>
                             </select>
                         </div>
                     </div>
@@ -3639,19 +3639,19 @@ if (isset($_GET['api'])) {
                 <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-top: 14px; margin-bottom: 24px;">
                     <div class="stat-card" style="padding: 16px;">
                         <span class="stat-label" style="font-size: 11px;">Total Drafted Value</span>
-                        <div class="stat-value" id="qs-total" style="font-size: 20px; margin-top: 4px;">Œì√©‚ï£0.00</div>
+                        <div class="stat-value" id="qs-total" style="font-size: 20px; margin-top: 4px;">GÈ¶0.00</div>
                     </div>
                     <div class="stat-card" style="padding: 16px; border-left: 4px solid var(--warning);">
                         <span class="stat-label" style="font-size: 11px; color: var(--warning);">Pending Value</span>
-                        <div class="stat-value" id="qs-pending" style="font-size: 20px; color: var(--warning); margin-top: 4px;">Œì√©‚ï£0.00</div>
+                        <div class="stat-value" id="qs-pending" style="font-size: 20px; color: var(--warning); margin-top: 4px;">GÈ¶0.00</div>
                     </div>
                     <div class="stat-card" style="padding: 16px; border-left: 4px solid var(--success);">
                         <span class="stat-label" style="font-size: 11px; color: var(--success);">Approved (Won) Value</span>
-                        <div class="stat-value" id="qs-approved" style="font-size: 20px; color: var(--success); margin-top: 4px;">Œì√©‚ï£0.00</div>
+                        <div class="stat-value" id="qs-approved" style="font-size: 20px; color: var(--success); margin-top: 4px;">GÈ¶0.00</div>
                     </div>
                     <div class="stat-card" style="padding: 16px; border-left: 4px solid var(--danger);">
                         <span class="stat-label" style="font-size: 11px; color: var(--danger);">Rejected Value</span>
-                        <div class="stat-value" id="qs-rejected" style="font-size: 20px; color: var(--danger); margin-top: 4px;">Œì√©‚ï£0.00</div>
+                        <div class="stat-value" id="qs-rejected" style="font-size: 20px; color: var(--danger); margin-top: 4px;">GÈ¶0.00</div>
                     </div>
                 </div>
 
@@ -3662,9 +3662,9 @@ if (isset($_GET['api'])) {
                             <tr>
                                 <th style="width: 10%;">Quote No.</th>
                                 <th style="width: 25%;">Client Company Name</th>
-                                <th style="width: 15%;">Subtotal (Œì√©‚ï£)</th>
-                                <th style="width: 15%;">GST Amount (Œì√©‚ï£)</th>
-                                <th style="width: 15%;">Total Value (Œì√©‚ï£)</th>
+                                <th style="width: 15%;">Subtotal (GÈ¶)</th>
+                                <th style="width: 15%;">GST Amount (GÈ¶)</th>
+                                <th style="width: 15%;">Total Value (GÈ¶)</th>
                                 <th style="width: 12%;">Status</th>
                                 <th style="width: 8%;">Actions</th>
                             </tr>
@@ -3712,7 +3712,7 @@ if (isset($_GET['api'])) {
                         <div class="badge-locked" style="background-color: var(--primary-light); color: var(--primary);"><i data-lucide="settings"></i> Configurations</div>
                     </div>
                     
-                    <div class="form-section-title">‚â°∆í√Ö√≥ Company Profile & Billing Details</div>
+                    <div class="form-section-title">=É≈Û Company Profile & Billing Details</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Company / Business Name</label>
@@ -3756,7 +3756,7 @@ if (isset($_GET['api'])) {
                         </div>
                     </div>
 
-                    <div class="form-section-title">‚â°∆í√Ö¬™ Bank Payment Details (Shown on Invoices)</div>
+                    <div class="form-section-title">=É≈™ Bank Payment Details (Shown on Invoices)</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Bank Name</label>
@@ -3772,7 +3772,7 @@ if (isset($_GET['api'])) {
                         </div>
                     </div>
 
-                    <div class="form-section-title">‚â°∆í√¶√± User / Staff Account</div>
+                    <div class="form-section-title">=ÉÊÒ User / Staff Account</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Staff Contact Person (Staff Name)</label>
@@ -3780,7 +3780,7 @@ if (isset($_GET['api'])) {
                         </div>
                     </div>
                     
-                    <div class="form-section-title">‚â°∆í√¥¬∫ SMTP Email Configuration</div>
+                    <div class="form-section-title">=ÉÙ∫ SMTP Email Configuration</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>SMTP Host</label>
@@ -3822,7 +3822,7 @@ if (isset($_GET['api'])) {
                         <h2>Manage Users</h2>
                         <div class="badge-locked" style="background-color: var(--secondary-light); color: var(--secondary);"><i data-lucide="shield"></i> Admin Only</div>
                     </div>
-                    <div class="form-section-title">Œì‚Çß√≤ Register New Staff</div>
+                    <div class="form-section-title">GPÚ Register New Staff</div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="required">Username</label>
@@ -3840,7 +3840,7 @@ if (isset($_GET['api'])) {
                     <div class="form-actions">
                         <button type="submit" class="btn btn-secondary">Create User</button>
                     </div>
-                    <div class="form-section-title" style="margin-top: 2rem;">‚â°∆í√¶√ë Existing Users</div>
+                    <div class="form-section-title" style="margin-top: 2rem;">=ÉÊ— Existing Users</div>
                     <div id="users-list-container">
                         <p style="color: var(--text-light); font-size: 0.9rem;">Loading users...</p>
                     </div>
@@ -3919,7 +3919,7 @@ if (isset($_GET['api'])) {
                 <div class="card-title-bar">
                     <h2>Email Templates Manager</h2>
                 </div>
-                <div class="form-section-title">Œì‚Çß√≤ Create New Template</div>
+                <div class="form-section-title">GPÚ Create New Template</div>
                 <form id="create-template-form" onsubmit="saveTemplate(event)" enctype="multipart/form-data">
                     <div class="form-grid">
                         <div class="form-group">
@@ -3952,7 +3952,7 @@ if (isset($_GET['api'])) {
                     </div>
                 </form>
                 
-                <div class="form-section-title" style="margin-top: 2rem;">‚â°∆í√¥√ú Saved Templates</div>
+                <div class="form-section-title" style="margin-top: 2rem;">=ÉÙ‹ Saved Templates</div>
                 <div id="templates-list-container">
                     <p style="color: var(--text-light); font-size: 0.9rem;">Loading templates...</p>
                 </div>
@@ -3971,19 +3971,19 @@ if (isset($_GET['api'])) {
                         } else {
                             let html = '<ul style="list-style:none; padding:0; margin:0;">';
                             data.forEach(t => {
-                                let attachBadge = t.attachment_name ? `<span style="font-size: 11px; background: var(--secondary-light); color: var(--secondary); padding: 2px 6px; border-radius: 4px; margin-left: 8px;">‚â°∆í√¥√Ñ Attached File</span>` : '';
+                                let attachBadge = t.attachment_name ? `<span style="font-size: 11px; background: var(--secondary-light); color: var(--secondary); padding: 2px 6px; border-radius: 4px; margin-left: 8px;">=ÉÙƒ Attached File</span>` : '';
                                 
                                 let buttonsHtml = ``;
                                 if (t.delete_requested == 1) {
                                     if (currentUser && currentUser.role === 'Admin') {
                                         buttonsHtml = `
                                             <div style="display:flex; gap:0.5rem;">
-                                                <button type="button" onclick="approveDeleteTemplate(${t.id})" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;">Œì¬£√† Approve</button>
-                                                <button type="button" onclick="rejectDeleteTemplate(${t.id})" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">Œì¬•√Æ Reject</button>
+                                                <button type="button" onclick="approveDeleteTemplate(${t.id})" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;">G£‡ Approve</button>
+                                                <button type="button" onclick="rejectDeleteTemplate(${t.id})" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">G•Ó Reject</button>
                                             </div>
                                         `;
                                     } else {
-                                        buttonsHtml = `<span style="font-size:12px; color:#ef4444; border:1px solid #fca5a5; padding: 0.4rem 0.8rem; border-radius: 6px; background: #fee2e2;">‚â°∆í√∂‚î§ Pending Admin Approval</span>`;
+                                        buttonsHtml = `<span style="font-size:12px; color:#ef4444; border:1px solid #fca5a5; padding: 0.4rem 0.8rem; border-radius: 6px; background: #fee2e2;">=Éˆ¶ Pending Admin Approval</span>`;
                                     }
                                 } else {
                                     buttonsHtml = `<button type="button" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 12px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;" onclick="deleteTemplate(${t.id})">Delete</button>`;
@@ -4058,7 +4058,7 @@ if (isset($_GET['api'])) {
                         document.querySelector('select[name="type"]').value = t.type;
                         
                         if (t.attachment_name) {
-                            badge.textContent = `‚â°∆í√¥√Ñ Will automatically attach: ${t.attachment_name}`;
+                            badge.textContent = `=ÉÙƒ Will automatically attach: ${t.attachment_name}`;
                             badge.style.display = 'block';
                         } else {
                             badge.style.display = 'none';
@@ -4091,12 +4091,12 @@ if (isset($_GET['api'])) {
                                         if (currentUser && currentUser.role === 'Admin') {
                                             buttonsHtml = `
                                                 <div style="display:flex; gap:0.5rem;">
-                                                    <button type="button" onclick="approveDeletePpt(${p.id})" style="padding: 4px 8px; font-size: 11px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;">Œì¬£√† Approve</button>
-                                                    <button type="button" onclick="rejectDeletePpt(${p.id})" style="padding: 4px 8px; font-size: 11px; background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">Œì¬•√Æ Reject</button>
+                                                    <button type="button" onclick="approveDeletePpt(${p.id})" style="padding: 4px 8px; font-size: 11px; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; border-radius: 6px; cursor: pointer;">G£‡ Approve</button>
+                                                    <button type="button" onclick="rejectDeletePpt(${p.id})" style="padding: 4px 8px; font-size: 11px; background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">G•Ó Reject</button>
                                                 </div>
                                             `;
                                         } else {
-                                            buttonsHtml = `<span style="font-size:11px; color:#ef4444; border:1px solid #fca5a5; padding: 4px 8px; border-radius: 6px; background: #fee2e2;">‚â°∆í√∂‚î§ Pending</span>`;
+                                            buttonsHtml = `<span style="font-size:11px; color:#ef4444; border:1px solid #fca5a5; padding: 4px 8px; border-radius: 6px; background: #fee2e2;">=Éˆ¶ Pending</span>`;
                                         }
                                     } else {
                                         buttonsHtml = `<button type="button" class="btn btn-danger" style="padding: 4px 8px; font-size: 11px;" onclick="deletePpt(${p.id})">Delete</button>`;
@@ -4152,7 +4152,7 @@ if (isset($_GET['api'])) {
                 <div class="card-title-bar">
                     <h2>Presentation (PPT) Library</h2>
                 </div>
-                <div class="form-section-title">Œì‚Çß√≤ Upload New Presentation</div>
+                <div class="form-section-title">GPÚ Upload New Presentation</div>
                 <form id="ppt-upload-form" onsubmit="savePpt(event)">
                     <div class="form-grid">
                         <div class="form-group">
@@ -4169,7 +4169,7 @@ if (isset($_GET['api'])) {
                     </div>
                 </form>
                 
-                <div class="form-section-title" style="margin-top: 2rem;">‚â°∆í√¥√ú Saved Presentations</div>
+                <div class="form-section-title" style="margin-top: 2rem;">=ÉÙ‹ Saved Presentations</div>
                 <div id="ppts-list-container">
                     <p style="color: var(--text-light); font-size: 0.9rem;">Loading presentations...</p>
                 </div>
@@ -4200,7 +4200,7 @@ if (isset($_GET['api'])) {
     <div id="template-preview-modal" class="modal">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>‚â°∆í√¥¬• Template Preview</h2>
+                <h2>=ÉÙ• Template Preview</h2>
                 <span class="close" onclick="closeTemplatePreviewModal()">&times;</span>
             </div>
             <div class="modal-body" id="template-preview-body" style="white-space: pre-wrap; font-size: 14px; color: var(--text);">
@@ -4217,7 +4217,7 @@ if (isset($_GET['api'])) {
     <div id="bulk-upload-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>‚â°∆í√¥√± Upload Leads Data</h2>
+                <h2>=ÉÙÒ Upload Leads Data</h2>
                 <span class="close" onclick="closeBulkUploadModal()">&times;</span>
             </div>
             <div class="modal-body">
@@ -4231,7 +4231,7 @@ if (isset($_GET['api'])) {
                 </div>
                 
                 <div id="bulk-preview-container" style="display:none; margin-top:15px; border-top: 1px solid var(--border); padding-top: 15px;">
-                    <p style="font-weight:600; color:var(--success); text-align:center; margin-bottom:15px;">Œì¬£√† <span id="bulk-record-count">0</span> records parsed successfully.</p>
+                    <p style="font-weight:600; color:var(--success); text-align:center; margin-bottom:15px;">G£‡ <span id="bulk-record-count">0</span> records parsed successfully.</p>
                     
                     <div style="background:var(--bg-main); border-radius:8px; padding: 15px;">
                         <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
@@ -4239,9 +4239,9 @@ if (isset($_GET['api'])) {
                         </label>
                         
                         <div id="split-options-container" style="display:none; margin-top:10px; padding-left:25px;">
-                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="random" onchange="renderSplitUI()"> ‚â°∆í√Ñ‚ñì Split Randomly (Even/Odd)</label>
-                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="serial" onchange="renderSplitUI()"> ‚â°∆í√∂√≥ Split by Serial</label>
-                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="location" onchange="renderSplitUI()"> ‚â°∆í√¥√¨ Split by Location</label>
+                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="random" onchange="renderSplitUI()"> =Éƒ¶ Split Randomly (Even/Odd)</label>
+                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="serial" onchange="renderSplitUI()"> =ÉˆÛ Split by Serial</label>
+                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="location" onchange="renderSplitUI()"> =ÉÙÏ Split by Location</label>
                             
                             <div id="dynamic-split-ui" style="margin-top:15px; padding:10px; border:1px solid var(--border); border-radius:6px; background:var(--bg-card); display:none;">
                             </div>
@@ -4279,7 +4279,7 @@ if (isset($_GET['api'])) {
             const footer = document.getElementById("template-preview-footer");
             if(t.attachment_name) {
                 footer.style.display = "block";
-                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;">‚â°∆í√¥√Ñ Download Attachment</a>`;
+                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;">=ÉÙƒ Download Attachment</a>`;
             } else {
                 footer.style.display = "none";
             }
@@ -4375,10 +4375,10 @@ if (isset($_GET['api'])) {
                     
                     // Adjust Header Text Details
                     const titles = {
-                        'dashboard': { title: 'Dashboard', sub: 'AuraCRM Operations Control Panel' },
+                        'dashboard': { title: 'Dashboard', sub: 'BFS Financial Services Operations Control Panel' },
                         'preleads': { title: 'Pre-Leads (Raw Data)', sub: 'Manage raw data and unverified prospects' },
-                        'leads': { title: 'Lead Management', sub: '‚â°∆í√Ñ¬ª Capture, track and convert leads into clients' },
-                        'add-client': { title: 'Register Client Account', sub: '‚â°∆í√∂√Ü Lock-in customer profile parameters permanently' },
+                        'leads': { title: 'Lead Management', sub: '=Éƒª Capture, track and convert leads into clients' },
+                        'add-client': { title: 'Register Client Account', sub: '=Éˆ∆ Lock-in customer profile parameters permanently' },
                         'search-crm': { title: 'Search & Tracking Dashboard', sub: 'Interactive CRM conversion tracker and client card catalog' },
                         'send-email': { title: 'Communication Center', sub: 'Compose and dispatch simulated customer interaction emails' },
                         'create-quotation': { title: 'Quotation Builder Suite', sub: 'Create items proposals with instant Indian GST taxation logic' },
@@ -4459,7 +4459,7 @@ if (isset($_GET['api'])) {
             if (x.length > 1) {
                 res += '.' + x[1].substring(0, 2);
             }
-            return 'Œì√©‚ï£' + res;
+            return 'GÈ¶' + res;
         }
 
         // ==========================================
@@ -4779,7 +4779,7 @@ if (isset($_GET['api'])) {
                         </div>
                         <div class="client-card-meta">
                             <i data-lucide="user" style="width: 12px; height: 12px;"></i>
-                            <span>${c.contact_name} Œì√á√∂ ${c.designation || 'Client Contact'}</span>
+                            <span>${c.contact_name} G«ˆ ${c.designation || 'Client Contact'}</span>
                         </div>
                         <div class="client-card-meta">
                             <i data-lucide="phone" style="width: 12px; height: 12px;"></i>
@@ -5005,7 +5005,7 @@ if (isset($_GET['api'])) {
                 if (emailSelect) emailSelect.innerHTML = '<option value="" disabled selected>Choose client account...</option>' + optHtml;
                 if (quoteSelect) quoteSelect.innerHTML = '<option value="" disabled selected>Choose client account...</option>' + optHtml;
             } catch (err) {
-                // Silent fail Œì√á√∂ do not show error toast on initial load
+                // Silent fail G«ˆ do not show error toast on initial load
                 console.warn('refreshClientDropdowns:', err);
             }
         }
@@ -5105,7 +5105,7 @@ if (isset($_GET['api'])) {
                 <td><input type="text" placeholder="Item/Service name description..." required class="item-name"></td>
                 <td><input type="number" min="1" value="1" required class="item-qty" oninput="calculateRowMath('${rowId}')"></td>
                 <td><input type="number" min="0.01" step="0.01" placeholder="0.00" required class="item-rate" oninput="calculateRowMath('${rowId}')"></td>
-                <td><input type="text" readonly value="Œì√©‚ï£0.00" class="item-taxval" style="background:#f1f5f9; font-weight: 500;"></td>
+                <td><input type="text" readonly value="GÈ¶0.00" class="item-taxval" style="background:#f1f5f9; font-weight: 500;"></td>
                 <td>
                     <select class="item-gst" onchange="calculateRowMath('${rowId}')">
                         <option value="0">0% Exempt</option>
@@ -5267,9 +5267,9 @@ if (isset($_GET['api'])) {
         };
 
         const PRIORITY_BADGE = {
-            'Hot':  '<span style="background:#fee2e2;color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">‚â°∆í√∂‚î§ Hot</span>',
-            'Warm': '<span style="background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">‚â°∆í∆í√≠ Warm</span>',
-            'Cold': '<span style="background:#dbeafe;color:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">‚â°∆í√∂‚ï° Cold</span>'
+            'Hot':  '<span style="background:#fee2e2;color:#ef4444;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">=Éˆ¶ Hot</span>',
+            'Warm': '<span style="background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">=ÉÉÌ Warm</span>',
+            'Cold': '<span style="background:#dbeafe;color:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;">=Éˆ¶ Cold</span>'
         };
 
         // ==========================================
@@ -5359,7 +5359,7 @@ if (isset($_GET['api'])) {
             const res = await fetch('?api=promote_prelead', { method:'POST', body:fd });
             const data = await res.json();
             if(data.success) { 
-                showNotification("‚â°∆í√ú√á " + data.message, 'success'); 
+                showNotification("=É‹« " + data.message, 'success'); 
                 loadPreLeads(); 
                 loadLeads(); // refresh main leads
             } else {
@@ -5438,7 +5438,7 @@ if (isset($_GET['api'])) {
                     return `<tr style="border-bottom:1px solid var(--border);transition:background .15s;" onmouseover="this.style.background='var(--bg-color)'" onmouseout="this.style.background=''">
                         <td style="padding:12px;">
                             <div style="font-weight:600;color:var(--text);">${l.lead_name}</div>
-                            <div style="font-size:11px;color:var(--text-light);">${l.company_name || 'Œì√á√∂'}</div>
+                            <div style="font-size:11px;color:var(--text-light);">${l.company_name || 'G«ˆ'}</div>
                         </td>
                         <td style="padding:12px;font-size:13px;">${l.mobile}</td>
                         <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.lead_source}</td>
@@ -5450,12 +5450,12 @@ if (isset($_GET['api'])) {
                                 ).join('')}
                             </select>
                         </td>
-                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || 'Œì√á√∂'}</td>
+                        <td style="padding:12px;font-size:12px;color:var(--text-light);">${l.assigned_to || 'G«ˆ'}</td>
                         <td style="padding:12px;">
                             <div style="display:flex;gap:6px;">
-                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">Œì¬£√Ö‚à©‚ïï√Ö</button>` : ''}
-                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">‚â°∆í√∂√§</button>
-                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">‚â°∆í√π√¶‚à©‚ïï√Ö</button>` : ''}
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="editLead(${l.id})" title="Edit">G£≈n+≈</button>` : ''}
+                                <button class="btn btn-secondary" style="padding:4px 10px;font-size:11px;background:#dcfce7;color:#166534;border:none;" onclick="convertToClient(${l.id})" title="Convert to Client">=Éˆ‰</button>
+                                ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" style="padding:4px 10px;font-size:11px;" onclick="deleteLead(${l.id})" title="Delete">=É˘Ên+≈</button>` : ''}
                             </div>
                         </td>
                     </tr>`;
@@ -5504,7 +5504,7 @@ if (isset($_GET['api'])) {
                 document.getElementById('lf-assigned').value = l.assigned_to || '';
                 document.getElementById('lf-notes').value    = l.notes || '';
                 
-                document.getElementById('lead-form-title').innerText = 'Œì¬£√Ö‚à©‚ïï√Ö Edit Lead';
+                document.getElementById('lead-form-title').innerText = 'G£≈n+≈ Edit Lead';
                 document.getElementById('lead-submit-btn').innerText = 'Update Lead';
                 document.getElementById('lead-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch(err) {
@@ -5564,7 +5564,7 @@ if (isset($_GET['api'])) {
         function resetLeadForm() {
             document.getElementById('lead-form').reset();
             document.getElementById('lead-id-hidden').value = '';
-            document.getElementById('lead-form-title').innerText = 'Œì‚Çß√≤ New Lead';
+            document.getElementById('lead-form-title').innerText = 'GPÚ New Lead';
             document.getElementById('lead-submit-btn').innerText = 'Save Lead';
         }
 
@@ -5793,9 +5793,9 @@ if (isset($_GET['api'])) {
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 6%; text-align: center;">S.No</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 50%; text-align: left;">Item/Service Specification</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 8%; text-align: center;">Qty</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Rate (Œì√©‚ï£)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Rate (GÈ¶)</th>
                                 <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 10%; text-align: center;">GST</th>
-                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Total (Œì√©‚ï£)</th>
+                                <th style="border: 1px solid #cbd5e1; padding: 12px 10px; width: 14%; text-align: right;">Total (GÈ¶)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -6081,7 +6081,7 @@ if (isset($_GET['api'])) {
                 locations.forEach(loc => {
                     locHTML += `
                         <div class="loc-row" data-loc="${loc}" style="display:flex;gap:10px;margin-bottom:8px;align-items:center;">
-                            <span style="flex:1;font-weight:600;">‚â°∆í√¥√¨ ${loc}</span>
+                            <span style="flex:1;font-weight:600;">=ÉÙÏ ${loc}</span>
                             <select class="l-staff" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:4px;">${userOptions}</select>
                         </div>
                     `;

@@ -7,7 +7,7 @@
     <div id="template-preview-modal" class="modal">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h2>📝 Template Preview</h2>
+                <h2> Template Preview</h2>
                 <span class="close" onclick="closeTemplatePreviewModal()">&times;</span>
             </div>
             <div class="modal-body" id="template-preview-body" style="white-space: pre-wrap; font-size: 14px; color: var(--text-primary); padding: 15px 0;">
@@ -17,30 +17,83 @@
         </div>
     </div>
     
-    <!-- Reminder Modal -->
-    <div id="reminder-modal" class="modal">
-        <div class="modal-content" style="max-width:400px;">
+    <!-- Advanced Global Reminder Modal -->
+    <div id="reminder-modal" class="modal" style="z-index: 100000;">
+        <div class="modal-content" style="max-width:550px;">
             <div class="modal-header">
-                <h2>⏰ Set Reminder</h2>
+                <h2 style="display:flex; align-items:center; gap:8px;"><i data-lucide="bell-ring" style="width:20px;height:20px;color:var(--primary);"></i> Set Reminder</h2>
                 <span class="close" onclick="closeReminderModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="reminder-form" onsubmit="handleGlobalReminderSubmit(event)">
-                    <input type="hidden" id="rem_lead_type" name="lead_type">
-                    <input type="hidden" id="rem_lead_id" name="lead_id">
+                    <input type="hidden" id="rem_lead_type" name="reference_type">
+                    <input type="hidden" id="rem_lead_id" name="reference_id">
+                    <input type="hidden" id="rem_ref_label" name="reference_label">
+                    
                     <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Date & Time</label>
-                        <input type="datetime-local" id="rem_date" name="remind_at" required>
+                        <label style="font-size:13px; font-weight:600; color:var(--text-primary);">Title / Subject *</label>
+                        <input type="text" id="rem_title" name="title" required placeholder="e.g. Call back regarding pricing" class="field-input">
                     </div>
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label>Notes (e.g. Call back regarding pricing)</label>
-                        <textarea id="rem_notes" name="notes" rows="3" placeholder="Add specific task remarks..."></textarea>
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                        <div class="form-group">
+                            <label style="font-size:13px; font-weight:600; color:var(--text-primary);">Date & Time *</label>
+                            <input type="datetime-local" id="rem_date" name="remind_at" required class="field-input">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:13px; font-weight:600; color:var(--text-primary);">Priority</label>
+                            <select id="rem_priority" name="priority" class="field-input">
+                                <option value="High">High (Urgent)</option>
+                                <option selected value="Medium">Medium (Standard)</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%;">Save Reminder</button>
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:12px;">
+                        <div class="form-group">
+                            <label style="font-size:13px; font-weight:600; color:var(--text-primary);">Category</label>
+                            <select id="rem_category" name="reminder_category" class="field-input">
+                                <option value="Follow-up">Follow-up</option>
+                                <option value="Call Back">Call Back</option>
+                                <option value="Bank Visit">Bank Visit</option>
+                                <option value="Document Chase">Document Chase</option>
+                                <option value="Payout Follow-up">Payout Follow-up</option>
+                                <option value="Referral Meeting">Referral Meeting</option>
+                                <option value="Field Visit">Field Visit</option>
+                            </select>
+                        </div>
+                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'Admin'): ?>
+                        <div class="form-group">
+                            <label style="font-size:13px; font-weight:600; color:var(--text-primary);">Assign To</label>
+                            <select id="rem_assigned" name="assigned_to" class="field-input">
+                                <option value="<?= htmlspecialchars($_SESSION['username'] ?? '') ?>"><?= htmlspecialchars($_SESSION['username'] ?? '') ?> (Me)</option>
+                                <?php 
+                                    if(isset($db)) {
+                                        $all_staff = $db->query("SELECT username FROM users WHERE is_active=1 ORDER BY username")->fetchAll(PDO::FETCH_COLUMN);
+                                        foreach ($all_staff as $st) {
+                                            if ($st !== ($_SESSION['username'] ?? '')) echo "<option value=\"".htmlspecialchars($st)."\">".htmlspecialchars($st)."</option>";
+                                        }
+                                    }
+                                ?>
+                            </select>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="font-size:13px; font-weight:600; color:var(--text-primary);">Notes (Optional)</label>
+                        <textarea id="rem_notes" name="notes" rows="3" placeholder="Add specific task remarks..." class="field-input"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-weight:600; font-size:14px; display:flex; justify-content:center; align-items:center; gap:8px;"><i data-lucide="check-circle"></i> Save Professional Reminder</button>
                 </form>
             </div>
         </div>
     </div>
+    <style>
+    .field-input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 14px; background: #fff; transition: all 0.2s; box-sizing: border-box; }
+    .field-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.05); }
+    </style>
 
     <!-- Notification Toast System -->
     <div class="toast-container" id="toast-container"></div>
@@ -49,7 +102,7 @@
     <div id="bulk-upload-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📤 Upload Leads Data</h2>
+                <h2> Upload Leads Data</h2>
                 <span class="close" onclick="closeBulkUploadModal()">&times;</span>
             </div>
             <div class="modal-body">
@@ -59,11 +112,14 @@
                         Select File to Upload
                     </label>
                     <input type="file" id="bulk-upload-file" accept=".csv, .xls, .xlsx" onchange="handleBulkFileSelect(event)" style="display:none;">
-                    <p style="font-size:12px;color:var(--text-light);margin-top:10px;">Supported formats: CSV, XLS, XLSX</p>
+                    <div style="margin-top:15px; display:flex; justify-content:space-between; align-items:center;">
+                        <p style="font-size:12px;color:var(--text-light);margin:0;">Supported formats: CSV, XLS, XLSX</p>
+                        <button onclick="downloadBulkTemplate()" class="btn btn-secondary" style="font-size:12px; padding:6px 10px; display:flex; align-items:center; gap:4px;"><i data-lucide="download" style="width:14px;height:14px;"></i> Download Format</button>
+                    </div>
                 </div>
                 
                 <div id="bulk-preview-container" style="display:none; margin-top:15px; border-top: 1px solid var(--border); padding-top: 15px;">
-                    <p style="font-weight:600; color:var(--success); text-align:center; margin-bottom:15px;">✅ <span id="bulk-record-count">0</span> records parsed successfully.</p>
+                    <p style="font-weight:600; color:var(--success); text-align:center; margin-bottom:15px;"> <span id="bulk-record-count">0</span> records parsed successfully.</p>
                     
                     <div style="background:var(--bg-main); border-radius:8px; padding: 15px;">
                         <label style="display:flex; align-items:center; gap:8px; font-weight:600; cursor:pointer;">
@@ -71,9 +127,9 @@
                         </label>
                         
                         <div id="split-options-container" style="display:none; margin-top:10px; padding-left:25px;">
-                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="random" onchange="renderSplitUI()"> 🎲 Split Randomly (Even/Odd)</label>
-                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="serial" onchange="renderSplitUI()"> 🔢 Split by Serial</label>
-                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="location" onchange="renderSplitUI()"> 📍 Split by Location</label>
+                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="random" onchange="renderSplitUI()">  Split Randomly (Even/Odd)</label>
+                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="serial" onchange="renderSplitUI()">  Split by Serial</label>
+                            <label style="display:block; margin-bottom:5px;"><input type="radio" name="split_type" value="location" onchange="renderSplitUI()">  Split by Location</label>
                             
                             <div id="dynamic-split-ui" style="margin-top:15px; padding:10px; border:1px solid var(--border); border-radius:6px; background:var(--bg-card); display:none;">
                             </div>
@@ -104,7 +160,7 @@
             const footer = document.getElementById("template-preview-footer");
             if(t.attachment_name) {
                 footer.style.display = "block";
-                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;">📎 Download Attachment</a>`;
+                footer.innerHTML = `<a href="uploads/${t.attachment_name}" target="_blank" class="btn btn-secondary" style="text-decoration:none;"> Download Attachment</a>`;
             } else {
                 footer.style.display = "none";
             }
@@ -145,10 +201,13 @@
             if(json.success && typeof loadPptsList === 'function') loadPptsList();
         }
 
-        function openReminderModal(type, id) {
-            document.getElementById('rem_lead_type').value = type;
-            document.getElementById('rem_lead_id').value = id;
-            document.getElementById('reminder-modal').style.display = 'flex';
+        function openReminderModal(type, id, label = '') {
+            if(document.getElementById('rem_lead_type')) document.getElementById('rem_lead_type').value = type;
+            if(document.getElementById('rem_lead_id')) document.getElementById('rem_lead_id').value = id;
+            if(document.getElementById('rem_ref_label')) document.getElementById('rem_ref_label').value = label;
+            if(document.getElementById('rem_title')) document.getElementById('rem_title').value = "Follow-up: " + label;
+            if(document.getElementById('reminder-modal')) document.getElementById('reminder-modal').style.display = 'flex';
+            if(typeof lucide !== 'undefined') lucide.createIcons();
         }
         
         function closeReminderModal() {
@@ -236,6 +295,19 @@
             reader.readAsBinaryString(file);
         }
 
+        function downloadBulkTemplate() {
+            const headers = "Contact Name,Company Name,Mobile,Email,Lead Source,Priority,Stage,Assigned To,Location,Notes\n";
+            const sampleRow = "John Doe,Acme Corp,9876543210,john@example.com,Cold Call,Warm,New Lead,,New York,Interested in product\n";
+            const csvContent = "data:text/csv;charset=utf-8," + headers + sampleRow;
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "BFS Financial Services_Bulk_Upload_Format.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function toggleSplitOptions() {
             const isChecked = document.getElementById('bulk-split-checkbox').checked;
             document.getElementById('split-options-container').style.display = isChecked ? 'block' : 'none';
@@ -257,8 +329,8 @@
                 uiContainer.innerHTML = `
                     <p style="font-size:13px;margin-bottom:10px;">Select multiple staff per team (Hold Ctrl/Cmd to select multiple). Even rows to Team A, Odd rows to Team B.</p>
                     <div style="display:flex; gap:10px;">
-                        <div style="flex:1;"><label style="font-size:12px;font-weight:600;">Team A (Even rows)</label><select id="split-random-a" multiple style="width:100%;height:100px;padding:6px;border-radius:4px;border:1px solid var(--border);">${multiUserOptions}</select></div>
-                        <div style="flex:1;"><label style="font-size:12px;font-weight:600;">Team B (Odd rows)</label><select id="split-random-b" multiple style="width:100%;height:100px;padding:6px;border-radius:4px;border:1px solid var(--border);">${multiUserOptions}</select></div>
+                        <div style="flex:1;"><label style="font-size:12px;font-weight:600;">Team A (Even rows)</label><select id="split-random-a" multiple style="width:100%;height:100px;padding:6px;border-radius:4px;border:1px solid var(--border);" onchange="updateRandomSplitSelects()">${multiUserOptions}</select></div>
+                        <div style="flex:1;"><label style="font-size:12px;font-weight:600;">Team B (Odd rows)</label><select id="split-random-b" multiple style="width:100%;height:100px;padding:6px;border-radius:4px;border:1px solid var(--border);" onchange="updateRandomSplitSelects()">${multiUserOptions}</select></div>
                     </div>
                 `;
             } 
@@ -286,7 +358,7 @@
                 locations.forEach(loc => {
                     locHTML += `
                         <div class="loc-row" data-loc="${loc}" style="display:flex;gap:10px;margin-bottom:8px;align-items:center;">
-                            <span style="flex:1;font-weight:600;font-size:12px;">📍 ${loc}</span>
+                            <span style="flex:1;font-weight:600;font-size:12px;"> ${loc}</span>
                             <select class="l-staff" style="flex:1;padding:4px;border:1px solid var(--border);border-radius:4px;">${userOptions}</select>
                         </div>
                     `;
@@ -294,6 +366,33 @@
                 locHTML += `</div>`;
                 uiContainer.innerHTML = locHTML;
             }
+        }
+        
+        function updateRandomSplitSelects() {
+            const teamASelect = document.getElementById('split-random-a');
+            const teamBSelect = document.getElementById('split-random-b');
+            if(!teamASelect || !teamBSelect) return;
+            
+            const selectedA = Array.from(teamASelect.selectedOptions).map(opt => opt.value);
+            const selectedB = Array.from(teamBSelect.selectedOptions).map(opt => opt.value);
+            
+            Array.from(teamBSelect.options).forEach(opt => {
+                if (selectedA.includes(opt.value)) {
+                    opt.disabled = true;
+                    opt.selected = false;
+                } else {
+                    opt.disabled = false;
+                }
+            });
+            
+            Array.from(teamASelect.options).forEach(opt => {
+                if (selectedB.includes(opt.value)) {
+                    opt.disabled = true;
+                    opt.selected = false;
+                } else {
+                    opt.disabled = false;
+                }
+            });
         }
         
         function addSerialRow() {
@@ -412,5 +511,317 @@
             }
         }
     </script>
+
+    <!--  Global Confirmation Modal -->
+    <div id="confirm-modal" onclick="if(event.target===this)confirmCancel()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);z-index:99999;align-items:center;justify-content:center;">
+        <div onclick="event.stopPropagation()" style="background:#fff;border-radius:14px;padding:30px 32px;max-width:380px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.2);text-align:center;animation:slideDown 0.25s ease;">
+            <div style="width:52px;height:52px;border-radius:50%;background:#fef3c7;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#f59e0b" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </div>
+            <h3 id="confirm-modal-title" style="margin:0 0 8px;font-size:17px;font-weight:700;color:#0f172a;">Are you sure?</h3>
+            <p id="confirm-modal-msg" style="margin:0 0 24px;font-size:14px;color:#64748b;line-height:1.5;">Do you want to save this update?</p>
+            <div style="display:flex;gap:10px;justify-content:center;">
+                <button onclick="confirmCancel()" style="flex:1;padding:10px 0;border-radius:8px;border:1px solid #e2e8f0;background:#f8fafc;color:#475569;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
+                <button id="confirm-modal-yes-btn" onclick="confirmProceed()" style="flex:1;padding:10px 0;border-radius:8px;border:none;background:#f59e0b;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Yes, Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let _confirmCallback = null;
+
+        /**
+         * Show a confirmation popup.
+         * @param {Function} callback - Function to run when user clicks Yes
+         * @param {string} title - Popup title (optional)
+         * @param {string} message - Popup message (optional)
+         * @param {string} yesLabel - Yes button label (optional)
+         */
+        function showConfirm(callback, title = 'Confirm Update', message = 'Do you want to save this update?', yesLabel = 'Yes, Update') {
+            _confirmCallback = callback;
+            document.getElementById('confirm-modal-title').innerText = title;
+            document.getElementById('confirm-modal-msg').innerText = message;
+            document.getElementById('confirm-modal-yes-btn').innerText = yesLabel;
+            const modal = document.getElementById('confirm-modal');
+            modal.style.display = 'flex';
+        }
+
+        function confirmProceed() {
+            document.getElementById('confirm-modal').style.display = 'none';
+            if (typeof _confirmCallback === 'function') _confirmCallback();
+            _confirmCallback = null;
+        }
+
+        function confirmCancel() {
+            document.getElementById('confirm-modal').style.display = 'none';
+            _confirmCallback = null;
+        }
+        
+        function showCustomAlert(title, message) {
+            document.getElementById('alert-modal-title').innerText = title;
+            document.getElementById('alert-modal-msg').innerText = message;
+            document.getElementById('alert-modal').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('alert-modal').style.display = 'none';
+        }
+    </script>
+    
+    <!-- Global Alert Modal -->
+    <div id="alert-modal" onclick="if(event.target===this)closeCustomAlert()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.6);z-index:99999;align-items:center;justify-content:center;backdrop-filter: blur(4px);">
+        <div onclick="event.stopPropagation()" style="background:#fff;border-radius:14px;padding:30px 32px;max-width:380px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.2);text-align:center;animation:slideDown 0.25s ease;">
+            <div style="width:52px;height:52px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#ef4444" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 id="alert-modal-title" style="margin:0 0 8px;font-size:17px;font-weight:700;color:#0f172a;">Action Blocked</h3>
+            <p id="alert-modal-msg" style="margin:0 0 24px;font-size:14px;color:#64748b;line-height:1.5;">Message goes here</p>
+            <div style="display:flex;gap:10px;justify-content:center;">
+                <button onclick="closeCustomAlert()" style="flex:1;padding:10px 0;border-radius:8px;border:none;background:#0f172a;color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Understood, Go Back</button>
+            </div>
+        </div>
+    </div>
+    <!-- Global Reminder Notification Checker -->
+    <script>
+        (function() {
+            async function checkDueReminders() {
+                try {
+                    // Try fetching from reminders.php api endpoint (as it handles get_reminders)
+                    const res = await fetch('reminders.php?api=get_reminders');
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    if (!Array.isArray(data)) return;
+
+                    const now = new Date();
+                    let notifiedIds = JSON.parse(localStorage.getItem('notified_reminders') || '[]');
+                    let newNotifications = [];
+
+                    data.forEach(r => {
+                        const dt = new Date(r.remind_at);
+                        const diffMins = (now - dt) / 60000;
+                        
+                        // If task is due (now passed the remind_at time) and is recent (last 24h)
+                        if (diffMins >= 0 && diffMins < 1440) { 
+                            if (!notifiedIds.includes(r.id)) {
+                                newNotifications.push(r);
+                                notifiedIds.push(r.id);
+                            }
+                        }
+                    });
+
+                    if (newNotifications.length > 0) {
+                        // Keep array size manageable (last 500 ids)
+                        if (notifiedIds.length > 500) notifiedIds = notifiedIds.slice(-500);
+                        localStorage.setItem('notified_reminders', JSON.stringify(notifiedIds));
+                        
+                        if (window.Swal) {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 8000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                }
+                            });
+
+                            let titleText = newNotifications.length > 1 
+                                ? `🔔 You have ${newNotifications.length} reminders due now!`
+                                : `🔔 Reminder: ${newNotifications[0].title || newNotifications[0].notes || 'Task Due'}`;
+
+                            Toast.fire({
+                                icon: 'info',
+                                title: titleText,
+                                text: 'Click here to view your Reminders & Tasks',
+                                background: '#eff6ff',
+                                color: '#1e3a8a'
+                            });
+                            
+                            setTimeout(() => {
+                                const popup = Swal.getPopup();
+                                if (popup) {
+                                    popup.style.cursor = 'pointer';
+                                    popup.onclick = () => window.location.href = 'reminders.php';
+                                }
+                            }, 100);
+                        }
+                    }
+                } catch(e) {
+                    console.error("Global reminder check failed", e);
+                }
+            }
+
+            // Check shortly after load, then every 60 seconds
+            setTimeout(checkDueReminders, 3000);
+            setInterval(checkDueReminders, 60000);
+        })();
+    </script>
+
+    <!-- Background Auto-Cron for Document Reminders -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Trigger the background cron job to send missing document emails
+            // The script itself handles the "once-per-day per applicant" logic
+            fetch('cron_document_reminders.php')
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success && data.emails_sent > 0) {
+                        console.log('Automated doc reminders sent: ' + data.emails_sent);
+                    }
+                })
+                .catch(err => console.error('Auto-cron error:', err));
+        });
+    </script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('PWA ServiceWorker registered successfully!'))
+                    .catch(err => console.error('PWA ServiceWorker registration failed: ', err));
+            });
+        }
+    </script>
+
+    <!-- 10x Field Force Tracker Engine (Strict Enforcement + WakeLock) -->
+    <?php if(isset($_SESSION['role']) && $_SESSION['role'] === 'Staff'): ?>
+    <div id="gps-blocker" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999999; flex-direction:column; align-items:center; justify-content:center; color:white; padding:20px; text-align:center;">
+        <i class="fas fa-map-marker-slash" style="font-size:60px; color:#ef4444; margin-bottom:20px;"></i>
+        <h2 style="margin-bottom:10px;">Location is Disabled!</h2>
+        <p style="margin-bottom:20px; font-size:14px; opacity:0.8; max-width:300px;">You are currently <b>On Duty</b>. Company policy requires live GPS tracking to be active. Please enable your Location (GPS) and grant permission to continue using the app.</p>
+        <button onclick="window.location.reload()" style="background:#22c55e; color:white; padding:12px 24px; border:none; border-radius:8px; font-weight:bold; font-size:16px;">I Have Enabled GPS - Refresh</button>
+    </div>
+
+    <script>
+        (function() {
+            let lastPingTime = 0;
+            
+            async function getBattery() {
+                try {
+                    if (navigator.getBattery) {
+                        const bat = await navigator.getBattery();
+                        return Math.round(bat.level * 100) + '%';
+                    }
+                } catch(e) {}
+                return 'Unknown';
+            }
+            
+            async function sendPing(lat, lon) {
+                const now = Date.now();
+                // Avoid spamming, wait at least 30 seconds between pings
+                if (now - lastPingTime < 30000) return;
+                
+                const bat = await getBattery();
+                const fd = new FormData();
+                fd.append('api', 'staff_ping');
+                fd.append('lat', lat);
+                fd.append('lon', lon);
+                fd.append('battery', bat);
+                fd.append('status', 'Active');
+                
+                try {
+                    await fetch('?api=x', { method: 'POST', body: fd }); // Use absolute root path or appropriate path
+                    // fallback if api.php is in same dir
+                    // We will use standard relative fetch
+                } catch(e) {
+                    console.error("Ping failed", e);
+                }
+                lastPingTime = now;
+            }
+            
+            let wakeLock = null;
+            async function requestWakeLock() {
+                try {
+                    if ('wakeLock' in navigator) {
+                        wakeLock = await navigator.wakeLock.request('screen');
+                        wakeLock.addEventListener('release', () => { console.log('Wake Lock released'); });
+                    }
+                } catch (err) {}
+            }
+
+            function fallbackFetch(lat, lon, bat) {
+                const fd = new FormData();
+                fd.append('api', 'staff_ping');
+                fd.append('lat', lat);
+                fd.append('lon', lon);
+                fd.append('battery', bat);
+                fd.append('status', 'Active');
+                
+                // Determine root path automatically. Use ?api=staff_ping if in root, else ../?api=staff_ping
+                let basePath = window.location.pathname.includes('/staff/') ? '../' : './';
+                fetch(basePath + '?api=staff_ping', { method: 'POST', body: fd }).catch(e=>console.log(e));
+            }
+
+            function showGpsBlocker() {
+                document.getElementById('gps-blocker').style.display = 'flex';
+            }
+            function hideGpsBlocker() {
+                document.getElementById('gps-blocker').style.display = 'none';
+            }
+
+            function startTracker() {
+                // Respect Punch-In status
+                if (typeof window.TRACKING_ACTIVE !== 'undefined' && window.TRACKING_ACTIVE === false) {
+                    return; // Do not track if not punched in
+                }
+                
+                requestWakeLock();
+                document.addEventListener('visibilitychange', async () => {
+                    if (wakeLock !== null && document.visibilityState === 'visible') {
+                        requestWakeLock();
+                    }
+                });
+
+                if (navigator.geolocation) {
+                    // Watch position for continuous updates
+                    navigator.geolocation.watchPosition(
+                        async (pos) => {
+                            hideGpsBlocker();
+                            const lat = pos.coords.latitude;
+                            const lon = pos.coords.longitude;
+                            
+                            const now = Date.now();
+                            if (now - lastPingTime > 45000) { // Ping every 45s max
+                                const bat = await getBattery();
+                                fallbackFetch(lat, lon, bat);
+                                lastPingTime = now;
+                            }
+                        },
+                        (err) => {
+                            console.log('Tracker GPS Error:', err);
+                            showGpsBlocker(); // ENFORCE GPS!
+                        },
+                        { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+                    );
+                    
+                    // Force a ping every 2 mins even if stationary (in case watchPosition sleeps)
+                    setInterval(() => {
+                        navigator.geolocation.getCurrentPosition(
+                            async (pos) => {
+                                hideGpsBlocker();
+                                const bat = await getBattery();
+                                fallbackFetch(pos.coords.latitude, pos.coords.longitude, bat);
+                                lastPingTime = Date.now();
+                            },
+                            (err) => {
+                                showGpsBlocker();
+                            }
+                        );
+                    }, 60000); // 1 minute stationary ping
+                } else {
+                    alert("Your browser does not support GPS tracking.");
+                }
+            }
+            
+            // Wait a few seconds before starting to not block page load
+            setTimeout(startTracker, 2000);
+        })();
+    </script>
+    <?php endif; ?>
+
 </body>
+
 </html>

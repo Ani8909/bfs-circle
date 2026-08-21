@@ -470,7 +470,7 @@
                     
                     // Adjust Header Text Details
                     const titles = {
-                        'dashboard': { title: 'Dashboard', sub: 'AuraCRM Operations Control Panel' },
+                        'dashboard': { title: 'Dashboard', sub: 'BFS Financial Services Operations Control Panel' },
                         'preleads': { title: 'Pre-Leads (Raw Data)', sub: 'Manage raw data and unverified prospects' },
                         'leads': { title: 'Lead Management', sub: '≡ƒÄ» Capture, track and convert leads into clients' },
                         'add-client': { title: 'Register Client Account', sub: '≡ƒöÆ Lock-in customer profile parameters permanently' },

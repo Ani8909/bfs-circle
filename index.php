@@ -1,6 +1,6 @@
 <?php
 /**
- * AuraCRM - Global Router
+ * BFS Financial Services - Global Router
  * Routes authenticated requests to the Dashboard and guest requests to Login.
  */
 

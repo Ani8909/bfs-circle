@@ -145,7 +145,7 @@ require_once 'header.php';
             
             if (response.ok && data.success) {
                 showNotification(data.message, 'success');
-                if (status === 'Accepted') {
+                if (newStatus === 'Approved') {
                     if (typeof confetti === 'function') {
                         confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                     }

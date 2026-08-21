@@ -144,6 +144,12 @@ require_once __DIR__ . '/header.php';
                 const priorityClass = 'badge-' + c.priority.toLowerCase();
                 const statusClass = c.overall_status.toLowerCase().replace(' ', '');
                 
+                if (c.overall_status === 'Closed Won') {
+                    card.classList.add('won');
+                    card.style.borderLeft = '4px solid var(--status-won)';
+                    card.style.background = 'linear-gradient(to right, var(--status-won-light) 0%, #fff 20%)';
+                }
+                
                 card.innerHTML = `
                     <div class="client-card-header">
                         <span class="client-card-title">${c.company_name}</span>
@@ -163,7 +169,7 @@ require_once __DIR__ . '/header.php';
                     </div>
                     <div style="display:flex; justify-content: space-between; align-items: center; margin-top: 12px; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
                         <span class="badge-status ${statusClass}">${c.overall_status}</span>
-                        <span style="font-size: 11px; color: var(--text-muted);">By: ${c.added_by}</span>
+                        <span style="font-size: 11px; color: var(--text-muted);">Added: ${formatDateShort(c.created_at)}</span>
                     </div>
                 `;
                 container.appendChild(card);
@@ -191,7 +197,8 @@ require_once __DIR__ . '/header.php';
                 selectClientCard(clients[0].id);
             }
         } catch (err) {
-            showNotification('CRM Search request failed.', 'error');
+            console.error(err);
+            showNotification('CRM Search request failed: ' + err.message, 'error');
         }
     }
 
@@ -250,11 +257,20 @@ require_once __DIR__ . '/header.php';
             }
 
             let commsHtml = '';
+            window.currentClientComms = c.communications_logs || [];
             if (c.communications_logs && c.communications_logs.length > 0) {
-                commsHtml = c.communications_logs.map(log => `
+                commsHtml = c.communications_logs.map((log, index) => {
+                    let viewBtn = '';
+                    if (log.body && (log.type === 'Custom Mail' || log.type === 'Quotation')) {
+                        viewBtn = `<button onclick="viewTrackEmailContent(${index})" class="btn btn-secondary" style="padding: 2px 8px; font-size: 11px; margin-left: 8px;"><i data-lucide="eye" style="width:12px;height:12px;"></i> View</button>`;
+                    }
+                    return `
                     <div class="history-item">
                         <div class="history-item-header">
-                            <span style="color: var(--primary); font-weight:700;">${log.type}</span>
+                            <div style="display:flex; align-items:center;">
+                                <span style="color: var(--primary); font-weight:700;">${log.type}</span>
+                                ${viewBtn}
+                            </div>
                             <span style="color: var(--text-muted);">${formatDate(log.sent_at)}</span>
                         </div>
                         <div class="history-item-body">
@@ -262,12 +278,19 @@ require_once __DIR__ . '/header.php';
                             <span style="font-size:11px; color: var(--text-muted);">Sent by: ${log.sent_by}</span>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             } else {
                 commsHtml = '<div style="color: var(--text-light); text-align:center; padding: 20px; font-size:13px;">No communication entries logged.</div>';
             }
 
+            if (c.overall_status === 'Closed Won') {
+                pane.classList.add('won-theme');
+            } else {
+                pane.classList.remove('won-theme');
+            }
+
             pane.innerHTML = `
+                ${c.overall_status === 'Closed Won' ? '<div style="background: var(--status-won); color: white; padding: 12px; border-radius: 8px 8px 0 0; margin: -24px -24px 20px -24px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; gap: 8px; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);"><i data-lucide="award" style="width:18px;"></i> Deal Closed Won</div>' : ''}
                 <div class="detail-header">
                     <div>
                         <div class="detail-company-title">${c.company_name}</div>
@@ -325,6 +348,24 @@ require_once __DIR__ . '/header.php';
                 </div>
 
                 <div style="margin-bottom: 24px;">
+                    <div class="detail-block-title">Interaction Analytics</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction:column; justify-content: center; align-items: center;">
+                            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; font-weight:600;">Breakdown</div>
+                            <div style="width: 200px; height: 200px;">
+                                <canvas id="interaction-breakdown-chart"></canvas>
+                            </div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction:column; justify-content: center; align-items: center;">
+                            <div style="font-size:12px; color:var(--text-muted); margin-bottom:10px; font-weight:600;">Activity Pulse (7 Days)</div>
+                            <div style="width: 100%; height: 200px;">
+                                <canvas id="sparkline-detail"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 24px;">
                     <div class="detail-block-title">Address coordinates</div>
                     <div style="font-size: 13.5px; line-height:1.5;">
                         ${c.address_line1}, ${c.address_line2 ? c.address_line2 + ',' : ''}<br>
@@ -365,6 +406,68 @@ require_once __DIR__ . '/header.php';
                 </div>
             `;
             lucide.createIcons();
+
+            // Render Interaction Breakdown Doughnut Chart
+            if (window.clientDoughnutChart) {
+                window.clientDoughnutChart.destroy();
+            }
+            if (window.clientSparklineChart) {
+                window.clientSparklineChart.destroy();
+            }
+
+            const ctx = document.getElementById('interaction-breakdown-chart').getContext('2d');
+            if (c.interaction_breakdown) {
+                window.clientDoughnutChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(c.interaction_breakdown),
+                        datasets: [{
+                            data: Object.values(c.interaction_breakdown),
+                            backgroundColor: ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'right', labels: { boxWidth: 12, font: {size: 11} } }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+            
+            // Render Sparkline in details pane
+            if (c.sparkline) {
+                const spCtx = document.getElementById('sparkline-detail').getContext('2d');
+                window.clientSparklineChart = new Chart(spCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['6d ago', '5d ago', '4d ago', '3d ago', '2d ago', 'Yesterday', 'Today'],
+                        datasets: [{
+                            label: 'Activities',
+                            data: c.sparkline,
+                            borderColor: 'rgba(59, 130, 246, 0.8)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 3,
+                            pointBackgroundColor: '#fff',
+                            fill: true,
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: { 
+                            y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
         } catch (err) {
             console.error(err);
             showNotification('Could not load client CRM profile details.', 'error');
@@ -426,6 +529,44 @@ require_once __DIR__ . '/header.php';
         loadFilterOptions();
         triggerSearch();
     });
+</script>
+
+<!-- View Email Content Modal -->
+<div id="view-email-modal" class="modal" style="display:none; z-index:10005;">
+    <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+        <div class="modal-header">
+            <h3>Email Content Preview</h3>
+            <button onclick="closeViewEmailModal()" style="background:none;border:none;cursor:pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body" style="overflow-y:auto; background: #f8fafc; border-radius: 8px; padding: 16px; margin-top: 10px;">
+            <div id="view-email-body-content" style="white-space: pre-wrap; font-family: sans-serif; font-size: 14px; color: #334155;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewTrackEmailContent(index) {
+        const email = window.currentClientComms[index];
+        if(!email) return;
+        
+        let htmlContent = email.body;
+        if (email.attachment_name) {
+            htmlContent += `\n\n<hr style="border:0; border-top:1px solid #e2e8f0; margin:15px 0;">`;
+            if (email.attachment_name.toLowerCase().endsWith('.pdf')) {
+                htmlContent += `<div style="font-weight:600; margin-bottom:10px;">📎 Attachment: ${email.attachment_name}</div>`;
+                htmlContent += `<iframe src="../uploads/${email.attachment_name}" style="width:100%; height:500px; border:1px solid #cbd5e1; border-radius:4px;"></iframe>`;
+            } else {
+                htmlContent += `<a href="../uploads/${email.attachment_name}" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;">📎 Attachment: View File</a>`;
+            }
+        }
+        
+        document.getElementById('view-email-body-content').innerHTML = htmlContent;
+        document.getElementById('view-email-modal').style.display = 'flex';
+    }
+
+    function closeViewEmailModal() {
+        document.getElementById('view-email-modal').style.display = 'none';
+    }
 </script>
 
 <!-- Log Call Modal -->

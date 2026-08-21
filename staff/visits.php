@@ -1,0 +1,350 @@
+<?php
+require_once '../config.php';
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+$username = $_SESSION['username'] ?? 'Staff';
+
+$stmt = $db->prepare("SELECT department FROM employees WHERE user_id = ?");
+$stmt->execute([$user_id]);
+$department = $stmt->fetchColumn();
+
+if ($department !== 'Lead Generation Team') {
+    die("Access Denied: This mobile application is restricted to Field Employees (Lead Generation Team) only.");
+}
+
+$username = $_SESSION['username'];
+$role = $_SESSION['role'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Field App - BFS Financial Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF7A00;
+            --primary-dark: #E66A00;
+            --secondary: #1E293B;
+            --bg-color: #F1F5F9;
+            --card-bg: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 70px; /* Space for bottom nav */
+        }
+
+        /* App Header */
+        .app-header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 16px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 10px rgba(255, 122, 0, 0.2);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .user-greeting { font-size: 14px; opacity: 0.9; }
+        .user-name { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        .logout-btn { color: white; text-decoration: none; font-size: 20px; }
+
+        /* Dashboard Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 16px;
+            margin-top: -30px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        .metric-card.full-width {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+            color: white;
+        }
+
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 122, 0, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 0 auto 12px;
+        }
+
+        .metric-value { font-size: 24px; font-weight: 700; color: var(--text-main); }
+        .metric-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        
+        .full-width .metric-value { color: white; font-size: 28px; }
+        .full-width .metric-label { color: #94A3B8; }
+        .full-width .metric-icon { margin: 0; background: rgba(255,255,255,0.1); color: white; }
+
+        /* Recent Activity */
+        .section-container {
+            padding: 24px 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .see-all { font-size: 12px; color: var(--primary); text-decoration: none; font-weight: 500; }
+
+        .lead-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid var(--border-color);
+        }
+
+        .lead-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .lead-info { flex: 1; overflow: hidden; }
+        .lead-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .lead-sub { font-size: 12px; color: var(--text-muted); }
+        
+        .lead-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+        .status-completed { background: #dcfce7; color: #15803d; }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .nav-btn.active { color: var(--primary); }
+        .nav-btn i { font-size: 20px; }
+        
+        /* Floating Action Button */
+        .fab {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 44px;
+            padding: 0 16px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #FF6B00 0%, #FF9A44 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 6px 15px rgba(255, 107, 0, 0.35);
+            text-decoration: none;
+            white-space: nowrap;
+            gap: 6px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <div class="header-top">
+            <div>
+                <div class="user-greeting">Welcome back,</div>
+                <div class="user-name" id="staff_name"><?= htmlspecialchars($username) ?></div>
+            </div>
+            <a href="../logout.php" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+        </div>
+    </div> <!-- Close app-header -->
+
+    <div style="padding:20px; padding-bottom:80px; z-index:1;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2 style="font-size:18px; color:#1e293b;">My Field Visits</h2>
+            <a href="export_visits.php" style="background:#10b981; color:white; padding:8px 12px; border-radius:8px; text-decoration:none; font-size:12px; font-weight:600; display:flex; align-items:center; gap:6px; box-shadow:0 2px 4px rgba(16,185,129,0.2);">
+                <i class="fas fa-file-excel"></i> Export
+            </a>
+        </div>
+        <div id="visits_list" style="display:flex; flex-direction:column; gap:12px;">
+            <div style="text-align:center;padding:20px;color:gray;font-size:14px;">Loading visits...</div>
+        </div>
+    </div>
+
+    <script>
+        // Skeleton HTML function
+        function getSkeletonHTML(count = 3) {
+            let html = '';
+            for(let i=0; i<count; i++) {
+                html += `
+                <div style="background:white; border-radius:16px; padding:18px; margin-bottom:12px; box-shadow:0 4px 15px rgba(0,0,0,0.04); position:relative; overflow:hidden;">
+                    <div style="animation: shimmer 2s infinite linear; background: linear-gradient(to right, #f6f7f8 4%, #edeef1 25%, #f6f7f8 36%); background-size: 1000px 100%; height: 20px; width: 60%; margin-bottom: 12px; border-radius: 4px;"></div>
+                    <div style="animation: shimmer 2s infinite linear; background: linear-gradient(to right, #f6f7f8 4%, #edeef1 25%, #f6f7f8 36%); background-size: 1000px 100%; height: 16px; width: 40%; border-radius: 4px;"></div>
+                </div>`;
+            }
+            return html;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const list = document.getElementById('visits_list');
+            list.innerHTML = getSkeletonHTML(4);
+            
+            try {
+                const res = await fetch(`?api=get_field_visits&page=1`);
+                const data = await res.json();
+                
+                if (data.data.length === 0) {
+                    list.innerHTML = '<div style="text-align:center;padding:20px;color:gray;font-size:14px;">No visits recorded yet.</div>';
+                    return;
+                }
+                
+                let html = '';
+                data.data.forEach(v => {
+                    let badgeColor = v.lead_quality === 'Hot' ? '#ef4444' : (v.lead_quality === 'Warm' ? '#f59e0b' : '#3b82f6');
+                    
+                    html += `
+                        <div style="background:white; border-radius:16px; padding:18px; box-shadow:0 4px 15px rgba(0,0,0,0.04); border-left:4px solid ${badgeColor};">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                                <div>
+                                    <div style="font-weight:700; color:#0f172a; font-size:15px; margin-bottom:4px;">${v.firm_name}</div>
+                                    <div style="font-size:13px; color:#64748b;">${v.person_name} (${v.profession})</div>
+                                </div>
+                                <span style="font-size:11px; padding:4px 10px; border-radius:20px; background:${badgeColor}20; color:${badgeColor}; font-weight:700;">
+                                    ${v.lead_quality}
+                                </span>
+                            </div>
+                            
+                            <div style="font-size:13px; color:#475569; margin-bottom:12px; line-height:1.5;">
+                                <i class="fas fa-map-marker-alt" style="color:#94a3b8; width:16px;"></i> ${v.city}, ${v.state}
+                                <br>
+                                <i class="fas fa-phone-alt" style="color:#94a3b8; width:16px;"></i> ${v.mobile}
+                            </div>
+                            ${(v.verified_address && v.verified_address !== 'null') ? `
+                            <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:10px; font-size:11.5px; color:#166534; margin-bottom:12px; line-height:1.4;">
+                                <strong style="display:block; margin-bottom:4px;"><i class="fas fa-check-circle"></i> Live Location Captured</strong>
+                                ${v.verified_address}
+                            </div>` : ''}
+                            
+                            <div style="display:flex; justify-content:space-between; border-top:1px solid #f1f5f9; padding-top:12px; font-size:12px; color:#94a3b8;">
+                                <div><i class="fas fa-calendar"></i> Visited: ${v.visit_date}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                list.innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                list.innerHTML = '<div style="text-align:center;padding:20px;color:red;font-size:14px;">Error loading visits.</div>';
+            }
+        });
+    </script>
+    <style>
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+    </style>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <a href="index.php" class="nav-btn <?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="visits.php" class="nav-btn <?= basename($_SERVER['PHP_SELF']) == 'visits.php' ? 'active' : '' ?>">
+            <i class="fas fa-list-ul"></i>
+            <span>My Visits</span>
+        </a>
+        <div style="width: 110px; position: relative;">
+            <a href="add_visit.php" class="fab">
+                <i class="fas fa-plus"></i> <span>Start Visit</span>
+            </a>
+        </div>
+        <a href="files.php" class="nav-btn <?= basename($_SERVER['PHP_SELF']) == 'files.php' ? 'active' : '' ?>">
+            <i class="fas fa-file-invoice"></i>
+            <span>Files</span>
+        </a>
+        <a href="profile.php" class="nav-btn <?= basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : '' ?>">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </div>
+
+</body>
+</html>

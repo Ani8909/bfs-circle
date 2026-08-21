@@ -1,7 +1,7 @@
 <?php
 require_once 'config.php';
 $page_title = 'Register Client Account';
-$page_subtitle = '🔒 Lock-in customer profile parameters permanently';
+$page_subtitle = ' Lock-in customer profile parameters permanently';
 require_once 'header.php';
 ?>
 
@@ -14,7 +14,7 @@ require_once 'header.php';
             </div>
             
             <!-- Business Information -->
-            <div class="form-section-title">🏢 Business Information</div>
+            <div class="form-section-title"> Business Information</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Business / Company Name</label>
@@ -66,7 +66,7 @@ require_once 'header.php';
             </div>
 
             <!-- Contact Person details -->
-            <div class="form-section-title">👨‍💼 Contact Person Details</div>
+            <div class="form-section-title">‍ Contact Person Details</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Contact Person Name</label>
@@ -99,7 +99,7 @@ require_once 'header.php';
             </div>
 
             <!-- Address details -->
-            <div class="form-section-title">📍 Address Details</div>
+            <div class="form-section-title"> Address Details</div>
             <div class="form-grid">
                 <div class="form-group full-width">
                     <label class="required">Address Line 1</label>
@@ -128,7 +128,7 @@ require_once 'header.php';
             </div>
 
             <!-- Bank Details -->
-            <div class="form-section-title">🏦 Bank Details (Optional)</div>
+            <div class="form-section-title"> Bank Details (Optional)</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Bank Name</label>
@@ -145,7 +145,7 @@ require_once 'header.php';
             </div>
 
             <!-- Other metadata info -->
-            <div class="form-section-title">📝 Other Info</div>
+            <div class="form-section-title"> Other Info</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Lead Source</label>
@@ -161,9 +161,9 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Priority Level</label>
                     <select name="priority" required>
-                        <option value="Hot">🔥 Hot</option>
-                        <option value="Warm" selected>☀️ Warm</option>
-                        <option value="Cold">❄️ Cold</option>
+                        <option value="Hot"> Hot</option>
+                        <option value="Warm" selected>️ Warm</option>
+                        <option value="Cold">️ Cold</option>
                     </select>
                 </div>
                 <div class="form-group">

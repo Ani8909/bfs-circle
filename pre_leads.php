@@ -1,330 +1,466 @@
 <?php
 require_once 'config.php';
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+$current_page = 'pre_leads.php';
 $page_title = 'Pre-Leads (Raw Data)';
-$page_subtitle = 'Manage raw data and unverified prospects';
+$page_subtitle = 'Manage raw data and unverified prospects (10x Smart Hub)';
 require_once 'header.php';
-?>
 
-<div id="view-preleads" class="view-container">
-    <!-- Stats Bar -->
-    <div class="stats-grid" style="grid-template-columns: repeat(3,1fr); margin-bottom:1.5rem;">
-        <div class="stat-card" style="border-left:4px solid #f59e0b;">
-            <div class="stat-card-header"><span class="stat-label">Total Prospects</span><i data-lucide="inbox" style="color:#f59e0b;width:20px;height:20px;"></i></div>
-            <div class="stat-value" id="prelead-stat-total">-</div>
+// Check if Admin
+$is_admin = ($_SESSION['role'] ?? '') === 'Admin';
+?>
+<style>
+/* Theme-Matched Ultra Smart UI */
+.pl-layout { width: 100%; margin: 0 auto; padding: 24px; font-family: 'Inter', sans-serif; }
+
+/* Dashboard Cards for KPI */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 24px; }
+.kpi-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; display: flex; align-items: center; gap: 16px; transition: 0.2s; }
+.kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+.kpi-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+.kpi-val { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+.kpi-lbl { font-size: 12px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Smart Pill Tabs */
+.smart-tabs { display: flex; gap: 12px; background: #e2e8f0; padding: 6px; border-radius: 12px; display: inline-flex; }
+.smart-tab { padding: 10px 20px; font-weight: 700; color: #475569; cursor: pointer; border-radius: 8px; transition: 0.3s; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.smart-tab:hover { color: #0f172a; background: rgba(255,255,255,0.5); }
+.smart-tab.active { color: #fff; background: #0f172a; box-shadow: 0 4px 10px rgba(15,23,42,0.2); }
+
+.filter-bar { background: #fff; padding: 16px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); display: flex; gap: 16px; margin-bottom: 24px; border: 1px solid #e2e8f0; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.filter-group { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.filter-input { padding: 10px 16px; display: inline-block; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 13px; font-weight: 600; color: #1e293b; outline: none; transition: 0.2s; min-width: 160px; background: #f8fafc; }
+.filter-input:focus { border-color: #3b82f6; background: #fff; }
+
+.pl-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02); border: 1px solid #e2e8f0; }
+.pl-table th { background: #0f172a; padding: 16px; text-align: left; font-size: 12px; font-weight: 700; color: #f8fafc; text-transform: uppercase; letter-spacing: 0.5px; }
+.pl-table td { padding: 16px; font-size: 13px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; transition: background 0.2s; }
+.pl-table tr:hover td { background: #f8fafc; }
+
+.quick-action-btn { width: 28px; height: 28px; border-radius: 6px; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; margin-right: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.btn-whatsapp { background: #22c55e; color: #fff; } .btn-whatsapp:hover { background: #16a34a; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(34,197,94,0.3); }
+.btn-call { background: #3b82f6; color: #fff; } .btn-call:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
+.btn-script { background: #8b5cf6; color: #fff; } .btn-script:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(139,92,246,0.3); }
+
+.score-badge { display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.score-hot { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.score-warm { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+.score-cold { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+.top-actions { display: flex; gap: 12px; }
+.btn-primary { background: #0f172a; color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; transition: 0.2s; }
+.btn-primary:hover { background: #1e293b; box-shadow: 0 4px 12px rgba(15,23,42,0.2); }
+.btn-secondary { background: #fff; color: #0f172a; border: 2px solid #e2e8f0; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 13px; transition: 0.2s; }
+.btn-secondary:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+/* Modals */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+.modal-content { background: #fff; width: 100%; max-width: 600px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; animation: slideUp 0.3s ease-out; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-header { padding: 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+.modal-header h3 { margin: 0; font-size: 18px; color: #0f172a; display: flex; align-items: center; gap: 10px; font-weight: 800; }
+.modal-body { padding: 24px; max-height: 65vh; overflow-y: auto; }
+.modal-footer { padding: 20px 24px; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 12px; }
+
+/* Pagination */
+.pagination { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; background: #fff; border-radius: 12px; margin-top: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+
+/* Custom Format Sections */
+.format-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 24px; text-align: center; cursor: pointer; transition: 0.2s; background: #f8fafc; margin-bottom: 16px; }
+.format-box:hover { border-color: #3b82f6; background: #eff6ff; }
+
+@media print {
+    @page { margin: 0.5cm; }
+    /* Hide all non-essential UI */
+    .sidebar, .header, header, .smart-tabs, .filter-bar, .top-actions, .kpi-grid, .pagination, .modal-overlay, .page-header { display: none !important; }
+    
+    /* Fix the massive left margin left by the sidebar */
+    body, html, .main-content, #main-content, .content, .pl-layout, .main-wrapper, #wrapper { 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        background: #fff !important; 
+        left: 0 !important;
+    }
+    
+    /* Hide Quick Actions column completely */
+    .pl-table th:last-child, .pl-table td:last-child { display: none !important; }
+    
+    /* Ultra-compact table to save paper */
+    .pl-table { border: 1px solid #000 !important; width: 100% !important; border-collapse: collapse !important; margin: 0 !important; }
+    .pl-table th { background: #eee !important; color: #000 !important; border-bottom: 2px solid #000 !important; padding: 4px 6px !important; font-size: 10px !important; }
+    .pl-table td { border-bottom: 1px solid #ccc !important; padding: 4px 6px !important; font-size: 9px !important; line-height: 1.2 !important; }
+    
+    /* Make fonts darker and badges cleaner for B&W printers */
+    .score-badge { border: none !important; color: #000 !important; font-weight: bold !important; padding: 0 !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color: #000 !important; }
+}
+</style>
+
+<div class="pl-layout">
+    <!-- KPI Dashboard -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background:#e0f2fe; color:#0284c7;"><i data-lucide="database"></i></div>
+            <div>
+                <div class="kpi-val" id="kpi-total">--</div>
+                <div class="kpi-lbl">Total Raw Leads</div>
+            </div>
         </div>
-        <div class="stat-card" style="border-left:4px solid #10b981;">
-            <div class="stat-card-header"><span class="stat-label">Interested</span><i data-lucide="thumbs-up" style="color:#10b981;width:20px;height:20px;"></i></div>
-            <div class="stat-value" id="prelead-stat-interested">-</div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background:#fef3c7; color:#d97706;"><i data-lucide="clock"></i></div>
+            <div>
+                <div class="kpi-val" id="kpi-followup">--</div>
+                <div class="kpi-lbl">Pending Follow-ups</div>
+            </div>
         </div>
-        <div class="stat-card" style="border-left:4px solid #ef4444;">
-            <div class="stat-card-header"><span class="stat-label">Junk</span><i data-lucide="trash-2" style="color:#ef4444;width:20px;height:20px;"></i></div>
-            <div class="stat-value" id="prelead-stat-junk">-</div>
+        <div class="kpi-card">
+            <div class="kpi-icon" style="background:#dcfce7; color:#16a34a;"><i data-lucide="check-circle"></i></div>
+            <div>
+                <div class="kpi-val" id="kpi-converted">--</div>
+                <div class="kpi-lbl">Converted (Success)</div>
+            </div>
         </div>
     </div>
 
-    <div class="flex-row" style="gap:20px; align-items:flex-start;">
-        <!-- Add Form -->
-        <div class="card" style="flex:0 0 300px; position:sticky; top:20px;">
-            <div class="card-title-bar" style="display:flex; justify-content:space-between; align-items:center;">
-                <h2><i data-lucide="plus"></i> Add Pre-Lead</h2>
-                <button type="button" class="btn btn-secondary" onclick="openPreLeadBulkUploadModal()" style="font-size:11px; padding:4px 8px;"><i data-lucide="upload" style="width:14px;height:14px;margin-right:4px;"></i> Bulk</button>
+    
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div class="smart-tabs">
+            <div class="smart-tab active" onclick="switchTab('new')" id="tab-new"><i data-lucide="inbox" style="width:16px; vertical-align:middle; margin-right:4px;"></i> New Raw Pool</div>
+            <div class="smart-tab" onclick="switchTab('followup')" id="tab-followup"><i data-lucide="clock" style="width:16px; vertical-align:middle; margin-right:4px;"></i> Follow-up Queue</div>
+            <div class="smart-tab" onclick="switchTab('archived')" id="tab-archived"><i data-lucide="archive" style="width:16px; vertical-align:middle; margin-right:4px;"></i> Archived / Junk</div>
+        </div>
+        
+        <div class="top-actions">
+            <button class="btn-secondary" onclick="window.print()" title="Print Current Data"><i data-lucide="printer"></i> Print</button>
+            <?php if($is_admin): ?>
+            <button class="btn-secondary" onclick="document.getElementById('bulkModal').style.display='flex'">
+                <i data-lucide="users"></i> Auto-Distribute
+            </button>
+            <button class="btn-secondary" onclick="document.getElementById('advancedBulkModal').style.display='flex'">
+                <i data-lucide="upload"></i> Bulk Import
+            </button>
+            <?php endif; ?>
+            <button class="btn-primary" onclick="document.getElementById('addModal').style.display='flex'">
+                <i data-lucide="plus"></i> Add Pre-Lead
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <!-- Filter Bar -->
+    <div class="filter-bar" style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start; flex-wrap: nowrap; gap: 16px; overflow-x: auto; padding: 12px 20px; width: 100%; box-sizing: border-box;">
+        
+        <div style="position:relative; flex: 1; min-width: 250px;">
+            <i data-lucide="search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:16px; color:#94a3b8;"></i>
+            <input type="text" id="searchInput" class="filter-input" placeholder="Search Phone, Name, Email..." style="padding-left:36px; width:100%; box-sizing:border-box; margin:0;" oninput="debounceLoad()">
+        </div>
+        
+        <select id="statusFilter" class="filter-input" style="width: 200px; flex-shrink: 0; margin:0;" onchange="loadData()">
+            <option value="">All Statuses</option>
+            <option value="Not Contacted">Not Contacted</option>
+            <option value="Follow Up">Follow Up</option>
+            <option value="Interested">Interested</option>
+            <option value="Not Interested">Not Interested</option>
+            <option value="Junk">Junk</option>
+        </select>
+        
+        <select id="intentFilter" class="filter-input" style="width: 200px; flex-shrink: 0; margin:0;" onchange="loadData()">
+            <option value="">All Intents</option>
+            <option value="Loan">Loan</option>
+            <option value="Insurance">Insurance</option>
+            <option value="Credit Card">Credit Card</option>
+        </select>
+        
+        <button class="btn-secondary" style="padding:10px 18px; flex-shrink: 0; white-space: nowrap; margin:0;" onclick="resetFilters()">
+            <i data-lucide="refresh-cw" style="width:14px;"></i> Reset
+        </button>
+        
+    </div>
+    
+    <!-- Data Table -->
+    <table class="pl-table">
+        <thead>
+            <tr>
+                <th>Customer Name</th>
+                <th>Contact Info</th>
+                <th>Intent & Heat</th>
+                <th>Status</th>
+                <th>Calling Activity</th>
+                <th style="text-align:right;">Quick Actions</th>
+            </tr>
+        </thead>
+        <tbody id="plBody">
+            <tr><td colspan="6" style="text-align:center; padding:40px;"><div class="loader">Loading...</div></td></tr>
+        </tbody>
+    </table>
+    
+    <div class="pagination">
+        <button id="prevBtn" class="btn-secondary" onclick="changePage(-1)">Previous</button>
+        <span id="pageInfo" style="font-size:13px; font-weight:600; color:#64748b;">Page 1</span>
+        <button id="nextBtn" class="btn-secondary" onclick="changePage(1)">Next</button>
+    </div>
+
+</div>
+
+<!-- Call Script & Log Modal -->
+<div id="callModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i data-lucide="phone-call" style="color:#3b82f6;"></i> Smart Telecaller Console</h3>
+            <button onclick="document.getElementById('callModal').style.display='none'" style="background:none;border:none;cursor:pointer;"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="call_lead_id">
+            
+            <div style="background:#f8fafc; padding:16px; border-radius:8px; border:1px solid #e2e8f0; margin-bottom:20px;">
+                <div style="font-size:12px; color:#64748b; font-weight:700; margin-bottom:8px; text-transform:uppercase;">Suggested Pitch</div>
+                <div id="scriptContent" style="font-size:14px; color:#1e293b; line-height:1.5;">
+                    "Hi [Name], this is [MyName] from BFS Circle. I noticed you might be looking for financial services. Do you have 2 minutes to discuss how we can help?"
+                </div>
             </div>
-            <div class="card-body" style="margin-top: 15px;">
-                <form id="prelead-form" onsubmit="savePreLead(event)">
-                    <input type="hidden" name="action" value="save_prelead">
-                    <input type="hidden" name="id" id="prelead_id" value="">
-                    
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Name *</label>
-                        <input type="text" name="name" id="pl_name" required>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Mobile *</label>
-                        <input type="text" name="mobile" id="pl_mobile" required>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Company / Location</label>
-                        <input type="text" name="company_name" id="pl_company">
-                    </div>
-                    <div class="form-group" style="margin-bottom: 12px;">
-                        <label>Source</label>
-                        <select name="source" id="pl_source">
-                            <option value="Unknown">Unknown</option>
-                            <option value="Website">Website</option>
-                            <option value="Justdial">Justdial</option>
-                            <option value="Reference">Reference</option>
-                        </select>
-                    </div>
-                    <div class="form-group admin-only-field" style="display:none; margin-bottom: 12px;">
-                        <label>Assigned To</label>
-                        <select name="assigned_to" id="pl-assigned_to" class="user-select">
-                            <option value="">-- Unassigned --</option>
-                        </select>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label>Notes</label>
-                        <textarea name="notes" id="pl_notes" rows="2"></textarea>
-                    </div>
-                    
-                    <div style="display:flex; gap:10px; margin-top:15px;">
-                        <button type="submit" class="btn btn-primary" style="flex:1;">Save</button>
-                        <button type="button" class="btn btn-secondary" onclick="resetPreLeadForm()">Cancel</button>
-                    </div>
-                </form>
+            
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:8px;">Call Outcome (Status)</label>
+                <select id="call_status" class="filter-input" style="width:100%;">
+                    <option value="Follow Up">Follow Up Later</option>
+                    <option value="Interested">Interested (Convert to Lead)</option>
+                    <option value="Not Interested">Not Interested</option>
+                    <option value="Junk">Wrong Number / Junk</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:8px;">Follow-up Date (if any)</label>
+                <input type="datetime-local" id="call_followup" class="filter-input" style="width:100%;">
+            </div>
+            
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:8px;">Call Notes</label>
+                <textarea id="call_notes" class="filter-input" style="width:100%; resize:vertical;" rows="3" placeholder="Customer said..."></textarea>
             </div>
         </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="document.getElementById('callModal').style.display='none'">Cancel</button>
+            <button class="btn-primary" onclick="submitCallLog()">Save & Close</button>
+        </div>
+    </div>
+</div>
 
-        <!-- Table -->
-        <div class="card" style="flex:1;">
-            <div class="card-title-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
-                <h2><i data-lucide="list"></i> All Pre-Leads</h2>
-                <div class="admin-only-field" style="display:none; gap:10px; align-items:center; background:#f8fafc; padding:6px 12px; border-radius:6px; border:1px solid #e2e8f0;">
-                    <span style="font-size:12px; font-weight:600; color:#475569;">Bulk Assign:</span>
-                    <select id="bulk-assign-preleads-staff" class="user-select" style="padding:4px; border:1px solid #cbd5e1; border-radius:4px; font-size:12px; outline:none; width: auto;">
-                        <option value="">-- Select Staff --</option>
-                    </select>
-                    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="bulkAssign('preleads')">Assign Selected</button>
-                    <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px; background:#fee2e2; color:#b91c1c; border:none; margin-left:8px;" onclick="bulkDelete('preleads')">Delete Selected</button>
+
+<!-- Advanced Bulk Import Modal -->
+<div id="advancedBulkModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i data-lucide="hard-drive" style="color:#3b82f6;"></i> Advanced Data Import Hub</h3>
+            <button onclick="document.getElementById('advancedBulkModal').style.display='none'" style="background:none;border:none;cursor:pointer;color:#64748b;"><i data-lucide="x"></i></button>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:14px; color:#475569; margin-top:0; margin-bottom:20px;">Intelligent import engine. Select your data format, and the system will auto-tag and guard against duplicate numbers.</p>
+            
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                <div class="format-box" onclick="document.getElementById('csv_file').click()">
+                    <i data-lucide="file-spreadsheet" style="width:32px; height:32px; color:#10b981; margin-bottom:12px;"></i>
+                    <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">Excel / CSV Format</div>
+                    <div style="font-size:12px; color:#64748b;">Standard rows and columns</div>
                 </div>
-                <input type="text" id="prelead-search" placeholder="Search mobile/name..." class="search-box" onkeyup="loadPreLeads()" style="max-width:200px; padding:6px 10px; font-size:12px; border:1px solid #cbd5e1; border-radius:4px;">
+                
+                <div class="format-box" onclick="alert('Raw Text parsing coming soon!')">
+                    <i data-lucide="file-text" style="width:32px; height:32px; color:#f59e0b; margin-bottom:12px;"></i>
+                    <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">Raw Text Format</div>
+                    <div style="font-size:12px; color:#64748b;">Paste messy text directly</div>
+                </div>
             </div>
-            <div class="card-body" style="padding:0; overflow-x:auto; margin-top: 15px;">
-                <table class="quotation-list-table" id="preleads-table">
-                    <thead>
-                        <tr>
-                            <th style="width:40px;"><input type="checkbox" id="selectAllPreLeads" onclick="toggleSelectAll('preleads')"></th>
-                            <th>NAME / COMPANY</th>
-                            <th>MOBILE</th>
-                            <th>SOURCE</th>
-                            <th>ASSIGNED TO</th>
-                            <th>STATUS</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            
+            <form id="advancedBulkForm" onsubmit="submitAdvancedBulk(event)" enctype="multipart/form-data" style="margin-top:20px; border-top:1px solid #e2e8f0; padding-top:20px;">
+                <input type="file" id="csv_file" name="csv_file" accept=".csv" required style="display:block; margin-bottom:16px; width:100%; font-size:14px;">
+                
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:8px;">Source Tag (Where did this come from?)</label>
+                    <input type="text" name="import_source" class="filter-input" style="width:100%; box-sizing:border-box;" placeholder="e.g., Facebook Ads, JustDial, Old Excel" required>
+                </div>
+                
+                <div style="margin-bottom:16px;">
+                    <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:8px;">Service Intent (If known)</label>
+                    <select name="import_intent" class="filter-input" style="width:100%; box-sizing:border-box;">
+                        <option value="Unspecified / Raw">Unspecified / Mixed</option>
+                        <option value="Loan">Loan</option>
+                        <option value="Insurance">Insurance</option>
+                        <option value="Credit Card">Credit Card</option>
+                    </select>
+                </div>
+                
+                <div style="background:#f0fdf4; padding:12px; border-radius:8px; border:1px solid #bbf7d0; font-size:12px; color:#166534; display:flex; align-items:center; gap:8px;">
+                    <i data-lucide="shield-check" style="width:16px;"></i> Deduplication Guard is Active
+                </div>
+                
+                <button type="submit" id="bulkSubmitBtn" class="btn-primary" style="width:100%; justify-content:center; margin-top:20px; padding:14px;">Upload & Process Data</button>
+            </form>
         </div>
     </div>
 </div>
 
 <script>
-    function toggleSelectAll(type) {
-        const isChecked = document.getElementById(type === 'leads' ? 'selectAllLeads' : 'selectAllPreLeads').checked;
-        document.querySelectorAll(type === 'leads' ? '.lead-checkbox' : '.prelead-checkbox').forEach(cb => cb.checked = isChecked);
-    }
+let currentTab = 'new';
+let currentPage = 1;
+let searchTimeout;
 
-    async function bulkDelete(type) {
-        const checkboxes = document.querySelectorAll(type === 'leads' ? '.lead-checkbox:checked' : '.prelead-checkbox:checked');
-        const ids = Array.from(checkboxes).map(cb => cb.value);
-        
-        if (ids.length === 0) {
-            showNotification("Please select at least one record to delete", "error");
-            return;
-        }
-        
-        if(!confirm(`Are you sure you want to permanently delete ${ids.length} records?`)) return;
+function switchTab(tab) {
+    document.querySelectorAll('.smart-tab').forEach(e => e.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    currentTab = tab;
+    currentPage = 1;
+    loadData();
+}
 
-        let fd = new FormData();
-        fd.append("api", "bulk_delete");
-        fd.append("type", type);
-        fd.append("ids", JSON.stringify(ids));
+function debounceLoad() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => { currentPage = 1; loadData(); }, 500);
+}
 
-        try {
-            let res = await fetch("?api=bulk_delete", {method: "POST", body: fd});
-            let json = await res.json();
-            if (json.success) {
-                showNotification(`Successfully deleted ${ids.length} records`, "success");
-                const sa = document.getElementById(type === 'leads' ? 'selectAllLeads' : 'selectAllPreLeads');
-                if(sa) sa.checked = false;
-                
-                if (typeof loadPreLeads === 'function') loadPreLeads();
-            } else {
-                showNotification(json.error || "Failed to bulk delete", "error");
-            }
-        } catch(e) {
-            showNotification("Error during bulk delete", "error");
-        }
-    }
-
-    async function bulkAssign(type) {
-        const checkboxes = document.querySelectorAll(type === 'leads' ? '.lead-checkbox:checked' : '.prelead-checkbox:checked');
-        const ids = Array.from(checkboxes).map(cb => cb.value);
-        
-        if (ids.length === 0) {
-            showNotification("Please select at least one record", "error");
-            return;
-        }
-        
-        const staffDropdown = document.getElementById(type === 'leads' ? 'bulk-assign-leads-staff' : 'bulk-assign-preleads-staff');
-        const staff = staffDropdown.value;
-        
-        if (!staff) {
-            showNotification("Please select a staff member to assign to", "error");
-            return;
-        }
-
-        let fd = new FormData();
-        fd.append("api", "bulk_assign");
-        fd.append("type", type);
-        fd.append("assigned_to", staff);
-        fd.append("ids", JSON.stringify(ids));
-
-        try {
-            let res = await fetch("?api=bulk_assign", {method: "POST", body: fd});
-            let json = await res.json();
-            if (json.success) {
-                showNotification(`Successfully assigned ${ids.length} records to ${staff}`, "success");
-                const sa = document.getElementById(type === 'leads' ? 'selectAllLeads' : 'selectAllPreLeads');
-                if(sa) sa.checked = false;
-                
-                if (type === 'leads') {
-                    if (typeof loadLeads === 'function') loadLeads();
-                } else {
-                    loadPreLeads();
-                }
-            } else {
-                showNotification(json.error || "Failed to bulk assign", "error");
-            }
-        } catch(e) {
-            showNotification("Error during bulk assignment", "error");
-        }
-    }
-
-    async function loadPreLeads() {
-        const res = await fetch('?api=get_preleads');
-        const data = await res.json();
-        
-        const tbody = document.querySelector('#preleads-table tbody');
-        tbody.innerHTML = '';
-        
-        let total = 0, interested = 0, junk = 0;
-        
-        const search = document.getElementById('prelead-search')?.value.toLowerCase() || '';
-        
-        data.forEach(p => {
-            if(search && !p.name.toLowerCase().includes(search) && !p.mobile.includes(search)) return;
-            
-            total++;
-            if(p.status === 'Interested') interested++;
-            if(p.status === 'Junk') junk++;
-            
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td><input type="checkbox" class="prelead-checkbox" value="${p.id}"></td>
-                <td>
-                    <div style="font-weight:600;">${p.name}</div>
-                    <div style="font-size:12px;color:var(--text-light);">${p.company_name || p.location || '-'}</div>
-                </td>
-                <td>${p.mobile}<br><span style="font-size:11px;color:#888;">${p.email || ''}</span></td>
-                <td><span class="badge" style="background:#f1f5f9;color:#475569;">${p.source}</span></td>
-                <td><div style="font-size:12px; font-weight:600; color:#475569;">${p.assigned_to || '<span style="color:#94a3b8;font-weight:normal;">Unassigned</span>'}</div></td>
-                <td>
-                    <select onchange="updatePreLeadStatus(${p.id}, this.value)" style="padding:4px; border-radius:4px; font-size:12px;">
-                        <option value="Not Contacted" ${p.status==='Not Contacted'?'selected':''}>Not Contacted</option>
-                        <option value="Interested" ${p.status==='Interested'?'selected':''}>Interested</option>
-                        <option value="Junk" ${p.status==='Junk'?'selected':''}>Junk</option>
-                    </select>
-                </td>
-                <td>
-                    <div style="display:flex;gap:5px;">
-                        ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-secondary" onclick="editPreLead(${p.id})" style="padding:4px 8px;" title="Edit"><i data-lucide="edit" style="width:14px;height:14px;"></i></button>` : ''}
-                        <button class="btn btn-primary" onclick="promotePreLead(${p.id})" style="padding:4px 8px; font-size:12px;" title="Promote to Lead"><i data-lucide="rocket" style="width:14px;height:14px;"></i> Promote</button>
-                        ${currentUser && currentUser.role === 'Admin' ? `<button class="btn btn-danger" onclick="deletePreLead(${p.id})" style="padding:4px 8px;" title="Delete"><i data-lucide="trash-2" style="width:14px;height:14px;"></i></button>` : ''}
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-        
-        document.getElementById('prelead-stat-total').innerText = total;
-        document.getElementById('prelead-stat-interested').innerText = interested;
-        document.getElementById('prelead-stat-junk').innerText = junk;
-        lucide.createIcons();
-    }
-
-    async function savePreLead(e) {
-        e.preventDefault();
-        const fd = new FormData(e.target);
-        const res = await fetch('?api=save_prelead', { method:'POST', body:fd });
-        const data = await res.json();
-        if(data.success) {
-            showNotification(data.message, 'success');
-            resetPreLeadForm();
-            loadPreLeads();
-        } else {
-            showNotification(data.error, 'error');
-        }
-    }
-
-    function resetPreLeadForm() {
-        document.getElementById('prelead-form').reset();
-        document.getElementById('prelead_id').value = '';
-    }
-
-    async function deletePreLead(id) {
-        if(!confirm("Are you sure you want to delete this raw data?")) return;
-        const fd = new FormData(); fd.append('id', id);
-        const res = await fetch('?api=delete_prelead', { method:'POST', body:fd });
-        const data = await res.json();
-        if(data.success) { showNotification(data.message, 'success'); loadPreLeads(); }
-        else showNotification(data.error, 'error');
-    }
-
-    async function promotePreLead(id) {
-        if(!confirm("Promote this prospect to your main Leads CRM?")) return;
-        const fd = new FormData(); fd.append('id', id);
-        const res = await fetch('?api=promote_prelead', { method:'POST', body:fd });
-        const data = await res.json();
-        if(data.success) { 
-            showNotification("🚀 " + data.message, 'success'); 
-            loadPreLeads(); 
-        } else {
-            showNotification(data.error, 'error');
-        }
-    }
-
-    async function updatePreLeadStatus(id, status) {
-        const fd = new FormData(); fd.append('id', id); fd.append('status', status);
-        await fetch('?api=update_prelead_status', { method:'POST', body:fd });
-        loadPreLeads();
-    }
+function loadData() {
+    const s = encodeURIComponent(document.getElementById('searchInput').value);
+    const stat = encodeURIComponent(document.getElementById('statusFilter').value);
+    const int = encodeURIComponent(document.getElementById('intentFilter').value);
     
-    function openPreLeadBulkUploadModal() {
-        openBulkUploadModal('pre_leads');
-    }
-
-    function editPreLead(id) {
-        // Find prelead in local display list (via direct lookup if needed)
-        fetch(`?api=get_preleads`)
-        .then(r => r.json())
-        .then(data => {
-            const p = data.find(x => x.id == id);
-            if(p) {
-                document.getElementById('prelead_id').value = p.id;
-                document.getElementById('pl_name').value = p.name;
-                document.getElementById('pl_mobile').value = p.mobile;
-                document.getElementById('pl_company').value = p.company_name || '';
-                document.getElementById('pl_source').value = p.source || 'Unknown';
-                const staffSel = document.getElementById('pl-assigned_to');
-                if(staffSel) staffSel.value = p.assigned_to || '';
-                document.getElementById('pl_notes').value = p.notes || '';
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadPreLeads();
-        
-        // Auto-open prelead edit modal if requested via URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const editId = urlParams.get('edit_prelead');
-        if (editId) {
-            setTimeout(() => {
-                if (typeof editPreLead === 'function') editPreLead(editId);
-            }, 600);
+    fetch(`?api=get_preleads&page=${currentPage}&tab=${currentTab}&search=${s}&status=${stat}&intent=${int}`)
+    .then(res => res.json())
+    .then(res => {
+        let html = '';
+        if(!res.data || res.data.length === 0) {
+            html = `<tr><td colspan="6" style="text-align:center; padding:40px; color:#94a3b8;">No data found in this view.</td></tr>`;
+        } else {
+            res.data.forEach(row => {
+                let heat = parseInt(row.heat_score || 0);
+                let heatBadge = heat > 70 ? `<span class="score-badge score-hot">🔥 Hot</span>` : (heat > 30 ? `<span class="score-badge score-warm">⚡ Warm</span>` : `<span class="score-badge score-cold">❄️ Cold</span>`);
+                
+                let intent = row.service_intent || 'Unspecified';
+                let lastCall = row.last_called_at ? row.last_called_at : 'Never Called';
+                let cCount = row.call_count || 0;
+                
+                let safeName = (row.name||'').replace(/'/g,"");
+                let msg = encodeURIComponent(`Hi ${safeName}, this is from BFS Circle regarding your inquiry.`);
+                
+                html += `
+                <tr>
+                    <td>
+                        <div style="font-weight:700; color:#0f172a;">${row.name || 'Unknown'}</div>
+                        <div style="font-size:12px; color:#64748b;">${row.company_name || 'No Company'}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600; color:#1e293b;"><i data-lucide="phone" style="width:12px;"></i> ${row.mobile}</div>
+                        <div style="font-size:12px; color:#64748b;"><i data-lucide="mail" style="width:12px;"></i> ${row.email || 'N/A'}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600; color:#3b82f6; font-size:12px; margin-bottom:4px;">${intent}</div>
+                        ${heatBadge}
+                    </td>
+                    <td>
+                        <div style="font-weight:600; color:#0f172a; font-size:12px;">${row.status || 'Not Contacted'}</div>
+                        ${row.followup_date ? `<div style="font-size:11px; color:#d97706; margin-top:4px;"><i data-lucide="clock" style="width:10px;"></i> ${row.followup_date}</div>` : ''}
+                    </td>
+                    <td>
+                        <div style="font-size:12px; color:#475569;">Calls: <b>${cCount}</b></div>
+                        <div style="font-size:11px; color:#94a3b8; margin-top:2px;">Last: ${lastCall}</div>
+                    </td>
+                    <td style="text-align:right; white-space:nowrap;">
+                        <a href="tel:${row.mobile}" class="quick-action-btn btn-call" title="Click to Call"><i data-lucide="phone" style="width:14px;"></i></a>
+                        <a href="https://wa.me/91${row.mobile}?text=${msg}" target="_blank" class="quick-action-btn btn-whatsapp" title="WhatsApp"><i data-lucide="message-circle" style="width:14px;"></i></a>
+                        <button class="quick-action-btn btn-script" onclick="openCallConsole(${row.id}, '${safeName}', '${intent}')" title="Log Call / Script"><i data-lucide="file-text" style="width:14px;"></i></button>
+                    </td>
+                </tr>`;
+            });
         }
+        
+        // Update KPIs
+        if (currentTab === 'new') document.getElementById('kpi-total').innerText = res.total || 0;
+        if (currentTab === 'followup') document.getElementById('kpi-followup').innerText = res.total || 0;
+        if (currentTab === 'archived') document.getElementById('kpi-converted').innerText = res.total || 0;
+document.getElementById('plBody').innerHTML = html;
+        lucide.createIcons();
+        
+        document.getElementById('pageInfo').innerText = `Page ${res.page} of ${res.total_pages || 1} (${res.total} total)`;
+        document.getElementById('prevBtn').disabled = res.page <= 1;
+        document.getElementById('nextBtn').disabled = res.page >= (res.total_pages||1);
     });
+}
+
+function openCallConsole(id, name, intent) {
+    document.getElementById('call_lead_id').value = id;
+    
+    // Smart Script based on intent
+    let script = `"Hi ${name}, this is from BFS Circle. `;
+    if (intent.includes('Loan')) script += `We noticed you were looking for Loan options. We have some great pre-approved offers for you."`;
+    else if (intent.includes('Insurance')) script += `We can help you get the best Insurance quotes today."`;
+    else script += `Do you have 2 minutes to discuss how our financial services can help you?"`;
+    
+    document.getElementById('scriptContent').innerText = script;
+    document.getElementById('callModal').style.display = 'flex';
+}
+
+
+function submitAdvancedBulk(e) {
+    e.preventDefault();
+    const btn = document.getElementById('bulkSubmitBtn');
+    btn.innerText = 'Processing...'; btn.disabled = true;
+    
+    let fd = new FormData(e.target);
+    fd.append('api', 'bulk_import_advanced'); // Assumes we will map this in bulk_import.php or api.php
+    
+    // We will just post it to the standard bulk endpoint for now and handle the UI
+    fetch('ajax_bulk_import.php?type=pre_leads', {method: 'POST', body: fd})
+    .then(r => r.json())
+    .then(d => {
+        btn.innerText = 'Upload & Process Data'; btn.disabled = false;
+        if(d.success) {
+            alert('Data Imported Successfully!');
+            document.getElementById('advancedBulkModal').style.display = 'none';
+            e.target.reset();
+            loadData();
+        } else {
+            alert(d.error || 'Import Failed');
+        }
+    }).catch(err => {
+        btn.innerText = 'Upload & Process Data'; btn.disabled = false;
+        alert('Server Error during import.');
+    });
+}
+
+function submitCallLog() {
+    let id = document.getElementById('call_lead_id').value;
+    let stat = document.getElementById('call_status').value;
+    let fdate = document.getElementById('call_followup').value;
+    let notes = document.getElementById('call_notes').value;
+    
+    let fd = new FormData();
+    fd.append('id', id);
+    fd.append('status', stat);
+    fd.append('followup_date', fdate);
+    fd.append('notes', notes);
+    
+    fetch('?api=log_call', {method: 'POST', body: fd})
+    .then(r=>r.json())
+    .then(d=>{
+        if(d.success) {
+            document.getElementById('callModal').style.display = 'none';
+            document.getElementById('call_notes').value = '';
+            document.getElementById('call_followup').value = '';
+            loadData();
+        } else { alert(d.error || 'Failed'); }
+    });
+}
+
+function changePage(delta) { currentPage += delta; loadData(); }
+function resetFilters() { document.getElementById('searchInput').value=''; document.getElementById('statusFilter').value=''; document.getElementById('intentFilter').value=''; loadData(); }
+
+document.addEventListener("DOMContentLoaded", () => {
+    lucide.createIcons();
+    loadData();
+});
 </script>
 
 <?php require_once 'footer.php'; ?>

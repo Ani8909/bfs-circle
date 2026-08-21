@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php $base_path = defined('IS_SUBFOLDER') ? '../' : ''; ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - AuraCRM' : 'AuraCRM - Client Management System'; ?></title>
+    <title><?php echo isset($page_title) ? htmlspecialchars($page_title) . ' - BFS Financial Services' : 'BFS Financial Services - Client Management System'; ?></title>
+    
+    <!-- PWA Installable App Configuration -->
+    <link rel="manifest" href="<?php echo $base_path; ?>manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/10311/10311651.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     
     <!-- Google Fonts Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +21,87 @@
     
     <!-- Lucide Icons for clean iconography -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        /* Fix SweetAlert overlapping with Client Details Modal */
+        .swal2-container { z-index: 99999 !important; }
+    
+
+        /* Premium Sidebar UI */
+        aside {
+            background: linear-gradient(180deg, #0b1121 0%, #111827 100%);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.25);
+            border-right: 1px solid rgba(255,255,255,0.06);
+        }
+        .sidebar-menu {
+            padding: 12px 16px;
+        }
+        .menu-item {
+            margin-bottom: 8px;
+        }
+        .menu-item a {
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .menu-item a:hover {
+            background: rgba(255,255,255,0.04);
+            color: #f1f5f9;
+            transform: translateX(6px);
+        }
+        
+        @keyframes active-pulse {
+            0% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+            50% { box-shadow: inset 40px 0 40px -20px rgba(255, 255, 255, 0.15); }
+            100% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        @keyframes glow-line {
+            0% { opacity: 0.5; box-shadow: 0 0 5px #ffffff; }
+            50% { opacity: 1; box-shadow: 0 0 15px 4px #ffffff, 0 0 5px #cbd5e1; }
+            100% { opacity: 0.5; box-shadow: 0 0 5px #ffffff; }
+        }
+
+        .menu-item.active a {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding-left: 20px;
+            animation: active-pulse 3s infinite ease-in-out;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+        
+        .menu-item.active a i {
+            color: #ffffff;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+        }
+
+        /* The Animated Glowing Line on the Left */
+        .menu-item.active a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 4px;
+            background: #ffffff;
+            border-radius: 0 4px 4px 0;
+            animation: glow-line 2s infinite ease-in-out;
+        }
+
+
+</style>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,17 +119,17 @@
     <!-- Vanilla CSS Design System -->
     <style>
         :root {
-            /* Orange & Slate Premium Palette */
-            --primary: #f97316;
-            --primary-hover: #ea580c;
-            --primary-light: #fff7ed;
-            --primary-border: #ffedd5;
-            --primary-glow: rgba(249, 115, 22, 0.15);
+            /* Minimalist Monochrome Palette (Black & White Luxury) */
+            --primary: #0f172a; /* Slate 900 / Deep Black */
+            --primary-hover: #000000; /* Pure Black */
+            --primary-light: #f1f5f9; /* Soft Grey */
+            --primary-border: #e2e8f0; /* Standard Border */
+            --primary-glow: rgba(0, 0, 0, 0.15);
             
             --bg-main: #f8fafc;
             --bg-card: #ffffff;
-            --sidebar-bg: #0f172a;
-            --sidebar-hover: #1e293b;
+            --sidebar-bg: #000000;
+            --sidebar-hover: #111827;
             
             --text-primary: #1e293b;
             --text-muted: #64748b;
@@ -92,6 +182,56 @@
             overflow-x: hidden;
         }
 
+        /* --- SKELETON LOADERS CSS --- */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .skeleton {
+            background: #f1f5f9;
+            background-image: linear-gradient(90deg, #f1f5f9 0px, #e2e8f0 40px, #f1f5f9 80px);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+            border-radius: var(--radius-sm);
+        }
+
+        .skeleton-text {
+            height: 14px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        
+        .skeleton-text.short { width: 50%; }
+        .skeleton-text.medium { width: 75%; }
+        .skeleton-text.long { width: 90%; }
+        .skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
+
+        .skeleton-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .skeleton-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .skeleton-card {
+            padding: 20px;
+            background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        /* -------------------------- */
+
         /* Sidebar Navigation Layout */
         aside {
             width: 260px;
@@ -142,22 +282,29 @@
 
         .sidebar-menu {
             list-style: none;
-            padding: 24px 12px;
+            padding: 16px 12px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             flex-grow: 1;
+            overflow-y: auto;
         }
+
+        /* Custom scrollbar for sidebar */
+        .sidebar-menu::-webkit-scrollbar { width: 4px; }
+        .sidebar-menu::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .sidebar-menu::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
 
         .menu-item a {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 16px;
+            padding: 10px 16px;
             color: var(--text-light);
             text-decoration: none;
             border-radius: var(--radius-md);
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 500;
             transition: var(--transition-fast);
         }
@@ -504,10 +651,13 @@
 
         input[type="text"],
         input[type="email"],
+        input[type="tel"],
+        input[type="password"],
         input[type="number"],
         input[type="url"],
         input[type="datetime-local"],
         input[type="file"],
+        input[type="date"],
         select,
         textarea {
             padding: 10px 14px;
@@ -565,10 +715,13 @@
         .btn-primary {
             background-color: var(--primary);
             color: white;
+            box-shadow: 0 4px 6px -1px var(--primary-glow);
         }
 
         .btn-primary:hover {
             background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -2px rgba(249, 115, 22, 0.3);
         }
 
         .btn-secondary {
@@ -579,6 +732,8 @@
 
         .btn-secondary:hover {
             background-color: #e2e8f0;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
         }
 
         .btn-accent {
@@ -588,6 +743,7 @@
 
         .btn-accent:hover {
             background-color: var(--sidebar-hover);
+            transform: translateY(-1px);
         }
 
         .btn-danger {
@@ -599,6 +755,8 @@
         .btn-danger:hover {
             background-color: var(--danger);
             color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
         }
 
         .form-actions {
@@ -677,7 +835,7 @@
         }
 
         .client-list-pane {
-            max-height: 650px;
+            height: calc(100vh - 240px);
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -706,6 +864,18 @@
             box-shadow: var(--shadow-md);
         }
 
+        .client-card.won {
+            border: 1px solid var(--status-won);
+            border-left: 4px solid var(--status-won) !important;
+            background: linear-gradient(145deg, #ffffff 60%, var(--status-won-light) 100%) !important;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.1);
+        }
+        
+        .client-card.won:hover {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            border-color: var(--status-won);
+        }
+
         .client-card-header {
             display: flex;
             justify-content: space-between;
@@ -728,13 +898,70 @@
             gap: 6px;
         }
 
+        /* Data Table Premium Design */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            background: white;
+            box-shadow: var(--shadow-sm);
+            margin-top: 10px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px; /* Reduced from 14px */
+        }
+
+        .data-table th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-size: 11px; /* Reduced from 12px */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 16px; /* Reduced padding */
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 10px 16px; /* Reduced from 16px 20px */
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            transition: background-color var(--transition-fast);
+        }
+
+        .data-table tbody tr:hover td {
+            background-color: var(--bg-main);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Improved Badges */
         .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             font-size: 11px;
             font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
         }
+
+        .badge-info { background-color: #eff6ff; color: #3b82f6; border: 1px solid #bfdbfe; }
+        .badge-success { background-color: var(--status-won-light); color: var(--status-won); border: 1px solid #a7f3d0; }
+        .badge-warning { background-color: var(--warning-light); color: var(--warning); border: 1px solid #fde68a; }
+        .badge-danger { background-color: var(--danger-light); color: var(--danger); border: 1px solid #fecaca; }
 
         .badge-hot { background-color: var(--status-lost-light); color: var(--status-lost); }
         .badge-warm { background-color: var(--status-negotiation-light); color: var(--status-negotiation); }
@@ -758,9 +985,21 @@
             border: 1px solid #e2e8f0;
             border-radius: var(--radius-lg);
             padding: 24px;
-            min-height: 500px;
-            position: sticky;
-            top: 24px;
+            height: calc(100vh - 240px);
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .client-list-pane::-webkit-scrollbar,
+        .client-detail-pane::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+
+        .client-detail-pane.won-theme {
+            border: 2px solid var(--status-won);
+            background: linear-gradient(to bottom right, #ffffff, var(--status-won-light) 150%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15);
         }
 
         .detail-placeholder {
@@ -830,7 +1069,7 @@
         /* Interactive Checklist for pipeline tracking */
         .pipeline-tracker {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             margin: 20px 0;
             background: #f8fafc;
@@ -862,14 +1101,21 @@
         }
 
         .pipeline-step.completed .pipeline-icon-circle {
-            background-color: var(--success);
+            background-color: #0f172a;
             color: white;
         }
 
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+        }
+
         .pipeline-step.active .pipeline-icon-circle {
-            background-color: var(--primary);
+            background-color: #0ea5e9; /* Vibrant Sky Blue for In-Progress */
             color: white;
-            box-shadow: 0 0 0 4px var(--primary-glow);
+            animation: pulseGlow 1.5s infinite;
+            border: 2px solid #bae6fd;
         }
 
         .pipeline-step-label {
@@ -1236,7 +1482,80 @@
                 flex-direction: column;
             }
         }
-    </style>
+    
+
+        /* Premium Sidebar UI */
+        aside {
+            background: linear-gradient(180deg, #0b1121 0%, #111827 100%);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.25);
+            border-right: 1px solid rgba(255,255,255,0.06);
+        }
+        .sidebar-menu {
+            padding: 12px 16px;
+        }
+        .menu-item {
+            margin-bottom: 8px;
+        }
+        .menu-item a {
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        .menu-item a:hover {
+            background: rgba(255,255,255,0.04);
+            color: #f1f5f9;
+            transform: translateX(6px);
+        }
+        
+        @keyframes active-pulse {
+            0% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+            50% { box-shadow: inset 40px 0 40px -20px rgba(255, 255, 255, 0.15); }
+            100% { box-shadow: inset 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        @keyframes glow-line {
+            0% { opacity: 0.5; box-shadow: 0 0 5px #ffffff; }
+            50% { opacity: 1; box-shadow: 0 0 15px 4px #ffffff, 0 0 5px #cbd5e1; }
+            100% { opacity: 0.5; box-shadow: 0 0 5px #ffffff; }
+        }
+
+        .menu-item.active a {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+            color: #ffffff;
+            border-radius: 12px;
+            padding-left: 20px;
+            animation: active-pulse 3s infinite ease-in-out;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+        
+        .menu-item.active a i {
+            color: #ffffff;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+        }
+
+        /* The Animated Glowing Line on the Left */
+        .menu-item.active a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 4px;
+            background: #ffffff;
+            border-radius: 0 4px 4px 0;
+            animation: glow-line 2s infinite ease-in-out;
+        }
+
+
+</style>
     
     <script>
         // Global variables populated from PHP
@@ -1300,6 +1619,10 @@
                     let opts = '<option value="">-- Unassigned --</option>';
                     users.forEach(u => opts += `<option value="${u.username}">${u.name ? u.name + ' (' + u.username + ')' : u.username}</option>`);
                     document.querySelectorAll('.user-select').forEach(sel => sel.innerHTML = opts);
+                    
+                    let filterOpts = '<option value=""> All Staff</option><option value="unassigned">-- Unassigned --</option>';
+                    users.forEach(u => filterOpts += `<option value="${u.username}">${u.name ? u.name + ' (' + u.username + ')' : u.username}</option>`);
+                    document.querySelectorAll('.user-filter-select').forEach(sel => sel.innerHTML = filterOpts);
                 }
             } catch(e) {}
         }
@@ -1326,131 +1649,202 @@
     <?php $active_page = basename($_SERVER['PHP_SELF']); ?>
     <!-- Sidebar Navigation -->
     <aside>
-        <div class="brand-container">
-            <div class="brand-logo">A</div>
-            <div class="brand-name">AuraCRM</div>
+        <div class="brand-container" style="display:flex; align-items:center; gap: 14px; padding: 24px 20px;">
+            <div style="display: flex; align-items: center; justify-content: center; background: transparent; width: auto; height: auto;">
+                <img src="<?php echo $base_path; ?>logo.png" alt="BFS Circle Logo" style="height: 40px; width: auto; object-fit: contain; filter: brightness(0) invert(1) drop-shadow(0 2px 8px rgba(255,255,255,0.2)); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            </div>
+            <div class="brand-name" style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; margin-left: 8px;">BFS Circle</div>
         </div>
         <ul class="sidebar-menu">
             <?php if (($_SESSION['role'] ?? '') === 'Admin'): ?>
             <li class="menu-item <?php echo ($active_page === 'dashboard.php') ? 'active' : ''; ?>">
-                <a href="dashboard.php">
+                <a href="<?php echo $base_path; ?>dashboard.php">
                     <i data-lucide="layout-dashboard"></i>
                     <span class="menu-text">Dashboard</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'pre_leads.php') ? 'active' : ''; ?>">
-                <a href="pre_leads.php">
+                <a href="<?php echo $base_path; ?>pre_leads.php">
                     <i data-lucide="inbox"></i>
                     <span class="menu-text">Pre-Leads (Raw Data)</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'leads.php') ? 'active' : ''; ?>">
-                <a href="leads.php">
+                <a href="<?php echo $base_path; ?>leads.php">
                     <i data-lucide="target"></i>
                     <span class="menu-text">Lead Management</span>
                 </a>
             </li>
+            <li class="menu-item <?php echo ($active_page === 'field_visits.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>field_visits.php">
+                    <i data-lucide="map-pin"></i>
+                    <span class="menu-text">Field Visits</span>
+                </a>
+            </li>
+
+
             <li class="menu-item <?php echo ($active_page === 'reminders.php') ? 'active' : ''; ?>">
-                <a href="reminders.php">
+                <a href="<?php echo $base_path; ?>reminders.php">
                     <i data-lucide="bell"></i>
                     <span class="menu-text">Reminders</span>
                 </a>
             </li>
-            <li class="menu-item <?php echo ($active_page === 'add_client.php') ? 'active' : ''; ?>">
-                <a href="add_client.php">
-                    <i data-lucide="user-plus"></i>
-                    <span class="menu-text">Add Client</span>
+            <li class="menu-item <?php echo ($active_page === 'applicants_list.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>applicants_list.php">
+                    <i data-lucide="files"></i>
+                    <span class="menu-text">Loan Applications</span>
                 </a>
             </li>
+            
+            <li class="menu-item <?php echo ($active_page === 'client_vault') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>client_vault/index.php">
+                    <i data-lucide="shield-check"></i>
+                    <span class="menu-text">Client Vault</span>
+                </a>
+            </li>
+
             <li class="menu-item <?php echo ($active_page === 'search_track.php') ? 'active' : ''; ?>">
-                <a href="search_track.php">
+                <a href="<?php echo $base_path; ?>search_track.php">
                     <i data-lucide="search"></i>
                     <span class="menu-text">Search & CRM Track</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'send_email.php') ? 'active' : ''; ?>">
-                <a href="send_email.php">
+                <a href="<?php echo $base_path; ?>send_email.php">
                     <i data-lucide="mail"></i>
                     <span class="menu-text">Send Email</span>
                 </a>
             </li>
-            <li class="menu-item <?php echo ($active_page === 'quotation_builder.php') ? 'active' : ''; ?>">
-                <a href="quotation_builder.php">
-                    <i data-lucide="file-plus"></i>
-                    <span class="menu-text">Quotation Builder</span>
-                </a>
-            </li>
-            <li class="menu-item <?php echo ($active_page === 'quotation_list.php') ? 'active' : ''; ?>">
-                <a href="quotation_list.php">
-                    <i data-lucide="file-text"></i>
-                    <span class="menu-text">Quotation List</span>
+            <li class="menu-item <?php echo ($active_page === 'calculators.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>calculators.php">
+                    <i data-lucide="calculator"></i>
+                    <span class="menu-text">Financial Calculators</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'activity_log.php') ? 'active' : ''; ?>">
-                <a href="activity_log.php">
+                <a href="<?php echo $base_path; ?>activity_log.php">
                     <i data-lucide="activity"></i>
                     <span class="menu-text">Activity Logs</span>
                 </a>
             </li>
+            <li class="menu-item <?php echo ($active_page === 'employee_activity.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>employee_activity.php">
+                    <i data-lucide="bar-chart-2"></i>
+                    <span class="menu-text">Staff Productivity</span>
+                </a>
+            </li>
+
             <li class="menu-item <?php echo ($active_page === 'settings.php') ? 'active' : ''; ?>">
-                <a href="settings.php">
+                <a href="<?php echo $base_path; ?>settings.php">
                     <i data-lucide="settings"></i>
                     <span class="menu-text">CRM Settings</span>
                 </a>
             </li>
+            <li class="menu-item <?php echo (basename($_SERVER['PHP_SELF']) === 'payout_distribution.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>payout_distribution.php">
+                    <i data-lucide="coins"></i>
+                    <span class="menu-text">Payout Distribution</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'payout_settings.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>payout_settings.php">
+                    <i data-lucide="percent"></i>
+                    <span class="menu-text">Payout Master</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'employees_list.php' || $active_page === 'add_employee.php' || $active_page === 'view_employee.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>employees_list.php">
+                    <i data-lucide="contact"></i>
+                    <span class="menu-text">Staff & HRMS</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'bankers_list.php' || $active_page === 'add_banker.php' || $active_page === 'view_banker.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>bankers_list.php">
+                    <i data-lucide="users"></i>
+                    <span class="menu-text">Bankers Directory</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'referrals_list.php' || $active_page === 'add_referral.php' || $active_page === 'view_referral.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>referrals_list.php">
+                    <i data-lucide="briefcase"></i>
+                    <span class="menu-text">Referrals / DSA</span>
+                </a>
+            </li>
             <?php else: ?>
             <li class="menu-item <?php echo ($active_page === 'dashboard.php') ? 'active' : ''; ?>">
-                <a href="dashboard.php">
+                <a href="<?php echo $base_path; ?>dashboard.php">
                     <i data-lucide="layout-dashboard"></i>
                     <span class="menu-text">Dashboard</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'pre_leads.php') ? 'active' : ''; ?>">
-                <a href="pre_leads.php">
+                <a href="<?php echo $base_path; ?>pre_leads.php">
                     <i data-lucide="inbox"></i>
                     <span class="menu-text">My Pre-Leads (Raw Data)</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'leads.php') ? 'active' : ''; ?>">
-                <a href="leads.php">
+                <a href="<?php echo $base_path; ?>leads.php">
                     <i data-lucide="target"></i>
                     <span class="menu-text">Lead Management</span>
                 </a>
             </li>
+
             <li class="menu-item <?php echo ($active_page === 'reminders.php') ? 'active' : ''; ?>">
-                <a href="reminders.php">
+                <a href="<?php echo $base_path; ?>reminders.php">
                     <i data-lucide="bell"></i>
                     <span class="menu-text">Reminders</span>
                 </a>
             </li>
-            <li class="menu-item <?php echo ($active_page === 'add_client.php') ? 'active' : ''; ?>">
-                <a href="add_client.php">
-                    <i data-lucide="user-plus"></i>
-                    <span class="menu-text">Add Client</span>
+            <li class="menu-item <?php echo ($active_page === 'applicants_list.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>applicants_list.php">
+                    <i data-lucide="files"></i>
+                    <span class="menu-text">Loan Applications</span>
                 </a>
             </li>
+            
+            <li class="menu-item <?php echo ($active_page === 'client_vault') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>client_vault/index.php">
+                    <i data-lucide="shield-check"></i>
+                    <span class="menu-text">Client Vault</span>
+                </a>
+            </li>
+
+
             <li class="menu-item <?php echo ($active_page === 'search_track.php') ? 'active' : ''; ?>">
-                <a href="search_track.php">
+                <a href="<?php echo $base_path; ?>search_track.php">
                     <i data-lucide="search"></i>
-                    <span class="menu-text">Search & CRM Track</span>
+                    <span class="menu-text">CRM Search</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'send_email.php') ? 'active' : ''; ?>">
-                <a href="send_email.php">
+                <a href="<?php echo $base_path; ?>send_email.php">
                     <i data-lucide="mail"></i>
                     <span class="menu-text">Send Email</span>
                 </a>
             </li>
-            <li class="menu-item <?php echo ($active_page === 'quotation_builder.php') ? 'active' : ''; ?>">
-                <a href="quotation_builder.php">
-                    <i data-lucide="file-plus"></i>
-                    <span class="menu-text">Quotation Builder</span>
+            <li class="menu-item <?php echo ($active_page === 'calculators.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>calculators.php">
+                    <i data-lucide="calculator"></i>
+                    <span class="menu-text">Financial Calculators</span>
                 </a>
             </li>
-            <li class="menu-item <?php echo ($active_page === 'quotation_list.php') ? 'active' : ''; ?>">
-                <a href="quotation_list.php">
-                    <i data-lucide="file-text"></i>
-                    <span class="menu-text">Quotation List</span>
+            <li class="menu-item <?php echo ($active_page === 'employees_list.php' || $active_page === 'view_employee.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>employees_list.php">
+                    <i data-lucide="contact"></i>
+                    <span class="menu-text">Staff & HRMS</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'bankers_list.php' || $active_page === 'view_banker.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>bankers_list.php">
+                    <i data-lucide="users"></i>
+                    <span class="menu-text">Bankers Directory</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'referrals_list.php' || $active_page === 'view_referral.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>referrals_list.php">
+                    <i data-lucide="briefcase"></i>
+                    <span class="menu-text">Referrals / DSA</span>
                 </a>
             </li>
             <?php endif; ?>
@@ -1467,26 +1861,12 @@
     <main>
         
         <!-- Header -->
-        <header class="main-header">
+        <header class="main-header" style="border-bottom:1px solid #f1f5f9; padding-bottom:16px; margin-bottom:24px;">
             <div class="page-title">
-                <h1 id="view-title"><?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?></h1>
-                <p id="view-subtitle"><?php echo htmlspecialchars($page_subtitle ?? ''); ?></p>
-            </div>
-            <div class="user-pill">
-                <div class="user-avatar" id="header-user-avatar"><?php 
-                    $current_username = $_SESSION['username'] ?? 'Unknown';
-                    $stmtUser = $db->prepare("SELECT name FROM users WHERE username = ?");
-                    $stmtUser->execute([$current_username]);
-                    $uRow = $stmtUser->fetch();
-                    $displayName = (!empty($uRow) && !empty($uRow['name'])) ? $uRow['name'] : $current_username;
-                    
-                    $names = explode(' ', $displayName);
-                    $initials = '';
-                    foreach ($names as $n) {
-                        if (!empty($n)) $initials .= strtoupper(substr($n, 0, 1));
-                    }
-                    echo htmlspecialchars(substr($initials, 0, 2));
-                ?></div>
-                <span id="header-user-name"><?php echo htmlspecialchars($displayName); ?></span>
+                <h1 id="view-title" style="font-size:24px; font-weight:800; color:#0f172a; letter-spacing:-0.03em; margin:0; display:flex; align-items:center; gap:10px;">
+                    <i data-lucide="layout-dashboard" style="color:#0f172a; width:24px; height:24px;"></i>
+                    <?php echo htmlspecialchars($page_title ?? 'Dashboard'); ?>
+                </h1>
+                <p id="view-subtitle" style="margin:6px 0 0 34px; color:#64748b; font-size:13px; font-weight:500;"><?php echo htmlspecialchars($page_subtitle ?? ''); ?></p>
             </div>
         </header>

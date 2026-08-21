@@ -144,7 +144,7 @@ require_once __DIR__ . '/header.php';
             
             if (response.ok && data.success) {
                 showNotification(data.message, 'success');
-                if (newStatus === 'Accepted') {
+                if (newStatus === 'Approved') {
                     if (typeof confetti === 'function') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                 }
                 loadQuotationList(); 
@@ -257,7 +257,7 @@ require_once __DIR__ . '/header.php';
             template.innerHTML = `
                 <div style="display:flex; justify-content:space-between; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px;">
                     <div>
-                        <h1 style="margin:0; font-family:'Outfit'; font-size:24px; color:var(--primary);">${companyProfile.company_name || 'Aura CRM'}</h1>
+                        <h1 style="margin:0; font-family:'Outfit'; font-size:24px; color:var(--primary);">${companyProfile.company_name || 'BFS Financial Services'}</h1>
                         <p style="margin:4px 0 0 0; color:#64748b;">
                             ${companyProfile.address_line1 || ''}<br>
                             ${companyProfile.city || ''}, ${companyProfile.state || ''} - ${companyProfile.pincode || ''}<br>
@@ -340,7 +340,7 @@ require_once __DIR__ . '/header.php';
                 
                 <div style="margin-top: 40px; border-top: 1px dashed #cbd5e1; padding-top:20px; display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#94a3b8;">
                     <div>System Generated Audit Record: <strong>${quote.quotation_number}</strong>. No signature required.</div>
-                    <div style="text-align:right;">Powered by AuraCRM Solutions</div>
+                    <div style="text-align:right;">Powered by BFS Financial Services Solutions</div>
                 </div>
             `;
             

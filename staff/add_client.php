@@ -189,30 +189,32 @@ require_once __DIR__ . '/header.php';
     async function saveClient(event) {
         event.preventDefault();
         const form = document.getElementById('client-registration-form');
-        const formData = new FormData(form);
-        // Force assigned_to to be the logged in staff member
-        formData.append('assigned_to', '<?php echo htmlspecialchars($_SESSION['username']); ?>');
-        
-        try {
-            const response = await fetch('?api=add_client', {
-                method: 'POST',
-                body: formData
-            });
+        showConfirm(async () => {
+            const formData = new FormData(form);
+            // Force assigned_to to be the logged in staff member
+            formData.append('assigned_to', '<?php echo htmlspecialchars($_SESSION['username']); ?>');
             
-            const data = await response.json();
-            
-            if (response.ok && data.success) {
-                showNotification(data.message, 'success');
-                form.reset();
-                setTimeout(() => {
-                    location.href = 'search_track.php';
-                }, 1000);
-            } else {
-                showNotification(data.error || 'Registration failed.', 'error');
+            try {
+                const response = await fetch('?api=add_client', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showNotification(data.message, 'success');
+                    form.reset();
+                    setTimeout(() => {
+                        location.href = 'search_track.php';
+                    }, 1000);
+                } else {
+                    showNotification(data.error || 'Registration failed.', 'error');
+                }
+            } catch (err) {
+                showNotification('Connection failure in client registration.', 'error');
             }
-        } catch (err) {
-            showNotification('Connection failure in client registration.', 'error');
-        }
+        }, 'Confirm Registration', 'Are you sure you want to register this new client?', 'Yes, Register');
     }
 
     document.addEventListener('DOMContentLoaded', () => {

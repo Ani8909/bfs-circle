@@ -1,0 +1,1 @@
+<?php require_once 'config.php'; \->exec('ALTER TABLE applicant_bank_assignments ADD COLUMN assigned_by TEXT'); echo 'Added'; ?>

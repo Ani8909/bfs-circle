@@ -4,8 +4,9 @@ $page_title = 'Communication Center';
 $page_subtitle = 'Compose and dispatch simulated customer interaction emails';
 require_once 'header.php';
 
-// Get client_id if passed in URL
+// Get client_id or email if passed in URL
 $preset_client_id = isset($_GET['client_id']) ? (int)$_GET['client_id'] : '';
+$preset_email = isset($_GET['email']) ? $_GET['email'] : '';
 ?>
 
 <div id="view-send-email" class="view-container">
@@ -25,8 +26,6 @@ $preset_client_id = isset($_GET['client_id']) ? (int)$_GET['client_id'] : '';
                 <div class="form-group">
                     <label class="required">Communication Stage Category</label>
                     <select name="type" required>
-                        <option value="Pitch">Pitch Sent</option>
-                        <option value="PPT">PPT Shared</option>
                         <option value="Custom Mail" selected>Custom Mail / Updates</option>
                         <option value="Quotation">Quotation Sent</option>
                     </select>
@@ -83,6 +82,7 @@ $preset_client_id = isset($_GET['client_id']) ? (int)$_GET['client_id'] : '';
 <script>
     let quillEmailEditor = null;
     let presetClientId = "<?php echo $preset_client_id; ?>";
+    let presetEmail = "<?php echo htmlspecialchars($preset_email); ?>";
     window.globalEmailTemplates = [];
 
     async function refreshClientDropdowns() {
@@ -92,11 +92,19 @@ $preset_client_id = isset($_GET['client_id']) ? (int)$_GET['client_id'] : '';
             if (!Array.isArray(clients)) return;
             
             const emailSelect = document.getElementById('email-to-select');
-            const optHtml = clients.map(c => `<option value="${c.id}">${c.company_name} (${c.contact_name})</option>`).join('');
+            const optHtml = clients.map(c => `<option value="${c.id}" data-email="${c.email}">${c.company_name} (${c.contact_name})</option>`).join('');
             emailSelect.innerHTML = '<option value="" disabled selected>Choose client account...</option>' + optHtml;
             
             if (presetClientId) {
                 emailSelect.value = presetClientId;
+            } else if (presetEmail) {
+                let options = emailSelect.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].getAttribute('data-email') === presetEmail) {
+                        emailSelect.selectedIndex = i;
+                        break;
+                    }
+                }
             }
         } catch (err) {
             console.warn('refreshClientDropdowns failed: ', err);
@@ -155,7 +163,7 @@ $preset_client_id = isset($_GET['client_id']) ? (int)$_GET['client_id'] : '';
             quillEmailEditor.root.innerHTML = t.body;
             
             if (t.attachment_name) {
-                badge.innerText = `📎 Template Attachment: ${t.attachment_name.substring(13)}`;
+                badge.innerText = ` Template Attachment: ${t.attachment_name.substring(13)}`;
                 badge.style.display = 'block';
             } else {
                 badge.style.display = 'none';
