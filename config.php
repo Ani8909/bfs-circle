@@ -49,7 +49,11 @@ try {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )");
 
-    // Create default admin if no users exist
+    
+    try { $db->exec("ALTER TABLE users ADD COLUMN staff_type TEXT"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE users ADD COLUMN has_dashboard INTEGER DEFAULT 1"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE users ADD COLUMN plain_password TEXT"); } catch (Exception $e) {}
+// Create default admin if no users exist
     $user_count = $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
     if ($user_count == 0) {
         $default_hash = password_hash('admin123', PASSWORD_DEFAULT);
@@ -459,6 +463,57 @@ try {
     )");
     
     // Check missing columns
+
+    $db->exec("CREATE TABLE IF NOT EXISTS co_applicants (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        applicant_id INTEGER NOT NULL,
+        is_financial INTEGER DEFAULT 0,
+        relationship TEXT,
+        full_name TEXT,
+        mobile TEXT,
+        email TEXT,
+        dob TEXT,
+        pan_number TEXT,
+        aadhar_number TEXT,
+        same_address INTEGER DEFAULT 0,
+        address TEXT,
+        pincode TEXT,
+        state TEXT,
+        city TEXT,
+        employment_type TEXT,
+        monthly_income REAL,
+        current_emis REAL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(applicant_id) REFERENCES applicants(id)
+    )");
+
+    $db->exec("CREATE TABLE IF NOT EXISTS bank_payout_settings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        bank_name TEXT NOT NULL,
+        loan_type TEXT NOT NULL,
+        payout_percentage REAL DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+
+    $db->exec("CREATE TABLE IF NOT EXISTS staff_location_logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        lat TEXT,
+        lon TEXT,
+        battery TEXT,
+        status TEXT,
+        logged_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
+
+    $db->exec("CREATE TABLE IF NOT EXISTS payout_distributions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        payout_id INTEGER,
+        recipient_type TEXT,
+        recipient_id TEXT,
+        amount REAL,
+        status TEXT DEFAULT 'Pending',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )");
 // Field Visits Module
     $db->exec("CREATE TABLE IF NOT EXISTS field_visits (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
