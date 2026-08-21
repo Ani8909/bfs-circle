@@ -1064,7 +1064,7 @@ try {
             $total_clients = $db->query("SELECT COUNT(*) FROM clients$assignedFilter")->fetchColumn();
             $emails_today = $db->query("SELECT COUNT(*) FROM communications" . $commJoinFilter . "date(sent_at) = date('now', 'localtime')")->fetchColumn();
             $quotes_this_month = $db->query("SELECT COUNT(quotations.id) FROM quotations" . $quotationJoinFilter . "strftime('%Y-%m', quotations.created_at) = strftime('%Y-%m', 'now', 'localtime')")->fetchColumn();
-            $pending_followups = $db->query("SELECT COUNT(*) FROM clients WHERE priority = 'Hot' AND overall_status IN ('New', 'Contacted', 'In Negotiation') $assignedFilterAnd")->fetchColumn();
+            $pending_followups = $db->query("SELECT COUNT(*) FROM leads WHERE priority = 'Hot' AND stage IN ('New', 'Contacted', 'In Negotiation') $assignedFilterAnd")->fetchColumn();
             $total_quote_value = $db->query("SELECT SUM(quotations.total_amount) FROM quotations" . $quotationJoinFilterEmpty)->fetchColumn() ?: 0;
             $no_quotation_clients = $db->query("SELECT COUNT(*) FROM clients WHERE id NOT IN (SELECT DISTINCT client_id FROM quotations) $assignedFilterAnd")->fetchColumn();
             
