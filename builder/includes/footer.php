@@ -22,6 +22,10 @@
         <i data-lucide="users"></i>
         <span>Clients</span>
     </a>
+    <a href="../activity_log.php" class="nav-item">
+        <i data-lucide="activity"></i>
+        <span>Logs</span>
+    </a>
     <a href="payouts.php" class="nav-item <?php echo $current_page == 'payouts.php' ? 'active' : ''; ?>">
         <i data-lucide="wallet"></i>
         <span>Payouts</span>

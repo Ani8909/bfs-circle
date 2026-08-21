@@ -1796,6 +1796,12 @@
                     <span class="menu-text">Reminders</span>
                 </a>
             </li>
+            <li class="menu-item <?php echo ($active_page === 'visits.php' || $active_page === 'my_route.php' || $active_page === 'add_visit.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>visits.php">
+                    <i data-lucide="map-pin"></i>
+                    <span class="menu-text">My Field Visits</span>
+                </a>
+            </li>
             <li class="menu-item <?php echo ($active_page === 'applicants_list.php') ? 'active' : ''; ?>">
                 <a href="<?php echo $base_path; ?>applicants_list.php">
                     <i data-lucide="files"></i>
@@ -1827,6 +1833,12 @@
                 <a href="<?php echo $base_path; ?>calculators.php">
                     <i data-lucide="calculator"></i>
                     <span class="menu-text">Financial Calculators</span>
+                </a>
+            </li>
+            <li class="menu-item <?php echo ($active_page === 'activity_log.php') ? 'active' : ''; ?>">
+                <a href="<?php echo $base_path; ?>activity_log.php">
+                    <i data-lucide="activity"></i>
+                    <span class="menu-text">Activity Logs</span>
                 </a>
             </li>
             <li class="menu-item <?php echo ($active_page === 'employees_list.php' || $active_page === 'view_employee.php') ? 'active' : ''; ?>">
@@ -1870,3 +1882,4 @@
                 <p id="view-subtitle" style="margin:6px 0 0 34px; color:#64748b; font-size:13px; font-weight:500;"><?php echo htmlspecialchars($page_subtitle ?? ''); ?></p>
             </div>
         </header>
+

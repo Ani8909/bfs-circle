@@ -46,19 +46,20 @@ require_once 'header.php';
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Loan ID</th>
+                        <th>Applicant ID</th>
                         <th>Applicant Name</th>
                         <th>Mobile</th>
                         <th>Loan Type</th>
                         <th>Amount (₹)</th>
                         <th>Current Stage</th>
                         <th>Added By</th>
+                        <th>Date Added</th>
                         <th style="text-align: right;">Action</th>
                     </tr>
                 </thead>
                 <tbody id="applicants-tbody">
                     <tr>
-                        <td colspan="8" style="text-align: center;">Loading applicants...</td>
+                        <td colspan="9" style="text-align: center;">Loading applicants...</td>
                     </tr>
                 </tbody>
             </table>
@@ -68,15 +69,22 @@ require_once 'header.php';
 
 <script>
     function getStatusBadge(status) {
-        if(status === 'Phase 1') return '<span class="badge badge-info"><i data-lucide="user-check" style="width:12px; height:12px;"></i> Phase 1 (KYC)</span>';
-        if(status === 'Phase 2') return '<span class="badge badge-warning"><i data-lucide="file-text" style="width:12px; height:12px;"></i> Phase 2 (Docs)</span>';
-        if(status === 'Phase 3') return '<span class="badge badge-primary" style="background:#fdf4ff; color:#a21caf; border:1px solid #fbcfe8;"><i data-lucide="coins" style="width:12px; height:12px;"></i> Phase 3 (Disburse)</span>';
-        if(status === 'Phase 4') return '<span class="badge badge-warning" style="background:#fef3c7; color:#b45309; border:1px solid #fde68a;"><i data-lucide="landmark" style="width:12px; height:12px;"></i> Phase 4 (Bank)</span>';
-        if(status === 'Completed') return '<span class="badge badge-success"><i data-lucide="check-circle" style="width:12px; height:12px;"></i> Completed</span>';
-        if(status === 'Rejected') return '<span class="badge badge-danger"><i data-lucide="x-circle" style="width:12px; height:12px;"></i> Rejected</span>';
-        return `<span class="badge">${status}</span>`;
+        let icon = '';
+        if(status === 'Phase 1') icon = 'user-check';
+        else if(status === 'Phase 2') icon = 'file-text';
+        else if(status === 'Phase 3') icon = 'coins';
+        else if(status === 'Phase 4') icon = 'landmark';
+        else if(status === 'Completed') icon = 'check-circle';
+        else if(status === 'Rejected') icon = 'x-circle';
+        
+        const title = status === 'Phase 1' ? 'Phase 1 (KYC)' : 
+                      status === 'Phase 2' ? 'Phase 2 (Docs)' : 
+                      status === 'Phase 3' ? 'Phase 3 (Disburse)' : 
+                      status === 'Phase 4' ? 'Phase 4 (Bank)' : status;
+                      
+        return `<span class="badge" style="background:#fff; color:#0f172a; border:1px solid #cbd5e1; font-weight:600; padding:4px 8px; border-radius:6px;"><i data-lucide="${icon}" style="width:12px; height:12px;"></i> ${title}</span>`;
     }
-
+    
     function formatAmt(num) {
         return new Intl.NumberFormat('en-IN').format(num);
     }
@@ -114,12 +122,12 @@ require_once 'header.php';
 
                     tbody.innerHTML += `
                         <tr class="applicant-row" data-stage="${app.overall_status}" data-type="${app.loan_type}">
-                            <td class="search-field"><strong style="color:var(--primary);">${app.loan_id}</strong></td>
+                            <td class="search-field"><strong style="color:var(--text-primary); font-family:'Outfit';">${app.loan_id}</strong></td>
                             <td class="search-field">
                                 <strong>${app.customer_name}</strong>
                                 ${app.calculated_completion < 100 
-                                    ? `<br><span style="font-size: 11px; color: #ef4444; font-weight: 600;"><i data-lucide="alert-circle" style="width:10px;height:10px;"></i> ${app.calculated_completion}% Complete</span>`
-                                    : `<br><span style="font-size: 11px; color: #10b981; font-weight: 600;"><i data-lucide="check-circle" style="width:10px;height:10px;"></i> 100% Complete</span>`
+                                    ? `<br><span style="font-size: 11px; color: #64748b; font-weight: 600;"><i data-lucide="alert-circle" style="width:10px;height:10px;"></i> ${app.calculated_completion}% Complete</span>`
+                                    : `<br><span style="font-size: 11px; color: #0f172a; font-weight: 600;"><i data-lucide="check-circle" style="width:10px;height:10px;"></i> 100% Complete</span>`
                                 }
                             </td>
                             <td class="search-field">${app.mobile}</td>
@@ -127,6 +135,7 @@ require_once 'header.php';
                             <td>₹${formatAmt(app.loan_amount_requested)}</td>
                             <td>${statusBadge}</td>
                             <td style="color:var(--text-muted); font-size:12px;">${app.added_by || 'System'}</td>
+                            <td style="color:var(--text-muted); font-size:12px;">${app.created_at ? app.created_at.split(' ')[0] : '-'}</td>
                             <td style="text-align: right;">
                                 <a href="${actionUrl}" class="btn ${btnClass}" style="padding: 6px 12px; font-size: 12px;">
                                     <i data-lucide="${btnIcon}" style="width:14px; height:14px;"></i> ${btnText}
@@ -137,11 +146,11 @@ require_once 'header.php';
                 });
                 lucide.createIcons();
             } else {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">No loan applications found. Start by creating a New Applicant.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">No loan applications found. Start by creating a New Applicant.</td></tr>';
             }
         } catch (e) {
             console.error('Error fetching applicants:', e);
-            document.getElementById('applicants-tbody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>';
+            document.getElementById('applicants-tbody').innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--danger);">Failed to load data.</td></tr>';
         }
     }
 
@@ -180,7 +189,7 @@ require_once 'header.php';
             if (!emptyRow) {
                 emptyRow = document.createElement('tr');
                 emptyRow.id = 'empty-search-row';
-                emptyRow.innerHTML = '<td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">No matching applicants found.</td>';
+                emptyRow.innerHTML = '<td colspan="9" style="text-align: center; padding: 40px; color: var(--text-muted);">No matching applicants found.</td>';
                 document.getElementById('applicants-tbody').appendChild(emptyRow);
             } else {
                 emptyRow.style.display = '';

@@ -806,7 +806,7 @@ try {
             
             // Auto-assign to entity owner if staff not given
             if ($ref_type === 'Lead' && $ref_id) {
-                $owner = $db->query("SELECT assigned_to FROM applicants WHERE id=" . (int)$ref_id)->fetchColumn();
+                $owner = $db->query("SELECT added_by FROM applicants WHERE id=" . (int)$ref_id)->fetchColumn();
                 if (!$owner) $owner = $db->query("SELECT assigned_to FROM leads WHERE id=" . (int)$ref_id)->fetchColumn();
                 if ($owner && ($assigned_to === $_SESSION['username'])) $assigned_to = $owner;
             }

@@ -21,14 +21,14 @@ $is_admin = ($_SESSION['role'] ?? '') === 'Admin';
 .rem-kpi-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .rem-kpi-count { font-size: 26px; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -1px; line-height: 1; }
 .rem-kpi-label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-top: 2px; }
-.kpi-overdue  .rem-kpi-icon { background: #fef2f2; color: #ef4444; }
-.kpi-overdue  .rem-kpi-count { color: #ef4444; }
-.kpi-today    .rem-kpi-icon { background: #fffbeb; color: #f59e0b; }
-.kpi-today    .rem-kpi-count { color: #f59e0b; }
-.kpi-upcoming .rem-kpi-icon { background: #eff6ff; color: #3b82f6; }
-.kpi-upcoming .rem-kpi-count { color: #3b82f6; }
-.kpi-done     .rem-kpi-icon { background: #f0fdf4; color: #10b981; }
-.kpi-done     .rem-kpi-count { color: #10b981; }
+.kpi-overdue  .rem-kpi-icon { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.kpi-overdue  .rem-kpi-count { color: var(--text-primary); }
+.kpi-today    .rem-kpi-icon { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.kpi-today    .rem-kpi-count { color: var(--text-primary); }
+.kpi-upcoming .rem-kpi-icon { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.kpi-upcoming .rem-kpi-count { color: var(--text-primary); }
+.kpi-done     .rem-kpi-icon { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.kpi-done     .rem-kpi-count { color: var(--text-primary); }
 
 /* FILTER BAR */
 .rem-filters { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; flex-wrap: nowrap; gap: 10px; align-items: center; overflow-x: auto; }
@@ -46,9 +46,9 @@ $is_admin = ($_SESSION['role'] ?? '') === 'Admin';
 .rem-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
 .rem-col-header { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; padding: 10px 14px; border-radius: 8px; margin-bottom: 10px; }
 .rem-col-header .rem-col-count { margin-left: auto; background: rgba(0,0,0,0.08); border-radius: 20px; padding: 2px 8px; font-size: 11px; }
-.col-overdue  .rem-col-header { background: #fef2f2; color: #ef4444; }
-.col-today    .rem-col-header { background: #fffbeb; color: #d97706; }
-.col-upcoming .rem-col-header { background: #eff6ff; color: #3b82f6; }
+.col-overdue  .rem-col-header { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.col-today    .rem-col-header { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.col-upcoming .rem-col-header { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
 .rem-col-body { display: flex; flex-direction: column; gap: 10px; min-height: 80px; }
 
 /* REMINDER CARD */
@@ -64,41 +64,42 @@ $is_admin = ($_SESSION['role'] ?? '') === 'Admin';
 }
 .rem-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); border-color: #cbd5e1; }
 .rem-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 12px 0 0 12px; }
-.rem-card.pri-High::before   { background: #ef4444; }
-.rem-card.pri-Medium::before { background: #f59e0b; }
-.rem-card.pri-Low::before    { background: #10b981; }
+.rem-card.pri-High::before   { background: var(--text-primary); }
+.rem-card.pri-Medium::before { background: #64748b; }
+.rem-card.pri-Low::before    { background: #cbd5e1; }
 
 .rem-card-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
 .rem-card-title { font-size: 14px; font-weight: 700; color: var(--text-primary); flex: 1; line-height: 1.3; }
 .rem-card-pri { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.3px; }
-.pri-badge-High   { background: #fef2f2; color: #ef4444; }
-.pri-badge-Medium { background: #fffbeb; color: #d97706; }
-.pri-badge-Low    { background: #f0fdf4; color: #10b981; }
+.pri-badge-High   { background: var(--text-primary); color: white; border: 1px solid var(--text-primary); }
+.pri-badge-Medium { background: #f8fafc; color: var(--text-primary); border: 1px solid #94a3b8; }
+.pri-badge-Low    { background: #f8fafc; color: #64748b; border: 1px solid var(--border); }
 
 .rem-entity-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 6px; margin-bottom: 6px; text-decoration: none; transition: opacity 0.2s; }
 .rem-entity-badge:hover { opacity: 0.8; }
-.entity-Lead     { background: #eff6ff; color: #2563eb; }
-.entity-Banker   { background: #faf5ff; color: #7c3aed; }
-.entity-Referral { background: #f0fdf4; color: #16a34a; }
-.entity-Pre-Lead { background: #fff7ed; color: #ea580c; }
-.entity-General  { background: #f8fafc; color: #64748b; }
+.entity-Lead     { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.entity-Banker   { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.entity-Referral { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.entity-Pre-Lead { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.entity-General  { background: #f8fafc; color: #64748b; border: 1px solid var(--border); }
+  .entity-Staff { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
 
 .rem-card-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px; }
 .rem-card-meta span { display: flex; align-items: center; gap: 4px; }
 .rem-cat-chip { background: var(--bg-main); border: 1px solid var(--border); border-radius: 6px; padding: 2px 7px; font-size: 11px; font-weight: 600; color: var(--text-primary); }
 .rem-time { font-weight: 600; }
-.rem-time.overdue { color: #ef4444; }
-.rem-time.today   { color: #d97706; }
-.rem-time.ok      { color: #3b82f6; }
+.rem-time.overdue { color: var(--text-primary); font-weight: 800; }
+.rem-time.today   { color: var(--text-primary); font-weight: 700; }
+.rem-time.ok      { color: #64748b; }
 
 .rem-notes { font-size: 12.5px; color: var(--text-muted); background: var(--bg-main); border-radius: 6px; padding: 7px 10px; margin-bottom: 10px; border-left: 3px solid var(--border); font-style: italic; }
 
 .rem-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .rem-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 7px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: all 0.18s; }
-.rem-btn-done    { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-.rem-btn-done:hover    { background: #dcfce7; }
-.rem-btn-snooze  { background: #fefce8; color: #b45309; border: 1px solid #fde68a; position: relative; }
-.rem-btn-snooze:hover  { background: #fef9c3; }
+.rem-btn-done    { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); }
+.rem-btn-done:hover    { background: #e2e8f0; }
+.rem-btn-snooze  { background: #f8fafc; color: var(--text-primary); border: 1px solid var(--border); position: relative; }
+.rem-btn-snooze:hover  { background: #e2e8f0; }
 .rem-btn-edit    { background: var(--bg-main); color: var(--text-primary); border: 1px solid var(--border); }
 .rem-btn-edit:hover    { background: var(--border); }
 .rem-assigned    { margin-left: auto; font-size: 11px; color: var(--text-light); display: flex; align-items: center; gap: 3px; }
@@ -226,6 +227,7 @@ $is_admin = ($_SESSION['role'] ?? '') === 'Admin';
             <option value="Banker">Banker</option>
             <option value="Referral">Referral Partner</option>
             <option value="Pre-Lead">Pre-Lead</option>
+                          <option value="Staff">Staff / Employee</option>
             <option value="General">General Task</option>
         </select>
         
@@ -307,6 +309,7 @@ $is_admin = ($_SESSION['role'] ?? '') === 'Admin';
                         <option value="Banker">Banker</option>
                         <option value="Referral">Referral Partner</option>
                         <option value="Pre-Lead">Pre-Lead</option>
+                          <option value="Staff">Staff / Employee</option>
                     </select>
                     <div></div>
                 </div>
@@ -459,7 +462,7 @@ function renderColumn(col, items) {
 
 const CATEGORY_ICONS = {};
 const ENTITY_ICONS = {};
-const ENTITY_URLS  = { 'Lead': 'applicant_bank_assign.php?id=', 'Banker': 'bankers.php?id=', 'Referral': 'referral_partners.php?id=', 'Pre-Lead': 'pre_leads.php?edit_prelead=' };
+const ENTITY_URLS  = { 'Lead': 'applicant_bank_assign.php?id=', 'Banker': 'bankers.php?id=', 'Referral': 'referral_partners.php?id=', 'Pre-Lead': 'pre_leads.php?edit_prelead=', 'Staff': 'view_employee.php?id=' };
 
 function buildCard(r, col, idx) {
     const now = new Date();
@@ -467,9 +470,11 @@ function buildCard(r, col, idx) {
     const pri = r.priority || 'Medium';
     const cat = r.reminder_category || 'Follow-up';
     const refType  = r.reference_type || r.lead_type || 'General';
-    const refLabel = r.reference_label || (r.lead_id ? '#' + r.lead_id : '');
+    const name = r.fetched_name || r.reference_label || (r.lead_id ? 'ID #' + r.lead_id : 'Unknown');
+    const mobile = r.fetched_mobile ? `<br><a href="tel:` + r.fetched_mobile + `" style="color:#64748b; font-size:11px; text-decoration:none; margin-top:2px; display:inline-block;"><i data-lucide="phone" style="width:10px;height:10px;"></i> ` + r.fetched_mobile + `</a>` : '';
+    const refLabel = name;
     const refId    = r.reference_id || r.lead_id || '';
-    const title    = r.title || r.notes || 'Reminder';
+    const title    = r.title || 'Follow up with ' + name;
     const notes    = r.notes && r.notes !== title ? r.notes : '';
     const assigned = r.assigned_to || '';
 
@@ -492,18 +497,22 @@ function buildCard(r, col, idx) {
     let entityHtml = '';
     if (refType !== 'General' && refLabel) {
         const url = (ENTITY_URLS[refType] && refId) ? ENTITY_URLS[refType] + refId : '#';
-        entityHtml = `<a class="rem-entity-badge entity-${refType}" href="${url}" target="_blank" title="Go to ${refType}">
-            ${ENTITY_ICONS[refType] || ''} ${escHtml(refLabel)}
-            <i data-lucide="external-link" style="width:11px;height:11px;"></i>
+        entityHtml = `<a class="rem-entity-badge entity-${refType}" href="${url}" target="_blank" title="Go to ${refType}" style="display:flex; justify-content:space-between; align-items:center; padding:10px 12px;">
+            <div>
+                <div style="font-weight:700; color:#1e293b; font-size:13px;">${ENTITY_ICONS[refType] || ''} ${escHtml(refLabel)}</div>
+                ${mobile}
+            </div>
+            <i data-lucide="external-link" style="width:16px;height:16px; color:#94a3b8;"></i>
         </a>`;
     }
 
     return `
     <div class="rem-card pri-${pri}" style="animation-delay:${idx * 0.04}s" id="remcard-${r.id}">
-        <div class="rem-card-top">
-            <div class="rem-card-title">${CATEGORY_ICONS[cat] || ''} ${escHtml(title)}</div>
+        <div class="rem-card-top" style="margin-bottom:6px;">
+            <div class="rem-card-title" style="font-size:14px; font-weight:700; color:#0f172a;">${CATEGORY_ICONS[cat] || ''} ${escHtml(title)}</div>
             <span class="rem-card-pri pri-badge-${pri}">${pri}</span>
         </div>
+        ${notes ? `<div style="font-size:12px; color:#475569; margin-bottom:10px; line-height:1.4; background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">${escHtml(notes)}</div>` : ''}
         ${entityHtml}
         <div class="rem-card-meta">
             <span class="rem-cat-chip">${escHtml(cat)}</span>
@@ -738,6 +747,16 @@ function showError(msg) {
 document.addEventListener('DOMContentLoaded', () => {
     loadReminders();
     setInterval(loadReminders, 120000); // Auto-refresh every 2 min
+    
+    // Auto-open modal if URL param
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('new')) {
+        let prefill = {};
+        if (urlParams.get('type')) prefill.reference_type = urlParams.get('type');
+        if (urlParams.get('id')) prefill.id = urlParams.get('id');
+        if (urlParams.get('name')) prefill.label = urlParams.get('name');
+        openAddModal(prefill);
+    }
 });
 </script>
 

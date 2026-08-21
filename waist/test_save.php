@@ -1,0 +1,1 @@
+<?php session_start(); $_SESSION['user_id'] = 1; $_SESSION['username'] = 'admin'; $_SESSION['role'] = 'Admin'; $_SESSION['session_token'] = '9f24639679244093304e50f52e0562eb'; $_SERVER['REQUEST_METHOD'] = 'POST'; $_POST['title'] = 'Test Reminder'; $_POST['reference_type'] = 'Lead'; $_POST['reference_id'] = '1'; $_GET['api'] = 'save_reminder'; require 'config.php'; ?>

@@ -259,6 +259,7 @@ if (!isset($active_page)) $active_page = 'index';
                 <a href="add_lead.php" class="nav-link <?php echo $active_page === 'add_lead' ? 'active' : ''; ?>"><i data-lucide="plus-square"></i> Submit Lead</a>
                 <a href="leads.php" class="nav-link <?php echo $active_page === 'leads' ? 'active' : ''; ?>"><i data-lucide="users"></i> My Leads</a>
                 <a href="payouts.php" class="nav-link <?php echo $active_page === 'payouts' ? 'active' : ''; ?>"><i data-lucide="wallet"></i> Earnings</a>
+                <a href="../activity_log.php" class="nav-link"><i data-lucide="activity"></i> Activity Logs</a>
                 <a href="../config.php?logout=1" class="nav-link" style="margin-top:auto; color:var(--danger);"><i data-lucide="log-out"></i> Logout</a>
             </nav>
         </aside>
@@ -282,6 +283,10 @@ if (!isset($active_page)) $active_page = 'index';
                 <a href="calculators.php" class="b-nav-item <?php echo $active_page=='calculators'?'active':''; ?>">
                     <i data-lucide="calculator"></i>
                     <span>Tools</span>
+                </a>
+                <a href="../activity_log.php" class="b-nav-item">
+                    <i data-lucide="activity"></i>
+                    <span>Logs</span>
                 </a>
                 <a href="profile.php" class="b-nav-item <?php echo $active_page=='profile'?'active':''; ?>">
                     <i data-lucide="user"></i>

@@ -1,24 +1,27 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-// Strict Admin-only access check
-if (($_SESSION['role'] ?? '') !== 'Admin') {
-    header("Location: dashboard.php");
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit;
 }
 
+$role = $_SESSION['role'] ?? '';
 $page_title = "Activity Logs";
-$page_subtitle = "System audit trails and user action logs";
+$page_subtitle = $role === 'Admin' ? "System audit trails and user action logs" : "Your recent activities";
 require_once __DIR__ . '/header.php';
 ?>
 
 <div class="view-container">
     <div class="card" style="background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid #f1f5f9; overflow: hidden; margin-bottom: 30px;">
         <div class="card-title-bar" style="padding: 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background: white;">
-            <h2 style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 18px; color: var(--text-primary); margin: 0;">System Audit & Activity Logs</h2>
+            <h2 style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 18px; color: var(--text-primary); margin: 0;"><?= htmlspecialchars($page_title) ?></h2>
+            <?php if($role === 'Admin'): ?>
             <div class="badge-locked" style="background-color: var(--primary-light); color: var(--primary); padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;">
                 <i data-lucide="shield" style="width: 14px; height: 14px;"></i> Admin Only
             </div>
+            <?php endif; ?>
         </div>
         <div style="padding: 24px;">
             <div class="table-responsive" style="overflow-x: auto; width: 100%;">

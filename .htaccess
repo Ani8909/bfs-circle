@@ -1,0 +1,6 @@
+<FilesMatch "\.(db|sqlite|sqlite3|ini|log|bak|py)$">
+    Require all denied
+</FilesMatch>
+
+Options -Indexes
+

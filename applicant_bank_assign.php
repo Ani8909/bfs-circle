@@ -363,7 +363,17 @@ require_once 'header.php';
         }
         
         .print-header { display: none; align-items: center; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 15px; }
-    </style>
+    
+    .data-table { border: 1px solid var(--border) !important; border-collapse: collapse !important; background: #fff !important; }
+    .data-table td, .data-table th { border: 1px solid var(--border) !important; padding: 12px 18px !important; vertical-align: middle !important; }
+    .data-table tr td:first-child { background: #f8fafc !important; color: #0f172a !important; font-weight: 600 !important; width: 35% !important; }
+    .data-table tr td:last-child { color: #0f172a !important; font-weight: 500 !important; }
+    #sourcing-header-row td { background: #0f172a !important; color: #ffffff !important; font-weight: 700 !important; border: 1px solid #0f172a !important; }
+    #sourcing-header-row td div { color: #ffffff !important; letter-spacing: 1px !important; }
+    .card-title-bar { background: #ffffff !important; border-bottom: 2px solid #0f172a !important; }
+    .card-title-bar h3 { color: #0f172a !important; font-weight: 800 !important; }
+    .badge { background: white !important; border: 1px solid #0f172a !important; color: #0f172a !important; font-weight: 600 !important; padding: 4px 10px !important; border-radius: 20px !important; }
+</style>
     
     <!-- Print-only Header with Logo -->
     <div class="print-header">
@@ -397,7 +407,7 @@ require_once 'header.php';
         
         <!-- BLOCK 1: Profile & Sourcing -->
         <div class="card">
-            <div class="card-title-bar" style="background:var(--primary-light); border-bottom:1px solid var(--primary-border); padding:16px;">
+            <div class="card-title-bar" style="background:#f8fafc; border-bottom:1px solid var(--primary-border); padding:16px;">
                 <h3 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;"><i data-lucide="user" style="color:var(--primary);"></i> 1. Basic & Sourcing Info (Phase 1)</h3>
             </div>
             <div style="padding: 16px;">
@@ -409,7 +419,7 @@ require_once 'header.php';
                     <tr><td style="color:var(--text-muted);">Aadhaar Number</td><td style="color:var(--text-primary);"><?php echo htmlspecialchars($app['aadhar_number']); ?></td></tr>
                     <tr><td style="color:var(--text-muted);">City / State</td><td style="color:var(--text-primary);"><?php echo htmlspecialchars($app['city'] . ', ' . $app['state']); ?></td></tr>
                     <tr id="sourcing-header-row">
-                        <td colspan="2" style="background:var(--bg-main); border-top:1px solid var(--primary-border); border-bottom:1px solid var(--primary-border); padding:8px; position:relative;">
+                        <td colspan="2" style="background:#f8fafc; border-top:1px solid var(--primary-border); border-bottom:1px solid var(--primary-border); padding:8px; position:relative;">
                             <div style="text-align:center; font-weight:600; color:var(--text-primary); text-transform:uppercase; font-size:12px; letter-spacing:0.5px;">Sourcing Origins</div>
                             <label class="print-hide" style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:var(--text-primary); cursor:pointer; background:white; padding:4px 8px; border-radius:6px; border:1px solid var(--primary-border); box-shadow:0 1px 2px rgba(0,0,0,0.05);" title="Include Sourcing Info in Print">
                                 <input type="checkbox" id="toggle-sourcing" checked onchange="toggleSourcingVisibility()" style="cursor:pointer; width:12px; height:12px; accent-color:var(--primary);">
@@ -420,7 +430,7 @@ require_once 'header.php';
                     <tr class="sourcing-row">
                         <td style="color:var(--text-muted);">Lead Source</td>
                         <td>
-                            <span class="badge" style="background:var(--primary-light); color:var(--text-primary); border:1px solid var(--primary-border);"><?php echo htmlspecialchars($app['lead_source']); ?></span>
+                            <span class="badge" style="background:#f8fafc; color:var(--text-primary); border:1px solid var(--primary-border);"><?php echo htmlspecialchars($app['lead_source']); ?></span>
                         </td>
                     </tr>
                     <tr class="sourcing-row"><td style="color:var(--text-muted);">Added By (Employee)</td><td style="color:var(--text-primary);"><?php echo htmlspecialchars($app['employee_name'] ?? $app['added_by']); ?></td></tr>
@@ -444,7 +454,7 @@ require_once 'header.php';
                 <?php if (!empty($co_apps)): ?>
                 <?php foreach ($co_apps as $index => $c): ?>
                 <table class="data-table" style="font-size:14px; width:100%; margin-top:20px; border-top:2px solid var(--primary-border);">
-                    <tr><td colspan="2" style="background:var(--primary-light); padding:8px; text-align:center; font-weight:600; color:var(--primary); text-transform:uppercase; font-size:12px; letter-spacing:0.5px; border-bottom:1px solid var(--primary-border);">Co-Applicant #<?php echo $index + 1; ?> (<?php echo htmlspecialchars($c['relationship']); ?>)</td></tr>
+                    <tr><td colspan="2" style="background:#f8fafc; padding:8px; text-align:center; font-weight:600; color:var(--primary); text-transform:uppercase; font-size:12px; letter-spacing:0.5px; border-bottom:1px solid var(--primary-border);">Co-Applicant #<?php echo $index + 1; ?> (<?php echo htmlspecialchars($c['relationship']); ?>)</td></tr>
                     <tr><td style="color:var(--text-muted); width:40%;">Full Name</td><td style="font-weight:600; color:var(--text-primary);"><?php echo htmlspecialchars($c['full_name']); ?></td></tr>
                     <tr><td style="color:var(--text-muted);">Financial Co-Borrower?</td><td><span class="badge <?php echo $c['is_financial'] === 'Yes' ? 'badge-success' : 'badge-warning'; ?>"><?php echo htmlspecialchars($c['is_financial']); ?></span></td></tr>
                     <tr><td style="color:var(--text-muted);">PAN Number</td><td style="color:var(--text-primary);"><?php echo htmlspecialchars($c['pan_number']); ?></td></tr>
@@ -505,7 +515,7 @@ require_once 'header.php';
 
         <!-- BLOCK 3: Payout & Commission Claim -->
         <div class="card" id="payout-block" style="grid-column: 1 / -1; margin-top: 24px;">
-            <div class="card-title-bar" style="background:var(--primary-light); border-bottom:1px solid var(--primary-border); padding:16px; display:flex; justify-content:space-between; align-items:center;">
+            <div class="card-title-bar" style="background:#f8fafc; border-bottom:1px solid var(--primary-border); padding:16px; display:flex; justify-content:space-between; align-items:center;">
                 <h3 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px; color:var(--primary);"><i data-lucide="receipt" style="color:var(--primary);"></i> 3. Payout & Commission Claim</h3>
                 <label class="print-hide" style="font-size:12px; cursor:pointer; font-weight:600; color:var(--text-primary); display:flex; align-items:center; gap:6px; background:var(--bg-card); padding:4px 8px; border-radius:6px; border:1px solid var(--primary-border);">
                     <input type="checkbox" checked onchange="document.getElementById('payout-block').classList.toggle('no-print', !this.checked)" style="accent-color:var(--primary);"> Print this block
@@ -515,7 +525,7 @@ require_once 'header.php';
                 <div style="flex: 1;">
                     <p style="color:var(--text-muted); font-size:14px; margin-bottom:16px; line-height:1.6;">Once the loan is sanctioned or disbursed by the bank, you can generate an invoice/claim email to request your sourcing payout (commission) from the bank.</p>
                     
-                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; background:var(--bg-main); padding: 16px; border-radius: 8px; border: 1px solid var(--primary-border); margin-bottom: 16px;">
+                    <div class="form-grid" style="grid-template-columns: 1fr 1fr; background:#f8fafc; padding: 16px; border-radius: 8px; border: 1px solid var(--primary-border); margin-bottom: 16px;">
                         <div>
                             <label style="font-size:11px; color:var(--text-muted); text-transform:uppercase; font-weight:600;">Sanctioned Amount</label>
                             <div style="font-size:18px; font-weight:700; color:var(--text-primary);">₹<?php echo number_format($app['sanctioned_amount'] ?? 0); ?></div>
@@ -545,7 +555,7 @@ require_once 'header.php';
         
         <!-- BLOCK 4: Documents Collected -->
         <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-title-bar" style="background:var(--primary-light); border-bottom:1px solid var(--primary-border); padding:16px;">
+            <div class="card-title-bar" style="background:#f8fafc; border-bottom:1px solid var(--primary-border); padding:16px;">
                 <h3 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;"><i data-lucide="folder-open" style="color:var(--primary);"></i> 4. Vault: Collected Documents (Phase 2)</h3>
             </div>
             <div style="padding: 16px;">
@@ -572,7 +582,7 @@ require_once 'header.php';
 
         <!-- BLOCK 5: Payout Ledger & Distribution -->
         <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-title-bar" style="background:var(--primary-light); border-bottom:1px solid var(--primary-border); padding:16px; display:flex; justify-content:space-between; align-items:center;">
+            <div class="card-title-bar" style="background:#f8fafc; border-bottom:1px solid var(--primary-border); padding:16px; display:flex; justify-content:space-between; align-items:center;">
                 <h3 style="margin:0; font-size:16px; display:flex; align-items:center; gap:8px;">
                     <i data-lucide="wallet" style="color:var(--primary);"></i> 5. Payout Ledger & Distribution
                 </h3>
@@ -590,7 +600,7 @@ require_once 'header.php';
                 
                 <!-- Payout From Bank -->
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:24px;">
-                    <div style="background:var(--bg-main); border:1px solid var(--primary-border); border-radius:8px; padding:20px;">
+                    <div style="background:#f8fafc; border:1px solid var(--primary-border); border-radius:8px; padding:20px;">
                         <h4 style="margin:0 0 16px 0; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
                             <i data-lucide="building-2" style="width:14px; height:14px;"></i> Payout From Bank
                         </h4>
@@ -621,7 +631,7 @@ require_once 'header.php';
                     </div>
 
                     <!-- Distribution Split -->
-                    <div style="background:var(--bg-main); border:1px solid var(--primary-border); border-radius:8px; padding:20px;">
+                    <div style="background:#f8fafc; border:1px solid var(--primary-border); border-radius:8px; padding:20px;">
                         <h4 style="margin:0 0 16px 0; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
                             <i data-lucide="split" style="width:14px; height:14px;"></i> Distribution Split
                         </h4>
@@ -633,7 +643,7 @@ require_once 'header.php';
                                     <div style="display:flex; align-items:center; gap:6px;">
                                         <i data-lucide="user" style="width:14px; height:14px;"></i>
                                         <?php echo htmlspecialchars($referral_data['full_name']); ?>
-                                        <span class="badge" style="font-size:10px; background:var(--primary-light); color:var(--primary); border:1px solid var(--primary-border);"><?php echo htmlspecialchars($referral_data['referrer_type']); ?></span>
+                                        <span class="badge" style="font-size:10px; background:#f8fafc; color:var(--primary); border:1px solid var(--primary-border);"><?php echo htmlspecialchars($referral_data['referrer_type']); ?></span>
                                     </div>
                                     <div style="font-size:11px; color:var(--text-light); margin-top:2px;">
                                         ID: <?php echo htmlspecialchars($app['referral_id']); ?> · Commission: <?php echo $referral_commission_rate; ?>% of payout
@@ -690,7 +700,7 @@ require_once 'header.php';
 
                 <!-- Referral Partner Full Details -->
                 <?php if ($referral_data): ?>
-                <div style="background:var(--bg-main); border:1px solid var(--primary-border); border-radius:8px; padding:20px; margin-bottom:24px;">
+                <div style="background:#f8fafc; border:1px solid var(--primary-border); border-radius:8px; padding:20px; margin-bottom:24px;">
                     <h4 style="margin:0 0 16px 0; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
                         <i data-lucide="contact" style="width:14px; height:14px;"></i> Referral Partner Details
                     </h4>
@@ -733,13 +743,13 @@ require_once 'header.php';
 
                 <!-- Payout History -->
                 <?php if (!empty($payout_records)): ?>
-                <div style="background:var(--bg-main); border:1px solid var(--primary-border); border-radius:8px; padding:20px;">
+                <div style="background:#f8fafc; border:1px solid var(--primary-border); border-radius:8px; padding:20px;">
                     <h4 style="margin:0 0 16px 0; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); display:flex; align-items:center; gap:6px;">
                         <i data-lucide="list" style="width:14px; height:14px;"></i> Payout Distribution Records
                     </h4>
                     <table class="data-table" style="font-size:13px; width:100%;">
                         <thead>
-                            <tr style="background:var(--primary-light);">
+                            <tr style="background:#f8fafc;">
                                 <th style="padding:8px; text-align:left; color:var(--text-muted); font-size:11px; text-transform:uppercase;">Payee</th>
                                 <th style="padding:8px; text-align:left; color:var(--text-muted); font-size:11px; text-transform:uppercase;">Type</th>
                                 <th style="padding:8px; text-align:right; color:var(--text-muted); font-size:11px; text-transform:uppercase;">Gross</th>
@@ -815,7 +825,7 @@ require_once 'header.php';
         <form method="POST" action="" style="padding:24px;">
             <input type="hidden" name="action" value="finalize_disbursement">
             
-            <div style="background:var(--primary-light); border:1px solid var(--primary-border); padding:12px; border-radius:8px; margin-bottom:20px; color:var(--text-primary); font-size:13px;">
+            <div style="background:#f8fafc; border:1px solid var(--primary-border); padding:12px; border-radius:8px; margin-bottom:20px; color:var(--text-primary); font-size:13px;">
                 <strong>Note:</strong> Marking this as Disbursed will complete the lifecycle of this application and close the file successfully.
             </div>
 
