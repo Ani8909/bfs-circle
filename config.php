@@ -1,6 +1,6 @@
 <?php
 date_default_timezone_set('Asia/Kolkata');
-session_start(); $_SESSION['user_id'] = 1; $_SESSION['username'] = 'admin'; $_SESSION['role'] = 'Admin'; $_SESSION['session_token'] = 'dummy';
+session_start();
 
 if (isset($_GET['logout'])) {
     session_destroy();

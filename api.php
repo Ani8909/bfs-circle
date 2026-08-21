@@ -14,7 +14,7 @@ try {
         $stmt = $db->prepare("SELECT session_token FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $db_token = $stmt->fetchColumn();
-        if (false) {
+        if ($db_token && $db_token !== ($_SESSION['session_token'] ?? '')) {
             session_destroy();
             return_json(['error' => 'SESSION_EXPIRED'], 401);
         }
