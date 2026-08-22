@@ -227,18 +227,18 @@ require_once 'config.php';
             .then(data => {
                 if (data.success) {
                     if (data.role === 'Staff') {
-                        location.href = 'staff/index.php';
-                    } else if (data.role === 'Partner') {
-                        location.href = 'partner/index.php';
-                    } else if (data.role === 'Builder') {
-                        location.href = 'builder/index.php';
-                    } else if (data.role === 'Agent') {
-                        location.href = 'agent/index.php';
-                    } else if (data.role === 'CA') {
-                        location.href = 'ca/index.php';
-                    } else {
-                        location.href = 'dashboard.php';
-                    }
+                          location.href = 'staff/index.php';
+                      } else if (['Partner', 'DSA', 'Connector', 'Individual'].includes(data.role)) {
+                          location.href = 'partner/index.php';
+                      } else if (data.role === 'Builder') {
+                          location.href = 'builder/index.php';
+                      } else if (data.role === 'Agent') {
+                          location.href = 'agent/index.php';
+                      } else if (['CA', 'CA/CS'].includes(data.role)) {
+                          location.href = 'ca/index.php';
+                      } else {
+                          location.href = 'dashboard.php';
+                      }
                 } else {
                     alert(data.error);
                 }
