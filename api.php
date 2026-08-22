@@ -2931,8 +2931,7 @@ try {
                     return_json(['success' => true, 'message' => 'Already exists']);
                 }
                 
-                $replace = $search . "
-        "" . $name . "",";
+                $replace = $search . "\n        \"" . $name . "\",";
                 $new_content = str_replace($search, $replace, $content);
                 file_put_contents($js_file, $new_content);
                 return_json(['success' => true, 'message' => 'Bank added successfully']);
