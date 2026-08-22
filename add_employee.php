@@ -224,7 +224,7 @@ $new_employee_id = $prefix . str_pad($next_num, 3, '0', STR_PAD_LEFT);
             <div class="form-grid" style="background:#f0f9ff; padding:20px; border-radius:8px; border:1px solid #bae6fd;">
                 <div class="form-group">
                     <label style="color:#0369a1; font-weight:600;">Login Username (Email ID)</label>
-                    <input type="text" id="preview_username" readonly style="background-color:#e0f2fe; border-color:#7dd3fc; color:#0c4a6e; font-weight:bold;">
+                    <input type="text" name="username" id="preview_username" readonly style="background-color:#e0f2fe; border-color:#7dd3fc; color:#0c4a6e; font-weight:bold;">
                     <small style="color:#0284c7;">This will be their Official Email ID.</small>
                 </div>
                 <div class="form-group">
