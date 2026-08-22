@@ -2821,7 +2821,7 @@ try {
 
         case 'edit_referral':
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Method'], 405);
-            $id = $_POST['referral_db_id'] ?? '';
+            $id = $_POST['id'] ?? '';
             if (!$id) return_json(['error' => 'Missing ID'], 400);
             
             $referrer_type = trim($_POST['referrer_type'] ?? '');
