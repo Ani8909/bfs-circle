@@ -2765,6 +2765,7 @@ try {
         
         case 'add_referral':
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Method'], 405);
+            
             $referrer_type = trim($_POST['referrer_type'] ?? '');
             $full_name = trim($_POST['full_name'] ?? '');
             $dob = trim($_POST['dob'] ?? '');
@@ -2775,27 +2776,105 @@ try {
             $bank_name = trim($_POST['bank_name'] ?? '');
             $account_number = trim($_POST['account_number'] ?? '');
             $ifsc_code = trim($_POST['ifsc_code'] ?? '');
+            $upi_id = trim($_POST['upi_id'] ?? '');
+            $commission_rate = trim($_POST['commission_rate'] ?? '');
+            $payout_frequency = trim($_POST['payout_frequency'] ?? '');
+            $pan_number = trim($_POST['pan_number'] ?? '');
+            $aadhar_number = trim($_POST['aadhar_number'] ?? '');
+            $assigned_rm = trim($_POST['assigned_rm'] ?? '');
+            $status = trim($_POST['status'] ?? 'Active');
             
             if (!$referrer_type || !$full_name || !$mobile) {
                 return_json(['error' => 'Type, Name and Mobile are required.'], 400);
             }
             
-            // Generate unique referral ID
+            $bank_doc_path = '';
+            $pan_doc_path = '';
+            
+            if (!is_dir('uploads/referrals')) {
+                @mkdir('uploads/referrals', 0777, true);
+            }
+            
+            if (isset($_FILES['bank_document']) && $_FILES['bank_document']['error'] == 0) {
+                $ext = pathinfo($_FILES['bank_document']['name'], PATHINFO_EXTENSION);
+                $bank_doc_path = 'uploads/referrals/' . uniqid('bank_') . '.' . $ext;
+                move_uploaded_file($_FILES['bank_document']['tmp_name'], $bank_doc_path);
+            }
+            if (isset($_FILES['pan_document']) && $_FILES['pan_document']['error'] == 0) {
+                $ext = pathinfo($_FILES['pan_document']['name'], PATHINFO_EXTENSION);
+                $pan_doc_path = 'uploads/referrals/' . uniqid('pan_') . '.' . $ext;
+                move_uploaded_file($_FILES['pan_document']['tmp_name'], $pan_doc_path);
+            }
+            
             $prefix = strtoupper(substr($referrer_type, 0, 3));
             $referral_id = "REF-" . $prefix . "-" . date('Ymd') . rand(100, 999);
             
             try {
-                $stmt = $db->prepare("INSERT INTO referrals (referral_id, referrer_type, full_name, dob, mobile, email, city_state, account_name, bank_name, account_number, ifsc_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$referral_id, $referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code]);
+                $stmt = $db->prepare("INSERT INTO referrals (referral_id, referrer_type, full_name, dob, mobile, email, city_state, account_name, bank_name, account_number, ifsc_code, upi_id, commission_rate, payout_frequency, pan_number, aadhar_number, bank_document_path, pan_document_path, assigned_rm, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$referral_id, $referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $assigned_rm, $status]);
                 
                 log_activity("Added new referral partner: $full_name", "referrals_list.php");
                 return_json(['success' => true, 'message' => 'Referral Partner added successfully!', 'referral_id' => $referral_id]);
             } catch (Exception $e) {
-                if (strpos($e->getMessage(), 'UNIQUE constraint failed') !== false) {
-                    return_json(['error' => 'A referral with this ID already exists, try again.'], 400);
-                }
-                throw $e;
+                return_json(['error' => 'Database error: ' . $e->getMessage()], 400);
             }
+
+        case 'edit_referral':
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Method'], 405);
+            $id = $_POST['referral_db_id'] ?? '';
+            if (!$id) return_json(['error' => 'Missing ID'], 400);
+            
+            $referrer_type = trim($_POST['referrer_type'] ?? '');
+            $full_name = trim($_POST['full_name'] ?? '');
+            $dob = trim($_POST['dob'] ?? '');
+            $mobile = trim($_POST['mobile'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $city_state = trim($_POST['city_state'] ?? '');
+            $account_name = trim($_POST['account_name'] ?? '');
+            $bank_name = trim($_POST['bank_name'] ?? '');
+            $account_number = trim($_POST['account_number'] ?? '');
+            $ifsc_code = trim($_POST['ifsc_code'] ?? '');
+            $upi_id = trim($_POST['upi_id'] ?? '');
+            $commission_rate = trim($_POST['commission_rate'] ?? '');
+            $payout_frequency = trim($_POST['payout_frequency'] ?? '');
+            $pan_number = trim($_POST['pan_number'] ?? '');
+            $aadhar_number = trim($_POST['aadhar_number'] ?? '');
+            $assigned_rm = trim($_POST['assigned_rm'] ?? '');
+            $status = trim($_POST['status'] ?? 'Active');
+            
+            $stmt = $db->prepare("SELECT bank_document_path, pan_document_path FROM referrals WHERE id = ?");
+            $stmt->execute([$id]);
+            $existing = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$existing) return_json(['error' => 'Not found'], 404);
+            
+            $bank_doc_path = $existing['bank_document_path'];
+            $pan_doc_path = $existing['pan_document_path'];
+            
+            if (!is_dir('uploads/referrals')) {
+                @mkdir('uploads/referrals', 0777, true);
+            }
+            
+            if (isset($_FILES['bank_document']) && $_FILES['bank_document']['error'] == 0) {
+                $ext = pathinfo($_FILES['bank_document']['name'], PATHINFO_EXTENSION);
+                $bank_doc_path = 'uploads/referrals/' . uniqid('bank_') . '.' . $ext;
+                move_uploaded_file($_FILES['bank_document']['tmp_name'], $bank_doc_path);
+            }
+            if (isset($_FILES['pan_document']) && $_FILES['pan_document']['error'] == 0) {
+                $ext = pathinfo($_FILES['pan_document']['name'], PATHINFO_EXTENSION);
+                $pan_doc_path = 'uploads/referrals/' . uniqid('pan_') . '.' . $ext;
+                move_uploaded_file($_FILES['pan_document']['tmp_name'], $pan_doc_path);
+            }
+            
+            try {
+                $stmt = $db->prepare("UPDATE referrals SET referrer_type=?, full_name=?, dob=?, mobile=?, email=?, city_state=?, account_name=?, bank_name=?, account_number=?, ifsc_code=?, upi_id=?, commission_rate=?, payout_frequency=?, pan_number=?, aadhar_number=?, bank_document_path=?, pan_document_path=?, assigned_rm=?, status=? WHERE id=?");
+                $stmt->execute([$referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $assigned_rm, $status, $id]);
+                
+                log_activity("Updated referral partner: $full_name", "referrals_list.php");
+                return_json(['success' => true, 'message' => 'Referral Partner updated successfully!']);
+            } catch (Exception $e) {
+                return_json(['error' => 'Database error: ' . $e->getMessage()], 400);
+            }
+
 
         case 'get_active_referrals':
             // Get from referrals table
