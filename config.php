@@ -359,6 +359,11 @@ try {
     )");
 
     // Referrals table
+    
+try {
+    $db->exec("ALTER TABLE referrals ADD COLUMN aadhar_document_path TEXT");
+} catch (Exception $e) {}
+
     $db->exec("CREATE TABLE IF NOT EXISTS referrals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         referral_id TEXT UNIQUE NOT NULL,
