@@ -246,6 +246,26 @@ function getVal($field, $ref, $ext) {
                     </div>
                 </div>
             </div>
+                  <div class="form-group">
+                      <label style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Aadhar Card Scan (Max 5MB)</label>
+                      <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px; padding: 8px 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; height: 42px; overflow:hidden;">
+                          <input type="file" name="aadhar_document" id="aadhar_document" style="display:none;" onchange="updateFileName(this, 'aadhar_doc_wrapper', 'aadhar_doc_empty', 'aadhar_doc_preview')" accept="image/*,.pdf">
+                          
+                          <button type="button" class="btn btn-sm" style="flex-shrink:0; background: white; color: #475569; border: 1px solid #cbd5e1; padding: 4px 10px;" onclick="document.getElementById('aadhar_document').click()">
+                              <i data-lucide="upload" style="width:14px;height:14px;"></i> Choose File
+                          </button>
+                          
+                          <div id="aadhar_doc_wrapper" style="flex:1; display:flex; align-items:center; overflow:hidden;">
+                              <?php if(!empty($referral['aadhar_document_path'])): ?>
+                              <a id="aadhar_doc_preview" href="<?php echo htmlspecialchars($referral['aadhar_document_path']); ?>" target="_blank" style="flex:1; font-size:12px; color:#f97316; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-decoration:none;"><i data-lucide="external-link" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> View File</a>
+                              <span id="aadhar_doc_empty" style="display:none; font-size:12px; color:#94a3b8; font-style:italic; white-space:nowrap;">No file chosen</span>
+                              <?php else: ?>
+                              <a id="aadhar_doc_preview" href="#" target="_blank" style="display:none; flex:1; font-size:12px; color:#f97316; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-decoration:none;"><i data-lucide="external-link" style="width:12px;height:12px;display:inline-block;vertical-align:middle;margin-right:4px;"></i> View File</a>
+                              <span id="aadhar_doc_empty" style="font-size:12px; color:#94a3b8; font-style:italic; white-space:nowrap;">No file chosen</span>
+                              <?php endif; ?>
+                          </div>
+                      </div>
+                  </div>
 
             <!-- 5. STATUS & MANAGEMENT -->
             <div class="form-section-title">5. STATUS & MANAGEMENT</div>

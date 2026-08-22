@@ -68,14 +68,6 @@ require_once 'header.php';
                     <label for="bank_name">Bank Name</label>
                     <select name="bank_name" id="bank_name">
                         <option value="">-- Select Bank --</option>
-                        <option value="HDFC Bank">HDFC Bank</option>
-                        <option value="State Bank of India">State Bank of India (SBI)</option>
-                        <option value="ICICI Bank">ICICI Bank</option>
-                        <option value="Axis Bank">Axis Bank</option>
-                        <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
-                        <option value="Punjab National Bank">Punjab National Bank (PNB)</option>
-                        <option value="Bank of Baroda">Bank of Baroda</option>
-                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -156,6 +148,20 @@ require_once 'header.php';
                     </div>
                 </div>
             </div>
+                  <div class="form-group">
+                      <label style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Aadhar Card Scan (Max 5MB)</label>
+                      <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px; padding: 8px 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; height: 42px; overflow:hidden;">
+                          <input type="file" name="aadhar_document" id="aadhar_document" style="display:none;" onchange="updateFileName(this, 'aadhar_doc_wrapper', 'aadhar_doc_empty')" accept="image/*,.pdf">
+                          
+                          <button type="button" class="btn btn-sm" style="flex-shrink:0; background: white; color: #475569; border: 1px solid #cbd5e1; padding: 4px 10px;" onclick="document.getElementById('aadhar_document').click()">
+                              <i data-lucide="upload" style="width:14px;height:14px;"></i> Choose File
+                          </button>
+                          
+                          <div id="aadhar_doc_wrapper" style="flex:1; display:flex; align-items:center; overflow:hidden;">
+                              <span id="aadhar_doc_empty" style="font-size:12px; color:#94a3b8; font-style:italic; white-space:nowrap;">No file chosen</span>
+                          </div>
+                      </div>
+                  </div>
 
             <!-- 5. STATUS & MANAGEMENT -->
             <div class="form-section-title">5. STATUS & MANAGEMENT</div>

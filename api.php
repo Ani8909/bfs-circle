@@ -2790,6 +2790,7 @@ try {
             
             $bank_doc_path = '';
             $pan_doc_path = '';
+            $aadhar_doc_path = '';
             
             if (!is_dir('uploads/referrals')) {
                 @mkdir('uploads/referrals', 0777, true);
@@ -2805,13 +2806,18 @@ try {
                 $pan_doc_path = 'uploads/referrals/' . uniqid('pan_') . '.' . $ext;
                 move_uploaded_file($_FILES['pan_document']['tmp_name'], $pan_doc_path);
             }
+            if (isset($_FILES['aadhar_document']) && $_FILES['aadhar_document']['error'] == 0) {
+                $ext = pathinfo($_FILES['aadhar_document']['name'], PATHINFO_EXTENSION);
+                $aadhar_doc_path = 'uploads/referrals/' . uniqid('aadhar_') . '.' . $ext;
+                move_uploaded_file($_FILES['aadhar_document']['tmp_name'], $aadhar_doc_path);
+            }
             
             $prefix = strtoupper(substr($referrer_type, 0, 3));
             $referral_id = "REF-" . $prefix . "-" . date('Ymd') . rand(100, 999);
             
             try {
-                $stmt = $db->prepare("INSERT INTO referrals (referral_id, referrer_type, full_name, dob, mobile, email, city_state, account_name, bank_name, account_number, ifsc_code, upi_id, commission_rate, payout_frequency, pan_number, aadhar_number, bank_document_path, pan_document_path, assigned_rm, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$referral_id, $referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $assigned_rm, $status]);
+                $stmt = $db->prepare("INSERT INTO referrals (referral_id, referrer_type, full_name, dob, mobile, email, city_state, account_name, bank_name, account_number, ifsc_code, upi_id, commission_rate, payout_frequency, pan_number, aadhar_number, bank_document_path, pan_document_path, aadhar_document_path, assigned_rm, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$referral_id, $referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $aadhar_doc_path, $assigned_rm, $status]);
                 
                 log_activity("Added new referral partner: $full_name", "referrals_list.php");
                 return_json(['success' => true, 'message' => 'Referral Partner added successfully!', 'referral_id' => $referral_id]);
@@ -2842,13 +2848,14 @@ try {
             $assigned_rm = trim($_POST['assigned_rm'] ?? '');
             $status = trim($_POST['status'] ?? 'Active');
             
-            $stmt = $db->prepare("SELECT bank_document_path, pan_document_path FROM referrals WHERE id = ?");
+            $stmt = $db->prepare("SELECT bank_document_path, pan_document_path, aadhar_document_path FROM referrals WHERE id = ?");
             $stmt->execute([$id]);
             $existing = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$existing) return_json(['error' => 'Not found'], 404);
             
             $bank_doc_path = $existing['bank_document_path'];
             $pan_doc_path = $existing['pan_document_path'];
+            $aadhar_doc_path = $existing['aadhar_document_path'] ?? '';
             
             if (!is_dir('uploads/referrals')) {
                 @mkdir('uploads/referrals', 0777, true);
@@ -2864,10 +2871,15 @@ try {
                 $pan_doc_path = 'uploads/referrals/' . uniqid('pan_') . '.' . $ext;
                 move_uploaded_file($_FILES['pan_document']['tmp_name'], $pan_doc_path);
             }
+            if (isset($_FILES['aadhar_document']) && $_FILES['aadhar_document']['error'] == 0) {
+                $ext = pathinfo($_FILES['aadhar_document']['name'], PATHINFO_EXTENSION);
+                $aadhar_doc_path = 'uploads/referrals/' . uniqid('aadhar_') . '.' . $ext;
+                move_uploaded_file($_FILES['aadhar_document']['tmp_name'], $aadhar_doc_path);
+            }
             
             try {
-                $stmt = $db->prepare("UPDATE referrals SET referrer_type=?, full_name=?, dob=?, mobile=?, email=?, city_state=?, account_name=?, bank_name=?, account_number=?, ifsc_code=?, upi_id=?, commission_rate=?, payout_frequency=?, pan_number=?, aadhar_number=?, bank_document_path=?, pan_document_path=?, assigned_rm=?, status=? WHERE id=?");
-                $stmt->execute([$referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $assigned_rm, $status, $id]);
+                $stmt = $db->prepare("UPDATE referrals SET referrer_type=?, full_name=?, dob=?, mobile=?, email=?, city_state=?, account_name=?, bank_name=?, account_number=?, ifsc_code=?, upi_id=?, commission_rate=?, payout_frequency=?, pan_number=?, aadhar_number=?, bank_document_path=?, pan_document_path=?, aadhar_document_path=?, assigned_rm=?, status=? WHERE id=?");
+                $stmt->execute([$referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $aadhar_doc_path, $assigned_rm, $status, $id]);
                 
                 log_activity("Updated referral partner: $full_name", "referrals_list.php");
                 return_json(['success' => true, 'message' => 'Referral Partner updated successfully!']);
