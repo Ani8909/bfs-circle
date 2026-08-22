@@ -2762,6 +2762,41 @@ try {
             break;
 
 
+        
+        case 'add_referral':
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Method'], 405);
+            $referrer_type = trim($_POST['referrer_type'] ?? '');
+            $full_name = trim($_POST['full_name'] ?? '');
+            $dob = trim($_POST['dob'] ?? '');
+            $mobile = trim($_POST['mobile'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $city_state = trim($_POST['city_state'] ?? '');
+            $account_name = trim($_POST['account_name'] ?? '');
+            $bank_name = trim($_POST['bank_name'] ?? '');
+            $account_number = trim($_POST['account_number'] ?? '');
+            $ifsc_code = trim($_POST['ifsc_code'] ?? '');
+            
+            if (!$referrer_type || !$full_name || !$mobile) {
+                return_json(['error' => 'Type, Name and Mobile are required.'], 400);
+            }
+            
+            // Generate unique referral ID
+            $prefix = strtoupper(substr($referrer_type, 0, 3));
+            $referral_id = "REF-" . $prefix . "-" . date('Ymd') . rand(100, 999);
+            
+            try {
+                $stmt = $db->prepare("INSERT INTO referrals (referral_id, referrer_type, full_name, dob, mobile, email, city_state, account_name, bank_name, account_number, ifsc_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$referral_id, $referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code]);
+                
+                log_activity("Added new referral partner: $full_name", "referrals_list.php");
+                return_json(['success' => true, 'message' => 'Referral Partner added successfully!', 'referral_id' => $referral_id]);
+            } catch (Exception $e) {
+                if (strpos($e->getMessage(), 'UNIQUE constraint failed') !== false) {
+                    return_json(['error' => 'A referral with this ID already exists, try again.'], 400);
+                }
+                throw $e;
+            }
+
         case 'get_active_referrals':
             // Get from referrals table
             $stmt = $db->query("SELECT referral_id, full_name, referrer_type as type FROM referrals WHERE status = 'Active'");
