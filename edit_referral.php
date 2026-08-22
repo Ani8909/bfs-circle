@@ -3,6 +3,9 @@ require_once 'config.php';
 $page_title = 'Edit Referral Profile';
 $page_subtitle = '️ Update and complete referral partner details';
 require_once 'header.php';
+?>
+<script src="assets/js/banks_directory.js"></script>
+<?php
 
 if (($_SESSION['role'] ?? '') !== 'Admin') {
     die("<div class='view-container'><h3>Access Denied. Admins only.</h3></div>");
