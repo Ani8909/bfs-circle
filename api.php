@@ -2825,7 +2825,7 @@ try {
                 $password = trim($_POST['password'] ?? '');
                 if (!empty($username) && !empty($password)) {
                     $hash = password_hash($password, PASSWORD_DEFAULT);
-                    $role = 'DSA'; // Default role for referral partners
+                    $role = $referrer_type; // Use the selected referrer type
                     try {
                         $ustmt = $db->prepare("INSERT INTO users (username, name, password_hash, role) VALUES (?, ?, ?, ?)");
                         $ustmt->execute([$username, $full_name, $hash, $role]);
