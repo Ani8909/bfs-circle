@@ -112,6 +112,8 @@ require_once 'header.php';
                     <label for="aadhar_number" class="required">Aadhar Card Number</label>
                     <input type="text" name="aadhar_number" id="aadhar_number" required pattern="[0-9]{12}" placeholder="12-digit Aadhar number">
                 </div>
+              </div>
+              <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px;">
                 <div class="form-group">
                     <label style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Bank Document (Max 5MB)</label>
                     <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px; padding: 8px 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; height: 42px; overflow:hidden;">

@@ -401,6 +401,9 @@ require_once 'header.php';
                         <span class="doc-title">Aadhar Card</span>
                         <span class="doc-value"><?php echo htmlspecialchars($referral['aadhar_number'] ?? 'N/A'); ?></span>
                     </div>
+                    <?php if (!empty($referral['aadhar_document_path'])): ?>
+                        <a href="<?php echo htmlspecialchars($referral['aadhar_document_path']); ?>" target="_blank" class="btn btn-sm" style="background:#f1f5f9; color:#475569; border:none;"><i data-lucide="eye" style="width:14px;height:14px;"></i> View</a>
+                    <?php endif; ?>
                 </div>
 
                 <div class="premium-doc-box">
