@@ -34,6 +34,10 @@ try {
     echo "<p>All test data has been removed. The Admin account, Company Profile, and IFSC Master Data have been preserved.</p>";
     echo "<br><a href='dashboard.php' style='padding: 10px 20px; background: #0f172a; color: white; text-decoration: none; border-radius: 5px;'>Back to Dashboard</a>";
     echo "</div>";
+    
+    // Self-destruct for security
+    @unlink(__FILE__);
+    
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage();
 }
