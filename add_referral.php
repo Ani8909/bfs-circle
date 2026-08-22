@@ -168,8 +168,24 @@ require_once 'header.php';
                       </div>
                   </div>
 
-            <!-- 5. STATUS & MANAGEMENT -->
-            <div class="form-section-title">5. STATUS & MANAGEMENT</div>
+            <!-- 6. STATUS & MANAGEMENT -->
+            
+            <!-- 5. SYSTEM LOGIN CREDENTIALS -->
+            <div class="form-section-title">5. SYSTEM LOGIN CREDENTIALS (AUTO-GENERATED)</div>
+            <div class="form-grid" style="background:#f0f9ff; padding:20px; border-radius:8px; border:1px solid #bae6fd;">
+                <div class="form-group">
+                    <label style="color:#0369a1; font-weight:600;">Login Username</label>
+                    <input type="text" name="username" id="preview_username" readonly style="background-color:#e0f2fe; border-color:#7dd3fc; color:#0c4a6e; font-weight:bold;">
+                    <small style="color:#0284c7;">Email ID (or Mobile No if Email is empty)</small>
+                </div>
+                <div class="form-group">
+                    <label style="color:#0369a1; font-weight:600;">System Password</label>
+                    <input type="text" name="password" id="preview_password" readonly style="background-color:#e0f2fe; border-color:#7dd3fc; color:#0c4a6e; font-weight:bold;">
+                    <small style="color:#0284c7;">First 4 letters of Name + Last 4 digits of Aadhaar (or Mobile)</small>
+                </div>
+            </div>
+            
+            <div class="form-section-title">6. STATUS & MANAGEMENT</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label for="mapped_branch">Branch Office</label>
@@ -263,6 +279,43 @@ require_once 'header.php';
         document.getElementById('previewModal').style.display = 'none';
         document.getElementById('previewContent').innerHTML = '';
     }
+
+    
+    const refNameInput = document.getElementById('full_name');
+    const refEmailInput = document.getElementById('email');
+    const refMobileInput = document.getElementById('mobile');
+    const refAadhaarInput = document.getElementById('aadhar_number');
+    const previewUsername = document.getElementById('preview_username');
+    const previewPassword = document.getElementById('preview_password');
+
+    function updateRefCredentialsPreview() {
+        const email = refEmailInput.value.trim();
+        const mobile = refMobileInput.value.trim();
+        const name = refNameInput.value.trim().replace(/[^a-zA-Z]/g, '');
+        const aadhar = refAadhaarInput.value.trim();
+        
+        // Username is Email or Mobile
+        previewUsername.value = email ? email.toLowerCase() : mobile;
+        
+        // Password logic
+        if (name.length >= 2 && (aadhar.length >= 4 || mobile.length >= 4)) {
+            const namePart = name.substring(0, 4).toUpperCase();
+            let numPart = "";
+            if (aadhar.length === 12) {
+                numPart = aadhar.slice(-4);
+            } else if (mobile.length === 10) {
+                numPart = mobile.slice(-4);
+            }
+            previewPassword.value = namePart + numPart;
+        } else {
+            previewPassword.value = '';
+        }
+    }
+
+    if (refNameInput) refNameInput.addEventListener('input', updateRefCredentialsPreview);
+    if (refEmailInput) refEmailInput.addEventListener('input', updateRefCredentialsPreview);
+    if (refMobileInput) refMobileInput.addEventListener('input', updateRefCredentialsPreview);
+    if (refAadhaarInput) refAadhaarInput.addEventListener('input', updateRefCredentialsPreview);
 
     document.addEventListener('DOMContentLoaded', () => {
         const typeSelect = document.getElementById('referrer_type');
@@ -410,6 +463,43 @@ document.getElementById('addReferralForm').addEventListener('submit', async func
             });
         });
     }
+
+    
+    const refNameInput = document.getElementById('full_name');
+    const refEmailInput = document.getElementById('email');
+    const refMobileInput = document.getElementById('mobile');
+    const refAadhaarInput = document.getElementById('aadhar_number');
+    const previewUsername = document.getElementById('preview_username');
+    const previewPassword = document.getElementById('preview_password');
+
+    function updateRefCredentialsPreview() {
+        const email = refEmailInput.value.trim();
+        const mobile = refMobileInput.value.trim();
+        const name = refNameInput.value.trim().replace(/[^a-zA-Z]/g, '');
+        const aadhar = refAadhaarInput.value.trim();
+        
+        // Username is Email or Mobile
+        previewUsername.value = email ? email.toLowerCase() : mobile;
+        
+        // Password logic
+        if (name.length >= 2 && (aadhar.length >= 4 || mobile.length >= 4)) {
+            const namePart = name.substring(0, 4).toUpperCase();
+            let numPart = "";
+            if (aadhar.length === 12) {
+                numPart = aadhar.slice(-4);
+            } else if (mobile.length === 10) {
+                numPart = mobile.slice(-4);
+            }
+            previewPassword.value = namePart + numPart;
+        } else {
+            previewPassword.value = '';
+        }
+    }
+
+    if (refNameInput) refNameInput.addEventListener('input', updateRefCredentialsPreview);
+    if (refEmailInput) refEmailInput.addEventListener('input', updateRefCredentialsPreview);
+    if (refMobileInput) refMobileInput.addEventListener('input', updateRefCredentialsPreview);
+    if (refAadhaarInput) refAadhaarInput.addEventListener('input', updateRefCredentialsPreview);
 
     document.addEventListener('DOMContentLoaded', () => {
         populateBankDropdown();

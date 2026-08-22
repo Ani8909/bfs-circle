@@ -2819,6 +2819,21 @@ try {
                 $stmt = $db->prepare("INSERT INTO referrals (referral_id, referrer_type, full_name, dob, mobile, email, city_state, account_name, bank_name, account_number, ifsc_code, upi_id, commission_rate, payout_frequency, pan_number, aadhar_number, bank_document_path, pan_document_path, aadhar_document_path, assigned_rm, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([$referral_id, $referrer_type, $full_name, $dob, $mobile, $email, $city_state, $account_name, $bank_name, $account_number, $ifsc_code, $upi_id, $commission_rate, $payout_frequency, $pan_number, $aadhar_number, $bank_doc_path, $pan_doc_path, $aadhar_doc_path, $assigned_rm, $status]);
                 
+                
+                // Also create a user account for them
+                $username = trim($_POST['username'] ?? '');
+                $password = trim($_POST['password'] ?? '');
+                if (!empty($username) && !empty($password)) {
+                    $hash = password_hash($password, PASSWORD_DEFAULT);
+                    $role = 'DSA'; // Default role for referral partners
+                    try {
+                        $ustmt = $db->prepare("INSERT INTO users (username, name, password_hash, role) VALUES (?, ?, ?, ?)");
+                        $ustmt->execute([$username, $full_name, $hash, $role]);
+                    } catch (Exception $ue) {
+                        // Ignore if username already exists, just don't create user
+                    }
+                }
+
                 log_activity("Added new referral partner: $full_name", "referrals_list.php");
                 return_json(['success' => true, 'message' => 'Referral Partner added successfully!', 'referral_id' => $referral_id]);
             } catch (Exception $e) {
