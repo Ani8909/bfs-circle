@@ -3078,7 +3078,7 @@ try {
             $ifsc_code = trim($_POST['ifsc_code'] ?? '');
             $contact_number = trim($_POST['contact_number'] ?? '');
             $official_email = trim($_POST['official_email'] ?? '');
-            $loan_category = trim($_POST['loan_category'] ?? '');
+            $loan_category = isset($_POST['loan_category']) ? (is_array($_POST['loan_category']) ? implode(',', $_POST['loan_category']) : trim($_POST['loan_category'])) : '';
             $min_limit = (float)($_POST['min_loan_limit'] ?? 0);
             $max_limit = (float)($_POST['max_loan_limit'] ?? 0);
             $dsa_code = trim($_POST['dsa_code'] ?? '');
@@ -3119,7 +3119,7 @@ try {
             $ifsc_code = trim($_POST['ifsc_code'] ?? '');
             $contact_number = trim($_POST['contact_number'] ?? '');
             $official_email = trim($_POST['official_email'] ?? '');
-            $loan_category = trim($_POST['loan_category'] ?? '');
+            $loan_category = isset($_POST['loan_category']) ? (is_array($_POST['loan_category']) ? implode(',', $_POST['loan_category']) : trim($_POST['loan_category'])) : '';
             $min_limit = (float)($_POST['min_loan_limit'] ?? 0);
             $max_limit = (float)($_POST['max_loan_limit'] ?? 0);
             $dsa_code = trim($_POST['dsa_code'] ?? '');
