@@ -40,7 +40,7 @@ require_once 'header.php';
                 </div>
                 <div class="form-group">
                     <label class="required">Bank Name</label>
-                    <select name="bank_name" id="bank_name_select" required>
+                    <select name="bank_name" id="bank_name_select" required onchange="handleBankNameChange(this)">
                         <option value="" disabled selected>Select Type First</option>
                     </select>
                 </div>
@@ -356,9 +356,51 @@ require_once 'header.php';
         }
     }
 
+    function handleBankNameChange(select) {
+        const customInput = document.getElementById('custom_bank_name');
+        if (select.value === 'OTHER_CUSTOM') {
+            customInput.style.display = 'block';
+            customInput.required = true;
+        } else {
+            customInput.style.display = 'none';
+            customInput.required = false;
+        }
+    }
+
     async function saveBanker(event) {
         event.preventDefault();
         const form = document.getElementById('banker-registration-form');
+        
+        let bankName = document.getElementById('bank_name_select').value;
+        const bankType = document.getElementById('bank_type_select').value;
+        const customInput = document.getElementById('custom_bank_name');
+        
+        if (bankName === 'OTHER_CUSTOM') {
+            bankName = customInput.value.trim();
+            if (!bankName) {
+                showNotification('Please enter the custom bank name.', 'error');
+                return;
+            }
+            
+            const confirmAdd = confirm("Are you sure you want to permanently add '" + bankName + "' to the '" + bankType + "' list for all users?");
+            if (!confirmAdd) return;
+            
+            const fd = new FormData();
+            fd.append('bank_type', bankType);
+            fd.append('bank_name', bankName);
+            
+            try {
+                const res = await fetch('?api=add_custom_bank', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (!data.success && data.message !== 'Already exists') {
+                    showNotification(data.error || 'Failed to save new bank to directory', 'error');
+                    return;
+                }
+            } catch (err) {
+                showNotification('Connection failure while saving custom bank.', 'error');
+                return;
+            }
+        }
         
         // Ensure at least one category is selected
         const checkboxes = form.querySelectorAll('input[name="loan_category[]"]:checked');
@@ -376,6 +418,7 @@ require_once 'header.php';
         }
 
         const formData = new FormData(form);
+        if (bankName) formData.set('bank_name', bankName);
         
         try {
             const response = await fetch('?api=add_banker', {

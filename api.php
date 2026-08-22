@@ -2911,6 +2911,35 @@ try {
             break;
 
 
+        
+        case 'add_custom_bank':
+            if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+            $type = trim($_POST['bank_type'] ?? '');
+            $name = trim($_POST['bank_name'] ?? '');
+            
+            if (!$type || !$name) return_json(['error' => 'Missing data'], 400);
+            
+            $js_file = __DIR__ . '/assets/js/banks_directory.js';
+            if (!file_exists($js_file)) return_json(['error' => 'JS file not found'], 404);
+            
+            $content = file_get_contents($js_file);
+            // We need to inject the new bank into the array for the specific type
+            $search = '"' . $type . '": [';
+            if (strpos($content, $search) !== false) {
+                // Check if it already exists
+                if (stripos($content, '"' . $name . '"') !== false) {
+                    return_json(['success' => true, 'message' => 'Already exists']);
+                }
+                
+                $replace = $search . "
+        "" . $name . "",";
+                $new_content = str_replace($search, $replace, $content);
+                file_put_contents($js_file, $new_content);
+                return_json(['success' => true, 'message' => 'Bank added successfully']);
+            } else {
+                return_json(['error' => 'Bank type not found in directory'], 404);
+            }
+
         case 'add_banker':
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Method'], 405);
             $full_name = trim($_POST['full_name'] ?? '');
@@ -3031,6 +3060,21 @@ try {
             $percent = $stmt->fetchColumn();
             return_json(['success' => true, 'payout' => $percent ?: 0]);
             break;
+
+        
+        case 'fetch_pincode':
+            $pin = trim($_GET['pincode'] ?? '');
+            if (!$pin || strlen($pin) !== 6) return_json(['error' => 'Invalid Pincode'], 400);
+            
+            $stmt = $db->prepare("SELECT city, state FROM pincode_master WHERE pincode = ?");
+            $stmt->execute([$pin]);
+            $info = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($info) {
+                return_json(['success' => true, 'data' => $info]);
+            } else {
+                return_json(['error' => 'Pincode not found'], 404);
+            }
 
         case 'fetch_ifsc':
             $ifsc = trim($_GET['ifsc'] ?? '');
