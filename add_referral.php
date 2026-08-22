@@ -40,7 +40,7 @@ require_once 'header.php';
                 </div>
                 <div class="form-group">
                     <label for="mobile" class="required">Mobile Number</label>
-                    <input type="tel" name="mobile" id="mobile" required pattern="[0-9]{10}" placeholder="10-digit mobile number">
+                    <input type="tel" name="mobile" id="mobile" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)" pattern="[0-9]{10}" placeholder="10-digit mobile number">
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -72,11 +72,11 @@ require_once 'header.php';
                 </div>
                 <div class="form-group">
                     <label for="account_number">Account Number</label>
-                    <input type="text" name="account_number" id="account_number" placeholder="Enter account number">
+                    <input type="text" name="account_number" id="account_number" maxlength="20" oninput="this.value = this.value.replace(/[^0-9A-Z]/g, '')" placeholder="Enter account number">
                 </div>
                 <div class="form-group">
                     <label for="ifsc_code">IFSC Code</label>
-                    <input type="text" name="ifsc_code" id="ifsc_code" placeholder="e.g. HDFC0001234">
+                    <input type="text" name="ifsc_code" id="ifsc_code" maxlength="11" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,11)" placeholder="e.g. HDFC0001234">
                 </div>
                 <div class="form-group full-width">
                     <label for="upi_id">UPI ID (Optional)</label>
@@ -106,11 +106,11 @@ require_once 'header.php';
             <div class="form-grid">
                 <div class="form-group">
                     <label for="pan_number" class="required">PAN Card Number</label>
-                    <input type="text" name="pan_number" id="pan_number" required placeholder="ABCDE1234F">
+                    <input type="text" name="pan_number" id="pan_number" required maxlength="10" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,10)" placeholder="ABCDE1234F">
                 </div>
                 <div class="form-group">
                     <label for="aadhar_number" class="required">Aadhar Card Number</label>
-                    <input type="text" name="aadhar_number" id="aadhar_number" required pattern="[0-9]{12}" placeholder="12-digit Aadhar number">
+                    <input type="text" name="aadhar_number" id="aadhar_number" required maxlength="12" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,12)" pattern="[0-9]{12}" placeholder="12-digit Aadhar number">
                 </div>
               </div>
               <div class="form-grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px;">

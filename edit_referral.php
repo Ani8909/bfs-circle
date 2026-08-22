@@ -130,7 +130,7 @@ function getVal($field, $ref, $ext) {
                 </div>
                 <div class="form-group">
                     <label for="mobile" class="required">Mobile Number</label>
-                    <input type="text" name="mobile" id="mobile" value="<?php echo getVal('mobile', $referral, $extra); ?>" required pattern="[0-9]{10}" placeholder="10-digit number">
+                    <input type="text" name="mobile" id="mobile" value="<?php echo getVal('mobile', $referral, $extra); ?>" required maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,10)" pattern="[0-9]{10}" placeholder="10-digit number">
                 </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -155,11 +155,11 @@ function getVal($field, $ref, $ext) {
                 </div>
                 <div class="form-group">
                     <label for="account_number">Account Number</label>
-                    <input type="text" name="account_number" id="account_number" value="<?php echo getVal('account_number', $referral, $extra); ?>" placeholder="Account Number">
+                    <input type="text" name="account_number" id="account_number" value="<?php echo getVal('account_number', $referral, $extra); ?>" maxlength="20" oninput="this.value = this.value.replace(/[^0-9A-Z]/g, '')" placeholder="Account Number">
                 </div>
                 <div class="form-group">
                     <label for="ifsc_code">IFSC Code</label>
-                    <input type="text" name="ifsc_code" id="ifsc_code" value="<?php echo getVal('ifsc_code', $referral, $extra); ?>" placeholder="e.g. HDFC0001234">
+                    <input type="text" name="ifsc_code" id="ifsc_code" value="<?php echo getVal('ifsc_code', $referral, $extra); ?>" maxlength="11" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,11)" placeholder="e.g. HDFC0001234">
                 </div>
                 <div class="form-group">
                     <label for="upi_id">UPI ID (Optional)</label>
@@ -192,11 +192,11 @@ function getVal($field, $ref, $ext) {
             <div class="form-grid">
                 <div class="form-group">
                     <label for="pan_number" class="required">PAN Card Number</label>
-                    <input type="text" name="pan_number" id="pan_number" value="<?php echo getVal('pan_number', $referral, $extra); ?>" required placeholder="ABCDE1234F">
+                    <input type="text" name="pan_number" id="pan_number" value="<?php echo getVal('pan_number', $referral, $extra); ?>" required maxlength="10" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,10)" placeholder="ABCDE1234F">
                 </div>
                 <div class="form-group">
                     <label for="aadhar_number" class="required">Aadhar Card Number</label>
-                    <input type="text" name="aadhar_number" id="aadhar_number" value="<?php echo getVal('aadhar_number', $referral, $extra); ?>" required pattern="[0-9]{12}" placeholder="12-digit Aadhar number">
+                    <input type="text" name="aadhar_number" id="aadhar_number" value="<?php echo getVal('aadhar_number', $referral, $extra); ?>" required maxlength="12" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,12)" pattern="[0-9]{12}" placeholder="12-digit Aadhar number">
                 </div>
                 <div class="form-group">
                     <label style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Bank Document (Max 5MB)</label>
