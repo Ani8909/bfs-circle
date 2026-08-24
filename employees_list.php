@@ -275,7 +275,7 @@ $employees = $stmt->fetchAll();
                         </div>
 
                         <div class="staff-actions" style="flex-direction: column; gap: 8px;">
-                            <button onclick="viewEmployee('<?php echo htmlspecialchars(json_encode($emp), ENT_QUOTES, 'UTF-8'); ?>')" class="btn btn-secondary" style="border:1px solid var(--primary); color:var(--primary); background:transparent;">
+                            <button data-emp="<?php echo htmlspecialchars(json_encode($emp), ENT_QUOTES, \'UTF-8\'); ?>" onclick="viewEmployee(this)" class="btn btn-secondary" style="border:1px solid var(--primary); color:var(--primary); background:transparent;">
                                 <i data-lucide="eye"></i> Full Profile
                             </button>
                             <a href="employee_performance_view.php?username=<?php echo urlencode($emp['username'] ?? ''); ?>" class="btn btn-primary" style="text-decoration:none; text-align:center;">
@@ -328,7 +328,8 @@ $employees = $stmt->fetchAll();
         }
     }
 
-    function viewEmployee(empJson) {
+    function viewEmployee(btn) {
+        const empJson = btn.getAttribute('data-emp');
         const emp = JSON.parse(empJson);
         const body = document.getElementById('employee-modal-body');
         
