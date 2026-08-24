@@ -281,6 +281,11 @@ $employees = $stmt->fetchAll();
                             <a href="employee_performance_view.php?username=<?php echo urlencode($emp['username'] ?? ''); ?>" class="btn btn-primary" style="text-decoration:none; text-align:center;">
                                  View Performance
                             </a>
+                            <?php if (($_SESSION[\'role\'] ?? \'\') === \'Admin\'): ?>
+                            <button onclick="deleteEmployee(<?php echo $emp[\'id\']; ?>, \'<?php echo htmlspecialchars(addslashes($emp[\'full_name\'])); ?>\')" class="btn btn-danger" style="background:#ef4444; border:none; color:white; margin-top:8px;">
+                                <i data-lucide="trash-2"></i> Delete
+                            </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
