@@ -288,7 +288,7 @@ async function deleteReferral(id) {
     try {
         const fd = new FormData();
         fd.append('id', id);
-        const res = await fetch('api.php?api=delete_referral', { method: 'POST', body: fd });
+        const res = await fetch('?api=delete_referral', { method: 'POST', body: fd });
         const data = await res.json();
         if(data.success) {
             showNotification(data.message, 'success');
