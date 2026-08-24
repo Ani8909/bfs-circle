@@ -114,8 +114,15 @@ require_once 'header.php';
 
             <!-- 5. Loan Application -->
             
-            <div class="form-section-title"> 5. Personal Discussion (PD) & Field Assessment (Optional)</div>
-            <div class="form-grid">
+            <div class="form-section-title" style="display:flex; justify-content:space-between; align-items:center;">
+                <span>5. Personal Discussion (PD) & Field Assessment (Optional)</span>
+                <label style="font-size:14px; display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:normal;">
+                    <input type="checkbox" id="add_pd_toggle" onchange="document.getElementById('pd_wrapper').style.display = this.checked ? 'block' : 'none'" style="width:16px; height:16px;">
+                    Add PD Assessment
+                </label>
+            </div>
+            <div id="pd_wrapper" style="display:none; padding:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-bottom:24px;">
+                <div class="form-grid">
                 <div class="form-group">
                     <label>PD Conducted By</label>
                     <input type="text" name="pd_conducted_by" id="pd_conducted_by" placeholder="Credit Officer Name">
@@ -253,6 +260,7 @@ require_once 'header.php';
                     <input type="file" name="pd_report_file" id="pd_report_file" accept=".pdf, .jpg, .jpeg, .png">
                     <div id="pd_report_file_link" style="margin-top:5px; font-size:12px;"></div>
                 </div>
+            </div>
             </div>
 
             <div class="form-section-title"> 6. Loan Application Details</div>
@@ -828,7 +836,9 @@ require_once 'header.php';
                 
                 populateFields(data);
                 
-                if (data.pd_report) {
+                if (data.pd_report && (data.pd_report.pd_conducted_by || data.pd_report.final_pd_status)) {
+                    document.getElementById('add_pd_toggle').checked = true;
+                    document.getElementById('pd_wrapper').style.display = 'block';
                     populateFields(data.pd_report);
                     if (data.pd_report.pd_report_path) {
                         const linkEl = document.getElementById('pd_report_file_link');
