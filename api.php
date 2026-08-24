@@ -158,7 +158,7 @@ try {
 
                 $db->commit();
                 
-                log_activity("Updated employee: $full_name", "staff_hrms.php");
+                log_activity("Updated employee: $full_name", "employees_list.php");
                 return_json(['success' => true, 'message' => 'Employee updated successfully!']);
             } catch (PDOException $e) {
                 $db->rollBack();
@@ -253,7 +253,7 @@ try {
 
                 $db->commit();
                 
-                log_activity("Added new employee: $full_name", "staff_hrms.php");
+                log_activity("Added new employee: $full_name", "employees_list.php");
                 return_json(['success' => true, 'message' => 'Employee onboarded successfully!']);
             } catch (PDOException $e) {
                 $db->rollBack();
