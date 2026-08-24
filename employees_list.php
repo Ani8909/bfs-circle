@@ -295,7 +295,7 @@ $employees = $stmt->fetchAll();
 </div>
 
 <!-- Employee Details Modal -->
-<div class="modal-overlay" id="employee-modal">
+<div class="modal" id="employee-modal">
     <div class="modal-content" style="max-width:800px;">
         <div class="modal-header">
             <h3>Staff Profile Details</h3>
