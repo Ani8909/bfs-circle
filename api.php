@@ -76,7 +76,7 @@ try {
                 $db->beginTransaction();
                 
                 // Get existing employee user_id
-                $stmt = $db->prepare("SELECT user_id, photo_path, aadhar_path, pan_path, marksheet_path, offer_letter_path, cancelled_cheque_path FROM employees WHERE id = ?");
+                $stmt = $db->prepare("SELECT user_id, photo_path, aadhar_path, pan_path, marksheet_path, relieving_letter_path, cheque_path FROM employees WHERE id = ?");
                 $stmt->execute([$id]);
                 $emp = $stmt->fetch();
                 if (!$emp) return_json(['error' => 'Employee not found'], 404);
@@ -97,7 +97,7 @@ try {
                 $uploads_dir = 'uploads/employees';
                 if (!file_exists($uploads_dir)) mkdir($uploads_dir, 0777, true);
                 
-                $files = ['photo_path', 'aadhar_path', 'pan_path', 'marksheet_path', 'relieving_letter_path' => 'offer_letter_path', 'cheque_path' => 'cancelled_cheque_path'];
+                $files = ['photo_path', 'aadhar_path', 'pan_path', 'marksheet_path', 'relieving_letter_path' => 'relieving_letter_path', 'cheque_path' => 'cheque_path'];
                 $paths = [];
                 foreach ($files as $post_key => $db_key) {
                     if (is_numeric($post_key)) {
@@ -141,7 +141,7 @@ try {
                     current_address=?, permanent_address=?, emergency_contact_name=?, emergency_relation=?, emergency_phone=?, 
                     department=?, designation=?, reporting_manager=?, doj=?, access_role=?, work_mode=?, 
                     pan_number=?, aadhar_number=?, bank_holder_name=?, bank_account_no=?, bank_name=?, bank_ifsc=?,
-                    photo_path=?, aadhar_path=?, pan_path=?, marksheet_path=?, offer_letter_path=?, cancelled_cheque_path=?,
+                    photo_path=?, aadhar_path=?, pan_path=?, marksheet_path=?, relieving_letter_path=?, cheque_path=?,
                     commission_rate=?, team_specific_data=?
                     WHERE id=?
                 ");
@@ -151,7 +151,7 @@ try {
                     $current_address, $permanent_address, $emergency_contact_name, $emergency_relation, $emergency_phone,
                     $department, $designation, $reporting_manager, $doj, $role, $work_mode,
                     $pan_number, $aadhar_number, $bank_holder_name, $bank_account_no, $bank_name, $bank_ifsc,
-                    $paths['photo_path'], $paths['aadhar_path'], $paths['pan_path'], $paths['marksheet_path'], $paths['offer_letter_path'], $paths['cancelled_cheque_path'],
+                    $paths['photo_path'], $paths['aadhar_path'], $paths['pan_path'], $paths['marksheet_path'], $paths['relieving_letter_path'], $paths['cheque_path'],
                     $commission_rate, $team_data,
                     $id
                 ]);
@@ -236,7 +236,7 @@ try {
                     current_address, permanent_address, emergency_contact_name, emergency_relation, emergency_phone, 
                     department, designation, reporting_manager, doj, access_role, work_mode, 
                     pan_number, aadhar_number, bank_holder_name, bank_account_no, bank_name, bank_ifsc,
-                    photo_path, aadhar_path, pan_path, marksheet_path, offer_letter_path, cancelled_cheque_path,
+                    photo_path, aadhar_path, pan_path, marksheet_path, relieving_letter_path, cheque_path,
                     commission_rate, team_specific_data
                 ) VALUES (
                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
