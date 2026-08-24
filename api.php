@@ -56,6 +56,119 @@ try {
             }
             break;
 
+                case 'update_employee':
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+            
+            $id = (int)($_POST['id'] ?? 0);
+            if (!$id) return_json(['error' => 'Employee ID is required'], 400);
+
+            $full_name = trim($_POST['full_name'] ?? '');
+            $username = trim($_POST['username'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+            $role = trim($_POST['access_role'] ?? 'Staff');
+            $mobile = trim($_POST['mobile'] ?? '');
+            
+            if(empty($full_name) || empty($username)) {
+                return_json(['error' => 'Name and Username are required.'], 400);
+            }
+            
+            try {
+                $db->beginTransaction();
+                
+                // Get existing employee user_id
+                $stmt = $db->prepare("SELECT user_id, photo_path, aadhar_path, pan_path, marksheet_path, offer_letter_path, cancelled_cheque_path FROM employees WHERE id = ?");
+                $stmt->execute([$id]);
+                $emp = $stmt->fetch();
+                if (!$emp) return_json(['error' => 'Employee not found'], 404);
+                
+                $user_id = $emp['user_id'];
+                
+                // 1. Update User
+                if (!empty($password)) {
+                    $hash = password_hash($password, PASSWORD_DEFAULT);
+                    $ustmt = $db->prepare("UPDATE users SET username=?, name=?, password_hash=?, role=? WHERE id=?");
+                    $ustmt->execute([$username, $full_name, $hash, $role, $user_id]);
+                } else {
+                    $ustmt = $db->prepare("UPDATE users SET username=?, name=?, role=? WHERE id=?");
+                    $ustmt->execute([$username, $full_name, $role, $user_id]);
+                }
+                
+                // 2. Upload Files (if any)
+                $uploads_dir = 'uploads/employees';
+                if (!file_exists($uploads_dir)) mkdir($uploads_dir, 0777, true);
+                
+                $files = ['photo_path', 'aadhar_path', 'pan_path', 'marksheet_path', 'relieving_letter_path' => 'offer_letter_path', 'cheque_path' => 'cancelled_cheque_path'];
+                $paths = [];
+                foreach ($files as $post_key => $db_key) {
+                    if (is_numeric($post_key)) {
+                        $post_key = $db_key;
+                    }
+                    $paths[$db_key] = $emp[$db_key]; // Default to old path
+                    if (isset($_FILES[$post_key]) && $_FILES[$post_key]['error'] == UPLOAD_ERR_OK) {
+                        $ext = pathinfo($_FILES[$post_key]['name'], PATHINFO_EXTENSION);
+                        $filename = $post_key . '_' . time() . '_' . rand(100, 999) . '.' . $ext;
+                        $dest = $uploads_dir . '/' . $filename;
+                        if (move_uploaded_file($_FILES[$post_key]['tmp_name'], $dest)) {
+                            $paths[$db_key] = $dest;
+                        }
+                    }
+                }
+
+                // 3. Update Employee profile
+                $official_email = trim($_POST['official_email'] ?? '');
+                $personal_email = trim($_POST['personal_email'] ?? '');
+                $current_address = trim($_POST['current_address'] ?? '');
+                $permanent_address = trim($_POST['permanent_address'] ?? '');
+                $emergency_contact_name = trim($_POST['emergency_contact_name'] ?? '');
+                $emergency_relation = trim($_POST['emergency_relation'] ?? '');
+                $emergency_phone = trim($_POST['emergency_phone'] ?? '');
+                $department = trim($_POST['department'] ?? 'General');
+                $designation = trim($_POST['designation'] ?? 'Staff');
+                $reporting_manager = trim($_POST['reporting_manager'] ?? '');
+                $doj = trim($_POST['doj'] ?? '');
+                $work_mode = trim($_POST['work_mode'] ?? '');
+                $pan_number = trim($_POST['pan_number'] ?? '');
+                $aadhar_number = trim($_POST['aadhar_number'] ?? '');
+                $bank_holder_name = trim($_POST['bank_holder_name'] ?? '');
+                $bank_account_no = trim($_POST['bank_account_no'] ?? '');
+                $bank_name = trim($_POST['bank_name'] ?? '');
+                $bank_ifsc = trim($_POST['bank_ifsc'] ?? '');
+                $commission_rate = (float)($_POST['commission_rate'] ?? 1.0);
+                $team_data = trim($_POST['team_specific_data'] ?? '');
+
+                $stmt2 = $db->prepare("UPDATE employees SET 
+                    full_name=?, official_email=?, personal_email=?, mobile=?, 
+                    current_address=?, permanent_address=?, emergency_contact_name=?, emergency_relation=?, emergency_phone=?, 
+                    department=?, designation=?, reporting_manager=?, doj=?, access_role=?, work_mode=?, 
+                    pan_number=?, aadhar_number=?, bank_holder_name=?, bank_account_no=?, bank_name=?, bank_ifsc=?,
+                    photo_path=?, aadhar_path=?, pan_path=?, marksheet_path=?, offer_letter_path=?, cancelled_cheque_path=?,
+                    commission_rate=?, team_specific_data=?
+                    WHERE id=?
+                ");
+                
+                $stmt2->execute([
+                    $full_name, $official_email, $personal_email, $mobile,
+                    $current_address, $permanent_address, $emergency_contact_name, $emergency_relation, $emergency_phone,
+                    $department, $designation, $reporting_manager, $doj, $role, $work_mode,
+                    $pan_number, $aadhar_number, $bank_holder_name, $bank_account_no, $bank_name, $bank_ifsc,
+                    $paths['photo_path'], $paths['aadhar_path'], $paths['pan_path'], $paths['marksheet_path'], $paths['offer_letter_path'], $paths['cancelled_cheque_path'],
+                    $commission_rate, $team_data,
+                    $id
+                ]);
+
+                $db->commit();
+                
+                log_activity("Updated employee: $full_name", "staff_hrms.php");
+                return_json(['success' => true, 'message' => 'Employee updated successfully!']);
+            } catch (PDOException $e) {
+                $db->rollBack();
+                if(strpos($e->getMessage(), 'UNIQUE') !== false) {
+                    return_json(['error' => 'Username/Email already exists.']);
+                }
+                return_json(['error' => 'Database error: ' . $e->getMessage()]);
+            }
+            break;
+
         case 'add_employee':
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
             $full_name = trim($_POST['full_name'] ?? '');
