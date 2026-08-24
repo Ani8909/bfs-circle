@@ -236,6 +236,9 @@ try {
 
     try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN owner_type TEXT DEFAULT 'Applicant'"); } catch (Exception $e) {}
     try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN owner_id INTEGER DEFAULT NULL"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN status TEXT DEFAULT 'Pending'"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN notes TEXT"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN file_type TEXT"); } catch (Exception $e) {}
 
     $db->exec("CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
