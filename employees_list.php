@@ -308,6 +308,26 @@ $employees = $stmt->fetchAll();
 </div>
 
 <script>
+
+    function deleteEmployee(empId, empName) {
+        if (confirm('Are you sure you want to permanently delete ' + empName + '?')) {
+            fetch('?api=delete_employee', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'emp_id=' + empId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    alert('Employee deleted successfully.');
+                    location.reload();
+                } else {
+                    alert(data.error || 'Failed to delete employee.');
+                }
+            });
+        }
+    }
+
     function viewEmployee(empJson) {
         const emp = JSON.parse(empJson);
         const body = document.getElementById('employee-modal-body');
