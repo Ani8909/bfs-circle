@@ -381,7 +381,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Income Considered for Loan?</label>
                     <div style="display:flex; gap:16px; padding-top:8px;">
-                        <label style="cursor:pointer;"><input type="radio" name="coapp_financial_${index}" value="Yes" onchange="toggleFinancial(${index})" required> Yes (Financial)</label>
+                        <label style="cursor:pointer;"><input type="radio" name="coapp_financial_${index}" value="Yes" onchange="toggleFinancial(${index})"> Yes (Financial)</label>
                         <label style="cursor:pointer;"><input type="radio" name="coapp_financial_${index}" value="No" onchange="toggleFinancial(${index})"> No (Guarantor)</label>
                         <input type="hidden" name="coapp_is_financial[]" id="hidden_financial_${index}" value="">
                     </div>
@@ -816,6 +816,7 @@ require_once 'header.php';
 
                             if (el.id && tsInstances[el.id]) {
                                 tsInstances[el.id].setValue(val);
+                                el.value = val;
                             } else if (el.type !== 'radio' && el.type !== 'checkbox') {
                                 el.value = val;
                             }
@@ -919,11 +920,15 @@ require_once 'header.php';
                         block.querySelector(`[name="coapp_income[]"]`).value = co.monthly_income;
                         block.querySelector(`[name="coapp_emis[]"]`).value = co.current_emis;
                         
-                        const radios = document.getElementsByName(`coapp_is_financial[${idx}]`);
+                        const radios = document.getElementsByName(`coapp_financial_${idx}`);
                         radios.forEach(r => { if(r.value === co.is_financial) r.checked = true; });
+                        document.getElementById(`hidden_financial_${idx}`).value = co.is_financial;
+                        if (co.is_financial === 'Yes') {
+                            document.getElementById(`coapp_financial_block_${idx}`).style.display = 'block';
+                        }
                         
                         // Refresh TS for this block
-                        if (tsInstances[`coapp_rel_${idx}`]) tsInstances[`coapp_rel_${idx}`].setValue(co.relationship);
+                        if (tsInstances[`coapp_rel_${idx}`]) tsInstances[`coapp_rel_${idx}`].setValue(co.relationship ? co.relationship.trim() : "");
                         if (tsInstances[`coapp_state_${idx}`]) tsInstances[`coapp_state_${idx}`].setValue(co.state);
                         if (tsInstances[`coapp_city_${idx}`]) tsInstances[`coapp_city_${idx}`].setValue(co.city);
                         if (tsInstances[`coapp_emp_${idx}`]) tsInstances[`coapp_emp_${idx}`].setValue(co.employment_type);
