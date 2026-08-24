@@ -418,17 +418,31 @@ require_once 'header.php';
 
     function updateSubTypes() {
         const typeSelect = document.getElementById('loan_type');
-        const subSelect = document.getElementById('loan_sub_type');
         const selected = typeSelect.value;
+        const subSelect = document.getElementById('loan_sub_type');
         
-        subSelect.innerHTML = '<option value="" disabled selected>Select Sub-Type</option>';
-        if (subTypeMap[selected]) {
-            subTypeMap[selected].forEach(sub => {
-                let opt = document.createElement('option');
-                opt.value = sub;
-                opt.textContent = sub;
-                subSelect.appendChild(opt);
-            });
+        // If TomSelect is active on loan_sub_type, use its API
+        if (tsInstances['loan_sub_type']) {
+            const ts = tsInstances['loan_sub_type'];
+            ts.clear();
+            ts.clearOptions();
+            ts.addOption({value: '', text: 'Select Sub-Type'});
+            if (subTypeMap[selected]) {
+                subTypeMap[selected].forEach(sub => {
+                    ts.addOption({value: sub, text: sub});
+                });
+            }
+            ts.refreshOptions(false);
+        } else {
+            subSelect.innerHTML = '<option value="">Select Sub-Type</option>';
+            if (subTypeMap[selected]) {
+                subTypeMap[selected].forEach(sub => {
+                    let opt = document.createElement('option');
+                    opt.value = sub;
+                    opt.textContent = sub;
+                    subSelect.appendChild(opt);
+                });
+            }
         }
     }
 
