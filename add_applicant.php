@@ -866,11 +866,68 @@ require_once 'header.php';
                     setTimeout(() => {
                         let lowerSrc = data.lead_source.toLowerCase();
                         if((lowerSrc.includes('referral') || lowerSrc.includes('partner') || lowerSrc.includes('agent')) && data.referral_id) {
-                            document.getElementById('referral_dropdown').value = data.referral_id;
+                            if (tsInstances['referral_dropdown']) {
+                                tsInstances['referral_dropdown'].setValue(data.referral_id);
+                            } else {
+                                document.getElementById('referral_dropdown').value = data.referral_id;
+                            }
                         } else if((lowerSrc.includes('employee') || lowerSrc.includes('staff')) && data.employee_id) {
-                            document.getElementById('employee_dropdown').value = data.employee_id;
+                            if (tsInstances['employee_dropdown']) {
+                                tsInstances['employee_dropdown'].setValue(data.employee_id);
+                            } else {
+                                document.getElementById('employee_dropdown').value = data.employee_id;
+                            }
                         }
-                    }, 300);
+                    }, 600); // Wait a bit longer for async dropdowns to populate
+                }
+
+                if (data.co_applicants && data.co_applicants.length > 0) {
+                    document.getElementById('has_co_applicant').checked = true;
+                    toggleCoApplicantSection();
+                    document.getElementById('co_applicants_container').innerHTML = ''; // clear auto-added block
+                    coAppCount = 0; // reset
+                    
+                    for (const co of data.co_applicants) {
+                        addCoApplicantBlock();
+                        const idx = coAppCount;
+                        
+                        // Wait for cities to load if needed (state is populated synchronously inside addCoApplicantBlock)
+                        if (co.state) {
+                            // We need to wait for cities to load to populate the city dropdown
+                            await loadCities(co.state, null, `coapp_city_${idx}`, co.city);
+                        }
+                        
+                        document.getElementById(`coapp_rel_${idx}`).value = co.relationship;
+                        const block = document.getElementById(`coapp_block_${idx}`);
+                        block.querySelector(`[name="coapp_name[]"]`).value = co.full_name;
+                        block.querySelector(`[name="coapp_mobile[]"]`).value = co.mobile;
+                        block.querySelector(`[name="coapp_email[]"]`).value = co.email;
+                        block.querySelector(`[name="coapp_dob[]"]`).value = co.dob;
+                        block.querySelector(`[name="coapp_pan[]"]`).value = co.pan_number;
+                        block.querySelector(`[name="coapp_aadhar[]"]`).value = co.aadhar_number;
+                        
+                        if (co.same_address == 1) {
+                            document.getElementById(`coapp_same_${idx}`).checked = true;
+                            toggleCoAppAddress(idx);
+                        } else {
+                            block.querySelector(`[name="coapp_address[]"]`).value = co.address;
+                            block.querySelector(`[name="coapp_pincode[]"]`).value = co.pincode;
+                            block.querySelector(`[name="coapp_state[]"]`).value = co.state;
+                        }
+                        
+                        block.querySelector(`[name="coapp_emp_type[]"]`).value = co.employment_type;
+                        block.querySelector(`[name="coapp_income[]"]`).value = co.monthly_income;
+                        block.querySelector(`[name="coapp_emis[]"]`).value = co.current_emis;
+                        
+                        const radios = document.getElementsByName(`coapp_is_financial[${idx}]`);
+                        radios.forEach(r => { if(r.value === co.is_financial) r.checked = true; });
+                        
+                        // Refresh TS for this block
+                        if (tsInstances[`coapp_rel_${idx}`]) tsInstances[`coapp_rel_${idx}`].setValue(co.relationship);
+                        if (tsInstances[`coapp_state_${idx}`]) tsInstances[`coapp_state_${idx}`].setValue(co.state);
+                        if (tsInstances[`coapp_city_${idx}`]) tsInstances[`coapp_city_${idx}`].setValue(co.city);
+                        if (tsInstances[`coapp_emp_${idx}`]) tsInstances[`coapp_emp_${idx}`].setValue(co.employment_type);
+                    }
                 }
             }
         } catch(e) {
