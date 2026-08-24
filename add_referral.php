@@ -69,8 +69,30 @@ require_once 'header.php';
                 </div>
                 <div class="form-group">
                     <label for="bank_name">Bank Name</label>
-                    <select name="bank_name" id="bank_name">
+                                        <select name="bank_name" id="bank_name">
                         <option value="">-- Select Bank --</option>
+                        <?php
+                        $js_file = 'assets/js/banks_directory.js';
+                        if (file_exists($js_file)) {
+                            $content = file_get_contents($js_file);
+                            $lines = explode("\n", $content);
+                            $banks = [];
+                            foreach ($lines as $line) {
+                                $line = trim($line);
+                                if (preg_match('/^"([^"]+)"(,|\])?$/', $line, $m)) {
+                                    $bank = $m[1];
+                                    if (!in_array($bank, ['Public Sector Bank', 'Private Sector Bank', 'Small Finance Bank', 'Housing Finance Company (HFC)', 'NBFC / Others'])) {
+                                        $banks[] = $bank;
+                                    }
+                                }
+                            }
+                            $banks = array_unique($banks);
+                            sort($banks);
+                            foreach ($banks as $bank) {
+                                echo '<option value="' . htmlspecialchars($bank) . '">' . htmlspecialchars($bank) . '</option>';
+                            }
+                        }
+                        ?>
                     </select>
                 </div>
                 <div class="form-group">
@@ -502,7 +524,7 @@ document.getElementById('addReferralForm').addEventListener('submit', async func
     if (refAadhaarInput) refAadhaarInput.addEventListener('input', updateRefCredentialsPreview);
 
     document.addEventListener('DOMContentLoaded', () => {
-        populateBankDropdown();
+        // populateBankDropdown();
         initValidationAndCapitalize();
     });
 </script>
