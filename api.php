@@ -2841,7 +2841,13 @@ try {
 
         case 'get_applicant_documents':
             $applicant_id = (int)($_GET['applicant_id'] ?? 0);
-            $stmt = $db->prepare("SELECT * FROM applicant_documents WHERE applicant_id = ? ORDER BY id DESC");
+            $stmt = $db->prepare("
+                SELECT d.*, c.full_name as coapp_name 
+                FROM applicant_documents d 
+                LEFT JOIN co_applicants c ON d.owner_id = c.id 
+                WHERE d.applicant_id = ? 
+                ORDER BY d.id DESC
+            ");
             $stmt->execute([$applicant_id]);
             return_json($stmt->fetchAll(PDO::FETCH_ASSOC));
             break;
@@ -2871,9 +2877,18 @@ try {
             if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
             $filepath = $upload_dir . $filename;
             
+            $owner_val = trim($_POST['owner_val'] ?? 'Applicant_0');
+            $owner_parts = explode('_', $owner_val);
+            $owner_type = $owner_parts[0] ?? 'Applicant';
+            $owner_id = (isset($owner_parts[1]) && $owner_parts[1] > 0) ? (int)$owner_parts[1] : null;
+            if ($owner_type !== 'CoApplicant') {
+                $owner_type = 'Applicant';
+                $owner_id = null;
+            }
+            
             if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                $stmt = $db->prepare("INSERT INTO applicant_documents (applicant_id, document_category, document_name, file_path, status) VALUES (?, ?, ?, ?, 'Pending')");
-                $stmt->execute([$applicant_id, $category, $name, $filepath]);
+                $stmt = $db->prepare("INSERT INTO applicant_documents (applicant_id, document_category, document_name, file_path, status, owner_type, owner_id) VALUES (?, ?, ?, ?, 'Pending', ?, ?)");
+                $stmt->execute([$applicant_id, $category, $name, $filepath, $owner_type, $owner_id]);
                 
                 // Auto-advance to Phase 2 if currently in Phase 1
                 $db->query("UPDATE applicants SET overall_status = 'Phase 2' WHERE id = $applicant_id AND overall_status = 'Phase 1'");

@@ -14,6 +14,10 @@ if (!$applicant) {
     die("Applicant not found.");
 }
 
+$co_stmt = $db->prepare("SELECT id, full_name, relationship FROM co_applicants WHERE applicant_id = ?");
+$co_stmt->execute([$id]);
+$co_applicants = $co_stmt->fetchAll();
+
 $page_title = 'Applicant Documents';
 $page_subtitle = ' Phase 2: Upload KYC & Loan Specific Documents';
 require_once 'header.php';
@@ -91,6 +95,18 @@ require_once 'header.php';
                     </div>
                 </div>
                 
+                <div class="form-grid" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label class="required">Document Owner</label>
+                        <select name="owner_val" id="owner_val" required>
+                            <option value="Applicant_0">Primary Applicant (<?php echo htmlspecialchars($applicant['customer_name']); ?>)</option>
+                            <?php foreach ($co_applicants as $co): ?>
+                            <option value="CoApplicant_<?php echo $co['id']; ?>">Co-Applicant: <?php echo htmlspecialchars($co['full_name']); ?> (<?php echo htmlspecialchars($co['relationship']); ?>)</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                
                 <div class="form-group" style="grid-column: 1 / -1;">
                     <label class="required">Document File</label>
                     <div style="display: flex; gap: 16px; align-items: stretch;">
@@ -125,6 +141,7 @@ require_once 'header.php';
                     <table class="data-table">
                         <thead>
                             <tr>
+                                <th>Owner</th>
                                 <th>Category</th>
                                 <th>Document Name</th>
                                 <th>Status</th>
@@ -133,7 +150,7 @@ require_once 'header.php';
                             </tr>
                         </thead>
                         <tbody id="docs-list">
-                            <tr><td colspan="4" style="text-align:center;">Loading documents...</td></tr>
+                            <tr><td colspan="6" style="text-align:center;">Loading documents...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -214,8 +231,11 @@ require_once 'header.php';
                     
                     const notesHtml = doc.notes ? `<div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Note: ${doc.notes}</div>` : '';
                     
+                    const ownerLabel = doc.owner_type === 'CoApplicant' && doc.coapp_name ? `<span style="color:var(--text-primary); font-weight:600;"><i data-lucide="users" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Co-App: ${doc.coapp_name}</span>` : `<span style="color:var(--primary); font-weight:600;"><i data-lucide="user" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"></i> Primary Applicant</span>`;
+                    
                     tbody.innerHTML += `
                         <tr>
+                            <td>${ownerLabel}</td>
                             <td><span class="badge badge-info">${doc.document_category}</span></td>
                             <td>
                                 <strong>${doc.document_name}</strong>
@@ -233,7 +253,7 @@ require_once 'header.php';
                 });
                 lucide.createIcons();
             } else {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">No documents uploaded yet.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">No documents uploaded yet.</td></tr>';
             }
         } catch (e) {
             console.error(e);
