@@ -208,6 +208,35 @@ try {
     
     try { $db->exec("ALTER TABLE quotations ADD COLUMN rejection_reason TEXT"); } catch (Exception $e) {}
 
+    
+    $db->exec("CREATE TABLE IF NOT EXISTS applicant_pd_reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        applicant_id INTEGER UNIQUE,
+        pd_conducted_by TEXT,
+        pd_date TEXT,
+        pd_mode TEXT,
+        business_board_seen TEXT,
+        stock_status TEXT,
+        business_stability TEXT,
+        monthly_turnover REAL,
+        residence_type TEXT,
+        years_at_address REAL,
+        locality_classification TEXT,
+        neighbor_feedback TEXT,
+        consumer_durables TEXT,
+        lifestyle_score TEXT,
+        positive_triggers TEXT,
+        negative_triggers TEXT,
+        recommended_loan_amount REAL,
+        final_pd_status TEXT,
+        pd_report_path TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (applicant_id) REFERENCES applicants(id)
+    )");
+
+    try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN owner_type TEXT DEFAULT 'Applicant'"); } catch (Exception $e) {}
+    try { $db->exec("ALTER TABLE applicant_documents ADD COLUMN owner_id INTEGER DEFAULT NULL"); } catch (Exception $e) {}
+
     $db->exec("CREATE TABLE IF NOT EXISTS activities (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT,
