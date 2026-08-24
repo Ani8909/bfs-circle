@@ -68,7 +68,17 @@ require_once __DIR__ . '/header.php';
 </style>
 
 <script>
-    async function loadFullActivityLogs() {
+    async       function filterLogs() {
+          const query = document.getElementById('logSearch').value.toLowerCase();
+          const rows = document.querySelectorAll('#full-activity-logs-tbody tr');
+          rows.forEach(row => {
+              const text = row.textContent.toLowerCase();
+              if(text.includes(query)) row.style.display = '';
+              else row.style.display = 'none';
+          });
+      }
+
+      function loadFullActivityLogs() {
         try {
             const response = await fetch('?api=get_activity_logs');
             const data = await response.json();
