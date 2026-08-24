@@ -30,7 +30,7 @@ try {
             $full_name = trim($_POST['full_name'] ?? '');
             $username = trim($_POST['username'] ?? '');
             $password = trim($_POST['password'] ?? '');
-            $role = trim($_POST['role'] ?? 'Staff');
+            $role = trim($_POST['access_role'] ?? 'Staff');
             $mobile = trim($_POST['mobile'] ?? '');
             
             if(empty($full_name) || empty($username) || empty($password)) {
@@ -46,16 +46,67 @@ try {
                 $stmt->execute([$username, $full_name, $hash, $role]);
                 $user_id = $db->lastInsertId();
                 
-                // 2. Create Employee profile
-
-                $dept = trim($_POST['department'] ?? 'General');
-                $desig = trim($_POST['designation'] ?? 'Staff');
-                $acc = trim($_POST['access_role'] ?? 'Staff');
-                $emp_id = 'EMP' . date('Ym') . rand(100, 999);
-                $stmt2 = $db->prepare("INSERT INTO employees (user_id, emp_id, full_name, mobile, personal_email, department, designation, access_role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt2->execute([$user_id, $emp_id, $full_name, $mobile, $username, $dept, $desig, $acc]);
-
+                // 2. Upload Files (if any)
+                $uploads_dir = 'uploads/employees';
+                if (!file_exists($uploads_dir)) mkdir($uploads_dir, 0777, true);
                 
+                $files = ['photo_path', 'aadhar_path', 'pan_path', 'marksheet_path', 'relieving_letter_path', 'cheque_path'];
+                $paths = [];
+                foreach ($files as $file) {
+                    $paths[$file] = null;
+                    if (isset($_FILES[$file]) && $_FILES[$file]['error'] == UPLOAD_ERR_OK) {
+                        $ext = pathinfo($_FILES[$file]['name'], PATHINFO_EXTENSION);
+                        $filename = $file . '_' . time() . '_' . rand(100, 999) . '.' . $ext;
+                        $dest = $uploads_dir . '/' . $filename;
+                        if (move_uploaded_file($_FILES[$file]['tmp_name'], $dest)) {
+                            $paths[$file] = $dest;
+                        }
+                    }
+                }
+
+                // 3. Create Employee profile
+                $emp_id = trim($_POST['emp_id'] ?? ('EMP' . date('Ym') . rand(100, 999)));
+                $official_email = trim($_POST['official_email'] ?? '');
+                $personal_email = trim($_POST['personal_email'] ?? '');
+                $current_address = trim($_POST['current_address'] ?? '');
+                $permanent_address = trim($_POST['permanent_address'] ?? '');
+                $emergency_contact_name = trim($_POST['emergency_contact_name'] ?? '');
+                $emergency_relation = trim($_POST['emergency_relation'] ?? '');
+                $emergency_phone = trim($_POST['emergency_phone'] ?? '');
+                $department = trim($_POST['department'] ?? 'General');
+                $designation = trim($_POST['designation'] ?? 'Staff');
+                $reporting_manager = trim($_POST['reporting_manager'] ?? '');
+                $doj = trim($_POST['doj'] ?? '');
+                $work_mode = trim($_POST['work_mode'] ?? '');
+                $pan_number = trim($_POST['pan_number'] ?? '');
+                $aadhar_number = trim($_POST['aadhar_number'] ?? '');
+                $bank_holder_name = trim($_POST['bank_holder_name'] ?? '');
+                $bank_account_no = trim($_POST['bank_account_no'] ?? '');
+                $bank_name = trim($_POST['bank_name'] ?? '');
+                $bank_ifsc = trim($_POST['bank_ifsc'] ?? '');
+                $commission_rate = (float)($_POST['commission_rate'] ?? 1.0);
+                $team_data = trim($_POST['team_specific_data'] ?? '');
+
+                $stmt2 = $db->prepare("INSERT INTO employees (
+                    user_id, emp_id, full_name, official_email, personal_email, mobile, 
+                    current_address, permanent_address, emergency_contact_name, emergency_relation, emergency_phone, 
+                    department, designation, reporting_manager, doj, access_role, work_mode, 
+                    pan_number, aadhar_number, bank_holder_name, bank_account_no, bank_name, bank_ifsc,
+                    photo_path, aadhar_path, pan_path, marksheet_path, offer_letter_path, cancelled_cheque_path,
+                    commission_rate, team_specific_data
+                ) VALUES (
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                )");
+                
+                $stmt2->execute([
+                    $user_id, $emp_id, $full_name, $official_email, $personal_email, $mobile,
+                    $current_address, $permanent_address, $emergency_contact_name, $emergency_relation, $emergency_phone,
+                    $department, $designation, $reporting_manager, $doj, $role, $work_mode,
+                    $pan_number, $aadhar_number, $bank_holder_name, $bank_account_no, $bank_name, $bank_ifsc,
+                    $paths['photo_path'], $paths['aadhar_path'], $paths['pan_path'], $paths['marksheet_path'], $paths['relieving_letter_path'], $paths['cheque_path'],
+                    $commission_rate, $team_data
+                ]);
+
                 $db->commit();
                 
                 log_activity("Added new employee: $full_name", "staff_hrms.php");
