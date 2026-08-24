@@ -244,6 +244,9 @@ $paginated_referrals = array_slice($filtered_referrals, $offset, $per_page);
                                         <a href="edit_referral.php?id=<?php echo $ref['id']; ?>" class="btn btn-sm" title="Edit Profile" style="background:#f1f5f9; color:#475569; border:none; padding: 6px 8px;">
                                             <i data-lucide="edit"></i>
                                         </a>
+                                        <button onclick="deleteReferral(<?php echo $ref['id']; ?>)" class="btn btn-sm" title="Delete Profile" style="background:#fee2e2; color:#ef4444; border:none; padding: 6px 8px; margin-left: 4px;">
+                                            <i data-lucide="trash-2"></i>
+                                        </button>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -279,4 +282,23 @@ $paginated_referrals = array_slice($filtered_referrals, $offset, $per_page);
     </div>
 </div>
 
+<script>
+async function deleteReferral(id) {
+    if(!confirm("Are you sure you want to delete this referral partner? This action cannot be undone.")) return;
+    try {
+        const fd = new FormData();
+        fd.append('id', id);
+        const res = await fetch('api.php?api=delete_referral', { method: 'POST', body: fd });
+        const data = await res.json();
+        if(data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch(err) {
+        showNotification("Network error", "error");
+    }
+}
+</script>
 <?php require_once 'footer.php'; ?>

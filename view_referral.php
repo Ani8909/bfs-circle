@@ -441,4 +441,23 @@ require_once 'header.php';
     </div>
 </div>
 
+<script>
+async function deleteReferral(id) {
+    if(!confirm("Are you sure you want to delete this referral partner? This action cannot be undone.")) return;
+    try {
+        const fd = new FormData();
+        fd.append('id', id);
+        const res = await fetch('api.php?api=delete_referral', { method: 'POST', body: fd });
+        const data = await res.json();
+        if(data.success) {
+            showNotification(data.message, 'success');
+            setTimeout(() => window.location.href = 'referrals_list.php', 1500);
+        } else {
+            showNotification(data.error, 'error');
+        }
+    } catch(err) {
+        showNotification("Network error", "error");
+    }
+}
+</script>
 <?php require_once 'footer.php'; ?>

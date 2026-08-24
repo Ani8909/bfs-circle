@@ -3320,6 +3320,27 @@ try {
 
 
         
+        case 'delete_referral':
+            if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+            $id = (int)($_POST['id'] ?? 0);
+            if ($id <= 0) return_json(['error' => 'Invalid ID'], 400);
+            try {
+                $stmt = $db->prepare("SELECT full_name FROM referrals WHERE id = ?");
+                $stmt->execute([$id]);
+                $ref = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $del = $db->prepare("DELETE FROM referrals WHERE id = ?");
+                $del->execute([$id]);
+                
+                if ($ref) {
+                    log_activity("Deleted referral partner: " . $ref['full_name'], "referrals_list.php");
+                }
+                return_json(['success' => true, 'message' => 'Referral deleted successfully.']);
+            } catch (Exception $e) {
+                return_json(['error' => 'Database error: ' . $e->getMessage()], 400);
+            }
+            break;
+            
         case 'add_custom_bank':
             if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
             $type = trim($_POST['bank_type'] ?? '');
