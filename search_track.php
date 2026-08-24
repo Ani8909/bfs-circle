@@ -833,6 +833,31 @@ Please process.`);
                     </div>
                 `}
                 
+                ${(() => {
+                    if (app.pd_report && (app.pd_report.pd_conducted_by || app.pd_report.final_pd_status)) {
+                        let badgeClass = 'badge-info';
+                        if(app.pd_report.final_pd_status === 'Positive') badgeClass = 'badge-success';
+                        else if(app.pd_report.final_pd_status === 'Negative') badgeClass = 'badge-danger';
+                        else if(app.pd_report.final_pd_status === 'Refer to Risk Manager') badgeClass = 'badge-warning';
+                        
+                        return `
+                        <div style="margin-top:16px; margin-bottom:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:16px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
+                            <div style="font-weight:600; font-size:14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                                <span style="color:#0f172a;"><i data-lucide="clipboard-check" style="width:16px; height:16px; vertical-align:text-bottom; margin-right:4px; color:var(--primary);"></i> PD Assessment Summary</span>
+                                ${app.pd_report.final_pd_status ? `<span class="badge ${badgeClass}">${app.pd_report.final_pd_status}</span>` : ''}
+                            </div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:13px; color:#475569;">
+                                <div><strong>Conducted By:</strong> ${app.pd_report.pd_conducted_by || '-'}</div>
+                                <div><strong>Mode:</strong> ${app.pd_report.pd_mode || '-'}</div>
+                                <div><strong>Date:</strong> ${app.pd_report.pd_date ? new Date(app.pd_report.pd_date).toLocaleString() : '-'}</div>
+                                <div><strong>Rec. Amount:</strong> ?${app.pd_report.recommended_loan_amount ? parseFloat(app.pd_report.recommended_loan_amount).toLocaleString('en-IN') : '-'}</div>
+                            </div>
+                            ${app.pd_report.pd_report_path ? `<div style="margin-top:12px;"><a href="${app.pd_report.pd_report_path}" target="_blank" class="btn btn-secondary" style="font-size:12px; padding:4px 8px; background:white;"><i data-lucide="external-link" style="width:12px; height:12px;"></i> View Full PD Report</a></div>` : ''}
+                        </div>`;
+                    }
+                    return '';
+                })()}
+                
                 <!-- LOS Pipeline Tracker -->
                 <div class="detail-block-title" style="margin-top:24px;">LOS Pipeline Progress</div>
                 <div class="pipeline-tracker">

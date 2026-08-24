@@ -2692,6 +2692,11 @@ try {
             $app = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$app) return_json(['error' => 'Not found'], 404);
             
+            // Fetch PD Report
+            $pd_stmt = $db->prepare("SELECT * FROM applicant_pd_reports WHERE applicant_id = ?");
+            $pd_stmt->execute([$id]);
+            $app['pd_report'] = $pd_stmt->fetch(PDO::FETCH_ASSOC);
+            
             // Phase 1 Calculation
             $phase1_fields = [
                 'customer_name' => 'Name', 'mobile' => 'Mobile', 'email' => 'Email', 
