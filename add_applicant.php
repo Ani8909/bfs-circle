@@ -113,7 +113,150 @@ require_once 'header.php';
             </div>
 
             <!-- 5. Loan Application -->
-            <div class="form-section-title"> 5. Loan Application Details</div>
+            
+            <div class="form-section-title"> 5. Personal Discussion (PD) & Field Assessment (Optional)</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>PD Conducted By</label>
+                    <input type="text" name="pd_conducted_by" id="pd_conducted_by" placeholder="Credit Officer Name">
+                </div>
+                <div class="form-group">
+                    <label>PD Date & Time</label>
+                    <input type="datetime-local" name="pd_date" id="pd_date">
+                </div>
+                <div class="form-group">
+                    <label>PD Mode</label>
+                    <div style="display:flex; gap:15px; align-items:center; height:42px;">
+                        <label><input type="radio" name="pd_mode" value="Physical Visit"> Physical</label>
+                        <label><input type="radio" name="pd_mode" value="Telephonic"> Telephonic</label>
+                        <label><input type="radio" name="pd_mode" value="Video Verification"> Video</label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Business Board / Signage Seen</label>
+                    <div style="display:flex; gap:15px; align-items:center; height:42px;">
+                        <label><input type="radio" name="business_board_seen" value="Yes"> Yes</label>
+                        <label><input type="radio" name="business_board_seen" value="No"> No</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Stock / Inventory Status</label>
+                    <select name="stock_status" id="stock_status">
+                        <option value="">-- Select --</option>
+                        <option value="Nil">Nil</option>
+                        <option value="Moderate">Moderate</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Business Continuity / Stability</label>
+                    <select name="business_stability" id="business_stability">
+                        <option value="">-- Select --</option>
+                        <option value="Less than 1 year">Less than 1 year</option>
+                        <option value="1-3 years">1-3 years</option>
+                        <option value="3+ years">3+ years</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Approx. Monthly Turnover (?)</label>
+                    <input type="number" name="monthly_turnover" id="monthly_turnover" placeholder="e.g. 500000">
+                </div>
+
+                <div class="form-group">
+                    <label>Residence Type</label>
+                    <select name="residence_type" id="residence_type">
+                        <option value="">-- Select --</option>
+                        <option value="Owned">Owned</option>
+                        <option value="Rented">Rented</option>
+                        <option value="Ancestral">Ancestral</option>
+                        <option value="Company Provided">Company Provided</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Years at Current Address</label>
+                    <input type="number" step="0.1" name="years_at_address" id="years_at_address" placeholder="e.g. 5.5">
+                </div>
+                <div class="form-group">
+                    <label>Locality Classification</label>
+                    <select name="locality_classification" id="locality_classification">
+                        <option value="">-- Select --</option>
+                        <option value="Slum">Slum</option>
+                        <option value="Lower-Middle">Lower-Middle</option>
+                        <option value="Middle">Middle</option>
+                        <option value="Upper-Middle">Upper-Middle</option>
+                        <option value="Premium">Premium</option>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Neighbor Verification Feedback</label>
+                    <textarea name="neighbor_feedback" id="neighbor_feedback" rows="2" placeholder="Summary of local feedback about applicant's reputation..."></textarea>
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Consumer Durables Observed</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:15px; margin-top:5px;">
+                        <label><input type="checkbox" name="consumer_durables[]" value="AC"> AC</label>
+                        <label><input type="checkbox" name="consumer_durables[]" value="Refrigerator"> Refrigerator</label>
+                        <label><input type="checkbox" name="consumer_durables[]" value="Car"> Car</label>
+                        <label><input type="checkbox" name="consumer_durables[]" value="Two-Wheeler"> Two-Wheeler</label>
+                        <label><input type="checkbox" name="consumer_durables[]" value="Washing Machine"> Washing Machine</label>
+                        <label><input type="checkbox" name="consumer_durables[]" value="Smart TV"> Smart TV</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Overall Lifestyle Score</label>
+                    <select name="lifestyle_score" id="lifestyle_score">
+                        <option value="">-- Select --</option>
+                        <option value="Low">Low</option>
+                        <option value="Average">Average</option>
+                        <option value="Affluent">Affluent</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Positive Triggers</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:15px; margin-top:5px;">
+                        <label><input type="checkbox" name="positive_triggers[]" value="Clean track record"> Clean track record</label>
+                        <label><input type="checkbox" name="positive_triggers[]" value="Stable business setup"> Stable business setup</label>
+                        <label><input type="checkbox" name="positive_triggers[]" value="Good residential stability"> Good residential stability</label>
+                    </div>
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label>Negative / Risk Triggers</label>
+                    <div style="display:flex; flex-wrap:wrap; gap:15px; margin-top:5px;">
+                        <label><input type="checkbox" name="negative_triggers[]" value="Aggressive behavior"> Aggressive behavior</label>
+                        <label><input type="checkbox" name="negative_triggers[]" value="Inconsistent income proofs"> Inconsistent income proofs</label>
+                        <label><input type="checkbox" name="negative_triggers[]" value="High existing liabilities"> High existing liabilities</label>
+                        <label><input type="checkbox" name="negative_triggers[]" value="Suspicious documents"> Suspicious documents</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Final PD Status / Recommendation</label>
+                    <select name="final_pd_status" id="final_pd_status">
+                        <option value="">-- Select --</option>
+                        <option value="Positive">Positive</option>
+                        <option value="Negative">Negative</option>
+                        <option value="Refer to Risk Manager">Refer to Risk Manager</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Recommended Loan Amount (?)</label>
+                    <input type="number" name="recommended_loan_amount" id="recommended_loan_amount" placeholder="If differs from requested">
+                </div>
+
+                <div class="form-group">
+                    <label>Upload PD Geotagged Photos / Report</label>
+                    <input type="file" name="pd_report_file" id="pd_report_file" accept=".pdf, .jpg, .jpeg, .png">
+                    <div id="pd_report_file_link" style="margin-top:5px; font-size:12px;"></div>
+                </div>
+            </div>
+
+            <div class="form-section-title"> 6. Loan Application Details</div>
+
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Loan Type</label>
@@ -144,7 +287,7 @@ require_once 'header.php';
             </div>
 
             <!-- 6. Lead Source -->
-            <div class="form-section-title"> 6. Lead Source & Referral</div>
+            <div class="form-section-title"> 7. Lead Source & Referral</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Lead Source</label>
@@ -648,23 +791,50 @@ require_once 'header.php';
                     await loadCities(data.state, null, 'city', data.city);
                 }
 
-                for (let key in data) {
-                    const el = document.querySelector(`[name="${key}"]`);
-                    if (el) {
-                        let val = data[key];
-                        if (key === 'lead_source' && val) {
-                            let srcVal = 'Direct / Website';
-                            let lowerSrc = val.toLowerCase();
-                            if (lowerSrc.includes('referral') || lowerSrc.includes('partner') || lowerSrc.includes('agent')) srcVal = 'Referral Partner / Agent';
-                            else if (lowerSrc.includes('employee') || lowerSrc.includes('staff')) srcVal = 'Employee Referral';
-                            else if (lowerSrc.includes('builder')) srcVal = 'Builder Tie-up';
-                            val = srcVal;
+                const populateFields = (obj) => {
+                    for (let key in obj) {
+                        if (key === 'pd_report_path') continue;
+                        const el = document.querySelector(`[name="${key}"]`);
+                        if (el) {
+                            let val = obj[key];
+                            if (key === 'lead_source' && val) {
+                                let srcVal = 'Direct / Website';
+                                let lowerSrc = val.toLowerCase();
+                                if (lowerSrc.includes('referral') || lowerSrc.includes('partner') || lowerSrc.includes('agent')) srcVal = 'Referral Partner / Agent';
+                                else if (lowerSrc.includes('employee') || lowerSrc.includes('staff')) srcVal = 'Employee Referral';
+                                else if (lowerSrc.includes('builder')) srcVal = 'Builder Tie-up';
+                                val = srcVal;
+                            }
+
+                            if (el.id && tsInstances[el.id]) {
+                                tsInstances[el.id].setValue(val);
+                            } else if (el.type !== 'radio' && el.type !== 'checkbox') {
+                                el.value = val;
+                            }
                         }
                         
-                        if (el.id && tsInstances[el.id]) {
-                            tsInstances[el.id].setValue(val);
-                        } else {
-                            el.value = val;
+                        const radios = document.querySelectorAll(`input[type="radio"][name="${key}"]`);
+                        if (radios.length > 0 && obj[key]) {
+                            radios.forEach(r => { if (r.value === obj[key]) r.checked = true; });
+                        }
+                        
+                        const multiCheckboxes = document.querySelectorAll(`input[type="checkbox"][name="${key}\[\]"]`);
+                        if (multiCheckboxes.length > 0 && obj[key]) {
+                            const values = String(obj[key]).split(',').map(s => s.trim());
+                            multiCheckboxes.forEach(cb => { if (values.includes(cb.value)) cb.checked = true; });
+                        }
+                    }
+                };
+                
+                populateFields(data);
+                
+                if (data.pd_report) {
+                    populateFields(data.pd_report);
+                    if (data.pd_report.pd_report_path) {
+                        const linkEl = document.getElementById('pd_report_file_link');
+                        if (linkEl) {
+                            linkEl.innerHTML = `<a href="${data.pd_report.pd_report_path}" target="_blank" style="color:var(--primary); font-weight: 500; display:inline-block; margin-top: 5px;"><i data-lucide="file-check" style="width:14px;height:14px;vertical-align:middle;"></i> View Existing Uploaded PD Report</a>`;
+                            if (typeof lucide !== 'undefined') lucide.createIcons();
                         }
                     }
                 }

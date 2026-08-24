@@ -2476,6 +2476,53 @@ try {
                 }
             }
             
+
+            // Save PD Report Details
+            $pd_conducted_by = trim($_POST['pd_conducted_by'] ?? '');
+            if ($pd_conducted_by || !empty($_POST['final_pd_status'])) {
+                $pd_date = trim($_POST['pd_date'] ?? '');
+                $pd_mode = trim($_POST['pd_mode'] ?? '');
+                $business_board_seen = trim($_POST['business_board_seen'] ?? '');
+                $stock_status = trim($_POST['stock_status'] ?? '');
+                $business_stability = trim($_POST['business_stability'] ?? '');
+                $monthly_turnover = (float)($_POST['monthly_turnover'] ?? 0);
+                $residence_type = trim($_POST['residence_type'] ?? '');
+                $years_at_address = (float)($_POST['years_at_address'] ?? 0);
+                $locality_classification = trim($_POST['locality_classification'] ?? '');
+                $neighbor_feedback = trim($_POST['neighbor_feedback'] ?? '');
+                
+                $consumer_durables = isset($_POST['consumer_durables']) && is_array($_POST['consumer_durables']) ? implode(', ', $_POST['consumer_durables']) : '';
+                $lifestyle_score = trim($_POST['lifestyle_score'] ?? '');
+                
+                $positive_triggers = isset($_POST['positive_triggers']) && is_array($_POST['positive_triggers']) ? implode(', ', $_POST['positive_triggers']) : '';
+                $negative_triggers = isset($_POST['negative_triggers']) && is_array($_POST['negative_triggers']) ? implode(', ', $_POST['negative_triggers']) : '';
+                
+                $recommended_loan_amount = (float)($_POST['recommended_loan_amount'] ?? 0);
+                $final_pd_status = trim($_POST['final_pd_status'] ?? '');
+                
+                $pd_report_path = '';
+                // Check if existing PD record exists to retain old file path
+                $existing_pd = $db->query("SELECT pd_report_path FROM applicant_pd_reports WHERE applicant_id = $final_id")->fetch();
+                if ($existing_pd) $pd_report_path = $existing_pd['pd_report_path'];
+                
+                if (isset($_FILES['pd_report_file']) && $_FILES['pd_report_file']['error'] === UPLOAD_ERR_OK) {
+                    $ext = pathinfo($_FILES['pd_report_file']['name'], PATHINFO_EXTENSION);
+                    $new_name = 'uploads/applicants/pd_' . $final_id . '_' . time() . '.' . $ext;
+                    if (!is_dir('uploads/applicants')) mkdir('uploads/applicants', 0777, true);
+                    if (move_uploaded_file($_FILES['pd_report_file']['tmp_name'], $new_name)) {
+                        $pd_report_path = $new_name;
+                    }
+                }
+                
+                if ($existing_pd) {
+                    $pd_stmt = $db->prepare("UPDATE applicant_pd_reports SET pd_conducted_by=?, pd_date=?, pd_mode=?, business_board_seen=?, stock_status=?, business_stability=?, monthly_turnover=?, residence_type=?, years_at_address=?, locality_classification=?, neighbor_feedback=?, consumer_durables=?, lifestyle_score=?, positive_triggers=?, negative_triggers=?, recommended_loan_amount=?, final_pd_status=?, pd_report_path=? WHERE applicant_id=?");
+                    $pd_stmt->execute([$pd_conducted_by, $pd_date, $pd_mode, $business_board_seen, $stock_status, $business_stability, $monthly_turnover, $residence_type, $years_at_address, $locality_classification, $neighbor_feedback, $consumer_durables, $lifestyle_score, $positive_triggers, $negative_triggers, $recommended_loan_amount, $final_pd_status, $pd_report_path, $final_id]);
+                } else {
+                    $pd_stmt = $db->prepare("INSERT INTO applicant_pd_reports (applicant_id, pd_conducted_by, pd_date, pd_mode, business_board_seen, stock_status, business_stability, monthly_turnover, residence_type, years_at_address, locality_classification, neighbor_feedback, consumer_durables, lifestyle_score, positive_triggers, negative_triggers, recommended_loan_amount, final_pd_status, pd_report_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $pd_stmt->execute([$final_id, $pd_conducted_by, $pd_date, $pd_mode, $business_board_seen, $stock_status, $business_stability, $monthly_turnover, $residence_type, $years_at_address, $locality_classification, $neighbor_feedback, $consumer_durables, $lifestyle_score, $positive_triggers, $negative_triggers, $recommended_loan_amount, $final_pd_status, $pd_report_path]);
+                }
+            }
+
             return_json(['success' => true, 'message' => $msg, 'id' => $final_id]);
             break;
 
@@ -2516,6 +2563,11 @@ try {
             $co_stmt = $db->prepare("SELECT * FROM co_applicants WHERE applicant_id = ?");
             $co_stmt->execute([$id]);
             $app['co_applicants'] = $co_stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Fetch PD reports
+            $pd_stmt = $db->prepare("SELECT * FROM applicant_pd_reports WHERE applicant_id = ?");
+            $pd_stmt->execute([$id]);
+            $app['pd_report'] = $pd_stmt->fetch(PDO::FETCH_ASSOC);
             
             return_json($app);
             break;
