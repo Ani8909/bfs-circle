@@ -25,6 +25,37 @@ try {
     }
 
     switch ($action) {
+                case 'delete_employee':
+            if (($_SESSION['role'] ?? '') !== 'Admin') return_json(['error' => 'Unauthorized'], 403);
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
+            
+            $emp_id = (int)($_POST['emp_id'] ?? 0);
+            if (!$emp_id) return_json(['error' => 'Employee ID is required.'], 400);
+            
+            try {
+                $db->beginTransaction();
+                
+                // Get user_id to delete from users table as well
+                $stmt = $db->prepare("SELECT user_id, full_name FROM employees WHERE id = ?");
+                $stmt->execute([$emp_id]);
+                $emp = $stmt->fetch();
+                
+                if ($emp) {
+                    $db->prepare("DELETE FROM employees WHERE id = ?")->execute([$emp_id]);
+                    if (!empty($emp['user_id'])) {
+                        $db->prepare("DELETE FROM users WHERE id = ?")->execute([$emp['user_id']]);
+                    }
+                    log_activity("Deleted employee: " . $emp['full_name'], "employees_list.php");
+                }
+                
+                $db->commit();
+                return_json(['success' => true]);
+            } catch (Exception $e) {
+                $db->rollBack();
+                return_json(['error' => 'Database error: ' . $e->getMessage()]);
+            }
+            break;
+
         case 'add_employee':
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') return_json(['error' => 'Invalid Request'], 405);
             $full_name = trim($_POST['full_name'] ?? '');
