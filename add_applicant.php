@@ -52,13 +52,13 @@ require_once 'header.php';
                 </div>
                 <div class="form-group">
                     <label class="required">State</label>
-                    <select name="state" id="state" required onchange="loadCities(this.value)">
+                    <select name="state" id="state" onchange="loadCities(this.value)">
                         <option value="">Select State</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label class="required">City / District</label>
-                    <select name="city" id="city" required>
+                    <select name="city" id="city">
                         <option value="">Select City</option>
                     </select>
                 </div>
@@ -268,7 +268,7 @@ require_once 'header.php';
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Loan Type</label>
-                    <select name="loan_type" id="loan_type" required onchange="updateSubTypes()">
+                    <select name="loan_type" id="loan_type" onchange="updateSubTypes()">
                         <option value="" disabled selected>Select Loan Type</option>
                         <option value="Home Loan">Home Loan</option>
                         <option value="Personal Loan">Personal Loan</option>
@@ -280,7 +280,7 @@ require_once 'header.php';
                 </div>
                 <div class="form-group">
                     <label class="required">Loan Sub-Type</label>
-                    <select name="loan_sub_type" id="loan_sub_type" required>
+                    <select name="loan_sub_type" id="loan_sub_type">
                         <option value="" disabled selected>Select Sub-Type First</option>
                     </select>
                 </div>
@@ -299,7 +299,7 @@ require_once 'header.php';
             <div class="form-grid">
                 <div class="form-group">
                     <label class="required">Lead Source</label>
-                    <select name="lead_source" id="lead_source" required onchange="toggleSourceFields()">
+                    <select name="lead_source" id="lead_source" onchange="toggleSourceFields()">
                         <option value="" disabled selected>Select Lead Source</option>
                         <option value="Direct / Walk-in">Direct / Walk-in</option>
                         <option value="Referral Partner / Agent">Referral Partner / Agent</option>
@@ -366,7 +366,7 @@ require_once 'header.php';
             <div class="form-grid" style="margin-bottom:16px;">
                 <div class="form-group">
                     <label class="required">Relationship with Applicant</label>
-                    <select name="coapp_relationship[]" id="coapp_rel_${index}" required>
+                    <select name="coapp_relationship[]" id="coapp_rel_${index}">
                         <option value="" disabled selected>Select Relation</option>
                         <option value="Spouse">Spouse</option>
                         <option value="Father">Father</option>
@@ -413,7 +413,7 @@ require_once 'header.php';
                         </div>
                     </div>
                     <div class="form-group"><label class="required">State</label><select name="coapp_state[]" id="coapp_state_${index}" onchange="loadCities(this.value, null, 'coapp_city_${index}')" required><option value="">Select State</option></select></div>
-                    <div class="form-group"><label class="required">City / District</label><select name="coapp_city[]" id="coapp_city_${index}" required><option value="">Select City</option></select></div>
+                    <div class="form-group"><label class="required">City / District</label><select name="coapp_city[]" id="coapp_city_${index}"><option value="">Select City</option></select></div>
                 </div>
             </div>
 
