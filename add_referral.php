@@ -4,7 +4,7 @@ $page_title = 'Add New Referral / DSA';
 $page_subtitle = ' Register a new referral partner or DSA';
 require_once 'header.php';
 ?>
-<script src="assets/js/banks_directory.js"></script>
+<script src="assets/js/banks_directory.js?v=<?php echo time(); ?>"></script>
 <?php
 ?>
 
