@@ -46,7 +46,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Pincode</label>
                     <div style="position: relative;">
-                        <input type="text" name="pincode" id="pincode" placeholder="6-digit pincode" required pattern="\d{6}" maxlength="6" oninput="verifyPincode(this.value)">
+                        <input type="text" name="pincode" id="pincode" placeholder="6-digit pincode" pattern="\d{6}" maxlength="6" oninput="verifyPincode(this.value)">
                         <span id="pincode-status" style="position: absolute; right: 10px; top: 10px;"></span>
                     </div>
                 </div>
@@ -64,7 +64,7 @@ require_once 'header.php';
                 </div>
                 <div class="form-group full-width">
                     <label class="required">Complete Address</label>
-                    <textarea name="address" rows="2" placeholder="House/Flat No., Street, Area" required></textarea>
+                    <textarea name="address" rows="2" placeholder="House/Flat No., Street, Area"></textarea>
                 </div>
             </div>
 
@@ -82,7 +82,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Employment Type</label>
                     <select name="employment_type" required>
-                        <option value="" disabled selected>Select Employment</option>
+                        <option value="" selected>Select Employment</option>
                         <option value="Salaried">Salaried</option>
                         <option value="Self-Employed">Self-Employed</option>
                         <option value="Business Owner">Business Owner</option>
@@ -269,7 +269,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Loan Type</label>
                     <select name="loan_type" id="loan_type" onchange="updateSubTypes()">
-                        <option value="" disabled selected>Select Loan Type</option>
+                        <option value="" selected>Select Loan Type</option>
                         <option value="Home Loan">Home Loan</option>
                         <option value="Personal Loan">Personal Loan</option>
                         <option value="Vehicle Loan">Vehicle Loan</option>
@@ -281,7 +281,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Loan Sub-Type</label>
                     <select name="loan_sub_type" id="loan_sub_type">
-                        <option value="" disabled selected>Select Sub-Type First</option>
+                        <option value="" selected>Select Sub-Type First</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -300,7 +300,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Lead Source</label>
                     <select name="lead_source" id="lead_source" onchange="toggleSourceFields()">
-                        <option value="" disabled selected>Select Lead Source</option>
+                        <option value="" selected>Select Lead Source</option>
                         <option value="Direct / Walk-in">Direct / Walk-in</option>
                         <option value="Referral Partner / Agent">Referral Partner / Agent</option>
                         <option value="Employee Referral">Employee Referral</option>
@@ -367,7 +367,7 @@ require_once 'header.php';
                 <div class="form-group">
                     <label class="required">Relationship with Applicant</label>
                     <select name="coapp_relationship[]" id="coapp_rel_${index}">
-                        <option value="" disabled selected>Select Relation</option>
+                        <option value="" selected>Select Relation</option>
                         <option value="Spouse">Spouse</option>
                         <option value="Father">Father</option>
                         <option value="Mother">Mother</option>
@@ -389,12 +389,12 @@ require_once 'header.php';
             </div>
 
             <div class="form-grid" style="margin-bottom:16px;">
-                <div class="form-group"><label class="required">Full Name</label><input type="text" name="coapp_name[]" placeholder="Full Name" required></div>
-                <div class="form-group"><label class="required">Mobile Number</label><input type="text" name="coapp_mobile[]" placeholder="10-digit number" maxlength="10" required></div>
+                <div class="form-group"><label class="required">Full Name</label><input type="text" name="coapp_name[]" placeholder="Full Name"></div>
+                <div class="form-group"><label class="required">Mobile Number</label><input type="text" name="coapp_mobile[]" placeholder="10-digit number" maxlength="10"></div>
                 <div class="form-group"><label>Email ID</label><input type="email" name="coapp_email[]" placeholder="Optional"></div>
-                <div class="form-group"><label class="required">Date of Birth</label><input type="date" name="coapp_dob[]" required></div>
-                <div class="form-group"><label class="required">PAN Number</label><input type="text" name="coapp_pan[]" placeholder="ABCDE1234F" style="text-transform:uppercase;" required></div>
-                <div class="form-group"><label class="required">Aadhaar Number</label><input type="text" name="coapp_aadhar[]" placeholder="12-digit Aadhaar" maxlength="12" required></div>
+                <div class="form-group"><label class="required">Date of Birth</label><input type="date" name="coapp_dob[]"></div>
+                <div class="form-group"><label class="required">PAN Number</label><input type="text" name="coapp_pan[]" placeholder="ABCDE1234F" style="text-transform:uppercase;"></div>
+                <div class="form-group"><label class="required">Aadhaar Number</label><input type="text" name="coapp_aadhar[]" placeholder="12-digit Aadhaar" maxlength="12"></div>
             </div>
 
             <div style="margin-bottom:16px;">
@@ -404,15 +404,15 @@ require_once 'header.php';
                     <input type="hidden" name="coapp_same_address[]" id="hidden_same_address_${index}" value="0">
                 </label>
                 <div id="coapp_address_block_${index}" class="form-grid">
-                    <div class="form-group full-width"><label class="required">Complete Address</label><input type="text" name="coapp_address[]" id="coapp_addr_${index}" required></div>
+                    <div class="form-group full-width"><label class="required">Complete Address</label><input type="text" name="coapp_address[]" id="coapp_addr_${index}"></div>
                     <div class="form-group">
                         <label class="required">Pincode</label>
                         <div style="position: relative;">
-                            <input type="text" name="coapp_pincode[]" id="coapp_pin_${index}" required maxlength="6" pattern="\\d{6}" onkeyup="verifyPincode(this.value, false, 'coapp_pin_status_${index}', 'coapp_state_${index}', 'coapp_city_${index}')">
+                            <input type="text" name="coapp_pincode[]" id="coapp_pin_${index}" maxlength="6" pattern="\\d{6}" onkeyup="verifyPincode(this.value, false, 'coapp_pin_status_${index}', 'coapp_state_${index}', 'coapp_city_${index}')">
                             <span id="coapp_pin_status_${index}" style="position: absolute; right: 10px; top: 10px;"></span>
                         </div>
                     </div>
-                    <div class="form-group"><label class="required">State</label><select name="coapp_state[]" id="coapp_state_${index}" onchange="loadCities(this.value, null, 'coapp_city_${index}')" required><option value="">Select State</option></select></div>
+                    <div class="form-group"><label class="required">State</label><select name="coapp_state[]" id="coapp_state_${index}" onchange="loadCities(this.value, null, 'coapp_city_${index}')"><option value="">Select State</option></select></div>
                     <div class="form-group"><label class="required">City / District</label><select name="coapp_city[]" id="coapp_city_${index}"><option value="">Select City</option></select></div>
                 </div>
             </div>
@@ -423,7 +423,7 @@ require_once 'header.php';
                     <div class="form-group">
                         <label class="required">Employment Type</label>
                         <select name="coapp_emp_type[]" id="coapp_emp_${index}">
-                            <option value="" disabled selected>Select</option>
+                            <option value="" selected>Select</option>
                             <option value="Salaried">Salaried</option>
                             <option value="Self-Employed Business">Self-Employed Business</option>
                             <option value="Self-Employed Professional">Self-Employed Professional</option>
@@ -463,7 +463,7 @@ require_once 'header.php';
         block.style.display = isFin ? 'block' : 'none';
         
         // Toggle required attributes
-        document.getElementById(`coapp_emp_${index}`).required = isFin;
+        // document.getElementById(`coapp_emp_${index}`).required = isFin; // Removed to prevent silent TomSelect HTML5 validation failure
         document.getElementById(`coapp_inc_${index}`).required = isFin;
     }
 
@@ -480,10 +480,10 @@ require_once 'header.php';
             document.getElementById(`coapp_city_${index}`).required = false;
         } else {
             block.style.display = 'grid';
-            document.getElementById(`coapp_addr_${index}`).required = true;
-            document.getElementById(`coapp_pin_${index}`).required = true;
-            document.getElementById(`coapp_state_${index}`).required = true;
-            document.getElementById(`coapp_city_${index}`).required = true;
+            
+            
+            
+            
         }
     }
     // --- CO-APPLICANT LOGIC END ---
